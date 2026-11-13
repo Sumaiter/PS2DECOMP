@@ -291,6 +291,10 @@ insufficient. Its `__init__.py` exports:
   `project_engine.Engine` and overriding the smallest necessary methods.
 - `coordination_state(engine)`: a fresh `(blocked_names, allowed_names)` pair;
   `allowed_names=None` is appropriate only when the project's policy permits it.
+- Optional `candidate_coordination_state(engine)`: a fresh pair for read-only
+  candidate discovery when a project's policy permits browsing unclaimed scopes.
+  Without this hook, discovery uses `coordination_state` unchanged. Session
+  creation, manual compilation and resume always use `coordination_state`.
 
 Set `adapter` to the folder name and `coordination.mode` to `native`. Keep
 compiler profiles, addresses, symbol mapping, GP, catalogue/overlay and region

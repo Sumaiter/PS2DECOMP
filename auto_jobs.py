@@ -352,8 +352,8 @@ def reservation_service(engine):
     return project_coordination
 
 
-def public_blocked(engine, names=None, owner=None, progress=None):
-    return reservation_service(engine).blocked(engine, names, owner, progress)
+def public_blocked(engine, names=None, owner=None, progress=None, *, discovery=False):
+    return reservation_service(engine).blocked(engine, names, owner, progress, discovery=discovery)
 
 
 def assert_public_free(engine, names, owner=None):
@@ -374,7 +374,7 @@ def plan(engine, limit=DEFAULT_LOAD_LIMIT, scope='both', progress=None):
         raise ValueError('Zum Laden eine positive ganze Zahl eingeben.')
     if progress:
         progress(dict(stage='inventory', checked=0))
-    publicly_blocked = public_blocked(engine, progress=progress)
+    publicly_blocked = public_blocked(engine, progress=progress, discovery=True)
     inventory, finals = engine.inventory_state(), candidates.local_finals(engine)
     placement_index = PlacementIndex(engine, inventory)
     # Reject mapped/claimed/unsupported candidates before opening their history.
@@ -882,7 +882,7 @@ class Manager:
             raise ValueError('Zum Laden eine positive ganze Zahl eingeben.')
         if scope not in ('incomplete', 'all') or program_scope not in ('both', 'main', 'overlays'):
             raise ValueError('Unbekannter Wiederholungsbereich.')
-        publicly_blocked = public_blocked(self.engine)
+        publicly_blocked = public_blocked(self.engine, discovery=True)
         latest = self._latest_jobs(); inventory = self.engine.inventory_state()
         placement_index = PlacementIndex(self.engine, inventory)
         finals = candidates.local_finals(self.engine); rows = []

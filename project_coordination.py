@@ -3,13 +3,16 @@ import json
 import subprocess
 
 
-def state(engine):
+def state(engine, *, discovery=False):
     policy = engine.config['coordination']
     if engine.config.get('adapter', 'generic') != 'generic':
         if policy.get('mode') != 'native':
             raise ValueError('A game adapter requires its native coordination gate.')
         import importlib
-        return importlib.import_module(engine.config['adapter']).coordination_state(engine)
+        adapter = importlib.import_module(engine.config['adapter'])
+        check = (getattr(adapter, 'candidate_coordination_state', adapter.coordination_state)
+                 if discovery else adapter.coordination_state)
+        return check(engine)
     if policy.get('mode') == 'local':
         return set(), None
     if policy.get('mode') != 'command':
@@ -32,8 +35,8 @@ def state(engine):
     return set(data['blocked']), set(data['allowed'])
 
 
-def blocked(engine, names=None, owner=None, progress=None):
-    held, allowed = state(engine)
+def blocked(engine, names=None, owner=None, progress=None, *, discovery=False):
+    held, allowed = state(engine, discovery=discovery)
     targets = set(engine.places if names is None else names)
     if allowed is not None:
         held |= targets - allowed
