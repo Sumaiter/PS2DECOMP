@@ -79,6 +79,31 @@ block local work; `coordination.mode` must remain `native`.
 All generic rule guards remain in force. Source-file compiler flags are not
 automatically changed to RAC4 profiles. NTSC-U remains unavailable.
 
+### R5900 square-root decoding
+
+Rough decompilation recovers single-format EE `SQRT.S` from raw `c1` or
+`.word` lines only when the operand agrees with the original instruction-word
+comment. R5900 uses FT (bits 20..16) as the source and FD (bits 10..6) as the
+destination. The unused FS field (bits 15..11) must be zero for this recovery;
+generic MIPS FS-form instructions and other formats remain unsupported.
+The original listing is preserved in `original.s`; `input.s` contains the
+decoded register operands and `instructionDecodings` records the evidence.
+Other adapters and existing textual instructions retain their own policy.
+
+The divider-padding diagnostic uses the same encoding check, accepting a
+nonzero FT and rejecting a nonzero unused FS. Its counts do not change the
+project's existing padding table or approve a configuration change.
+
+The [evidence summary](evidence/sqrt_ft_review20261113.json) covers a complete,
+hash-checked native placement and an isolated existing `sqrt_asm` helper
+compiled through the project's three assembler profiles. The FT source also
+agrees with [PCSX2's EE FPU implementation](https://github.com/PCSX2/pcsx2/blob/master/pcsx2/FPU.cpp).
+Synthetic m2c recovery produces `sqrtf`; that rough expression does not prove
+EE floating-point behavior or authorize replacing the project's helper.
+Types, ABI, ownership, complete function semantics and retail-matching builds
+still require independent review. This change supplies no new game source,
+compiler profile, search candidate, search budget or verdict policy.
+
 Submit RAC3 PAL-specific improvements as PRs in this folder. General rules belong
 in shared code only after evidence establishes applicability across games.
 

@@ -15,7 +15,7 @@ from RAC3_PAL.rac3_engine import Engine as AdapterEngine
 
 NAME = 'func_L02_00001000'
 DIV = 0x46020803
-SQRT = 0x46000804
+SQRT = 0x46010004
 
 
 def words(*items):
@@ -84,7 +84,7 @@ class DivisionPaddingTests(unittest.TestCase):
     def test_division_and_sqrt_counts_keep_native_order_and_reserved_sqrt_is_rejected(self):
         sites = padding.native_sites(words(0, DIV, 0, 0, SQRT, 0x03e00008, 0))
         self.assertEqual([(row['mnemonic'], row['count']) for row in sites], [('div.s', 1), ('sqrt.s', 2)])
-        self.assertIsNone(padding.native_sites(words(SQRT | 1 << 16)))
+        self.assertIsNone(padding.native_sites(words(SQRT | 1 << 11)))
         self.assertIsNone(padding.native_sites(b'\x00'))
         self.assertIsNone(padding.native_sites(b''))
 

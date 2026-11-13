@@ -309,6 +309,9 @@ class Engine(ManualEngine):
         assembly = self.asm(name)
         (directory / 'original.s').write_text(assembly, encoding='utf-8', newline='\n')
         assembly, decoded = rough.normalize_raw_cop1(assembly)
+        from . import sqrt_encoding
+        assembly, sqrt_decoded = sqrt_encoding.normalize(assembly)
+        decoded += sqrt_decoded
         from . import gp_identity
         assembly, gp_identities = gp_identity.normalize(self, name, assembly)
         gp = self.validated_gp(self.place(name)[0]) if re.search(r'\$gp\b', assembly) else 0

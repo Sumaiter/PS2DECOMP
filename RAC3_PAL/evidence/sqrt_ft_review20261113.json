@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "baseline": "95d306c",
+  "scope": "RAC3 PAL R5900 SQRT.S raw-listing recovery and divider diagnostic correction; no game bytes, objects, private paths or proprietary tools",
+  "encoding": {
+    "source": "FT: bits 20..16",
+    "destination": "FD: bits 10..6",
+    "supportedUnusedField": "FS: bits 15..11 must be zero",
+    "mask": "0xffe0f83f",
+    "value": "0x46000004",
+    "rawListing": "Anchored c1 lower-25-bit operand or .word full operand must agree with instruction comment"
+  },
+  "primarySource": {
+    "url": "https://github.com/PCSX2/pcsx2/blob/master/pcsx2/FPU.cpp",
+    "checkedOn": "2026-11-13",
+    "evidence": "EE SQRT_S reads FT; register extraction defines FT at bit 16 and FD at bit 6. No implementation source copied."
+  },
+  "nativeReplay": {
+    "name": "func_L24_00350C30",
+    "canonicalPlacements": 1,
+    "placements": [
+      {
+        "level": 24,
+        "address": 3476528,
+        "bytes": 2068,
+        "bodySha256": "2d354809609d0027054dec8ca555b6a29838ecce82e93618ba5298bd486cd3c4",
+        "referenceSha1": "79e9d151e51d6cc987b0327fcca186175052ded3",
+        "referenceSha256": "e5cfd5f262d60f5802f6fc5497a777b1e8db66ab093f106cd4013226ff4878f9",
+        "gp": 1951920,
+        "completeCfg": true
+      }
+    ],
+    "sqrtOffset": 656,
+    "sourceRegister": 1,
+    "destinationRegister": 1,
+    "fullImmutableListingAgreesWithEveryBodyWord": true,
+    "incomingDirectBoundaryChecks": {
+      "eligible": true,
+      "complete": true,
+      "placements": [
+        {
+          "program": "level_24",
+          "section": ".text",
+          "address": 3476528,
+          "size": 2068,
+          "eligible": true,
+          "incoming": [],
+          "directEntryCalls": 0,
+          "directEntryTailJumps": 0,
+          "referenceSha256": "e5cfd5f262d60f5802f6fc5497a777b1e8db66ab093f106cd4013226ff4878f9"
+        }
+      ],
+      "problems": [],
+      "limitation": "Direct incoming edges only; absence is not a boundary or ABI proof."
+    },
+    "padding": {
+      "status": "missing-entry",
+      "table": "config/levels/divs_nops.txt",
+      "tableSha256": "16a183f5c1b21662e69305e01cc3116b1bb02fe1d818bbaf2d0bafaccd2eda19",
+      "configuredCounts": null,
+      "nativeCounts": [
+        2,
+        2,
+        2
+      ]
+    },
+    "immutableFilesUnchanged": true
+  },
+  "syntheticCompilerProof": {
+    "source": "Existing vu0.h sqrt_asm used in one isolated float-to-float probe",
+    "compilerSha256": "522d28f9d74ddfce89568437156c8ee323c806de525d99907f698050dee8d81e",
+    "helperHeaderSha256": "aebd7a785a317ffb1de8b9f5aaca1105d8d0fa3699673e0a0694cc3b60897521",
+    "sourceSha256": "fd69080401401e052e866261402716ae43c0227ac9c3bc21b6d314020bf52a91",
+    "commandTemplate": "ee-gcc2953 -S|-c -I <game>/include -I <game> -mvu0-use-vf0-vf2 -O2 -G8 -fopt-stack -mno-check-zero-division -mno-split-addresses -B<sn>/bin/ee- <profile extras> -o <synthetic-output> <synthetic-input>",
+    "profileExtras": {
+      "gnu": [],
+      "newas": [
+        "-B<sn>/ee/bin/"
+      ],
+      "ps2as": [
+        "-DNO_MACRO_INC",
+        "-B<sn>/ee/bin/Ps2Ee"
+      ]
+    },
+    "results": [
+      {
+        "assembler": "gnu",
+        "assemblerSha256": "5ae3c981bb4e105bd1edfc48c11f15a932dbbf4680be46edc46c55a869885f9e",
+        "profile": [
+          "-mvu0-use-vf0-vf2",
+          "-O2",
+          "-G8",
+          "-fopt-stack",
+          "-mno-check-zero-division",
+          "-mno-split-addresses"
+        ],
+        "objectSha256": "f492e4130afeb69955d1cff06181e23a19fdcc836567b0e92155a65c8f8c2518",
+        "textSha256": "0ac5d442b7bf60c18e47a8c4ec5994737dc40951027189ce07fd45f282697c16",
+        "assemblySha256": "e27d6bda477117ce0054ec230cdc0eef5a63d136c82985e745f772f1b27c58a6",
+        "textBytes": 12,
+        "sqrt": [
+          {
+            "offset": 0,
+            "word": "460C0004",
+            "fd": 0,
+            "fs": 0,
+            "ft": 12
+          }
+        ]
+      },
+      {
+        "assembler": "newas",
+        "assemblerSha256": "7f504e571215fead2a15a14520bd22dc13507a1f13b479ca8c06a165f4a886a4",
+        "profile": [
+          "-mvu0-use-vf0-vf2",
+          "-O2",
+          "-G8",
+          "-fopt-stack",
+          "-mno-check-zero-division",
+          "-mno-split-addresses",
+          "@newas"
+        ],
+        "objectSha256": "f492e4130afeb69955d1cff06181e23a19fdcc836567b0e92155a65c8f8c2518",
+        "textSha256": "0ac5d442b7bf60c18e47a8c4ec5994737dc40951027189ce07fd45f282697c16",
+        "assemblySha256": "e27d6bda477117ce0054ec230cdc0eef5a63d136c82985e745f772f1b27c58a6",
+        "textBytes": 12,
+        "sqrt": [
+          {
+            "offset": 0,
+            "word": "460C0004",
+            "fd": 0,
+            "fs": 0,
+            "ft": 12
+          }
+        ]
+      },
+      {
+        "assembler": "ps2as",
+        "assemblerSha256": "cb5adda955e64626564212ef7e0c1434708c4e1ef423344a92ec8033306ed3aa",
+        "profile": [
+          "-mvu0-use-vf0-vf2",
+          "-O2",
+          "-G8",
+          "-fopt-stack",
+          "-mno-check-zero-division",
+          "-mno-split-addresses",
+          "@ps2as"
+        ],
+        "objectSha256": "a127913f2394dd36050f440149c4053e38febefc8ee2d0cd637134f5bd54cfb9",
+        "textSha256": "49b5794105d915b5851251ce6a7394622d1518d8848c00f81331a6de48fbad39",
+        "assemblySha256": "e27d6bda477117ce0054ec230cdc0eef5a63d136c82985e745f772f1b27c58a6",
+        "textBytes": 24,
+        "sqrt": [
+          {
+            "offset": 8,
+            "word": "460C0004",
+            "fd": 0,
+            "fs": 0,
+            "ft": 12
+          }
+        ]
+      }
+    ],
+    "allRecordedCompilerAssemblerSourceObjectAndTextHashesRevalidated": true,
+    "preliminaryProbeCorrection": "The earlier folder labeled the @newas directory prefix as ps2as; this protocol uses exact distinct project prefixes for all three assemblers."
+  },
+  "syntheticM2cProof": {
+    "target": "mipsee-gcc-c",
+    "m2cSha256": "b99bc4cbad2aa8c89ccdf67b874256e0a36ce7b31b7ac26e488bb27ee446ab63",
+    "commandTemplate": "python <m2c>/m2c.py -t mipsee-gcc-c --valid-syntax --no-cache -f ps2decomp_sqrt_probe <synthetic-listing>",
+    "runs": [
+      {
+        "label": "before",
+        "returncode": 0,
+        "stdout": "void ps2decomp_sqrt_probe(void) {\n    M2C_ERROR(/* unknown instruction: c1 0xc0004 */);\n}\n",
+        "stderr": "",
+        "inputSha256": "fb0423e3ae2819c23e7cbe96c324138d488d3941b70e71faa93cbebb2b2eaec5",
+        "outputSha256": "0c9128999db9d18862efe8172ec0da248cf3fef8e1e8b55c7fe22715e1502c35"
+      },
+      {
+        "label": "after",
+        "returncode": 0,
+        "stdout": "f32 ps2decomp_sqrt_probe(f32 fparg0) {\n    return sqrtf(fparg0);\n}\n",
+        "stderr": "",
+        "inputSha256": "574402788cec7fae888ecd87bedf0df51017034f2e74792751f0f58368e62a47",
+        "outputSha256": "112fb1fdc377cffb1bcd6826485f1f6d8745943e7d1b2a5e040a15718e3c5bfa"
+      }
+    ]
+  },
+  "counterexamples": [
+    "All 1024 FD/FT pairs decode with zero unused FS",
+    "Every nonzero FS value, generic MIPS FS form, other format and unrelated opcode is rejected",
+    "Mismatched raw operands/comments, cross-line records and additional operands are unchanged",
+    "Existing textual instructions and shared rough COP1 decoder remain unchanged",
+    "FT12 with FS0 is counted by padding diagnostic; FS12 with FT0 is unavailable",
+    "Original listing and subprocess timeout survive adapter integration"
+  ],
+  "validation": {
+    "focusedTestsPassed": 16,
+    "regularPythonTestsRun": 404,
+    "regularPythonTestsPassed": 396,
+    "regularPythonOptionalSkips": 8,
+    "javascriptTestsPassed": 15,
+    "offlineVsixValidated": true,
+    "newCompilerInvocations": 0,
+    "earlierIsolatedSyntheticCompilerInvocations": 6,
+    "syntheticM2cInvocations": 2,
+    "gameCandidateCompiles": 0,
+    "gameCandidateDecompilations": 0,
+    "liveClaimsTouched": 0,
+    "configurationWrites": 0,
+    "functionApprovals": 0
+  },
+  "limitations": [
+    "Recovery is RAC3 PAL-specific; no other game/region or shared decoder is changed.",
+    "Nonzero unused FS remains conservatively unsupported; the source is FT, not generic MIPS FS.",
+    "m2c sqrtf is rough output, not proof of EE floating-point semantics or an approved replacement for sqrt_asm.",
+    "Direct incoming-edge eligibility cannot exclude indirect entries or fallthrough.",
+    "No game source, types, ABI, ownership, values, profiles, padding tables, budgets, search rules or verdict gates are changed.",
+    "No game candidate was compiled/decompiled or promoted, and no complete game build was claimed."
+  ]
+}
