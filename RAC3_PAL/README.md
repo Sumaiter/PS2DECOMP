@@ -111,6 +111,30 @@ not prove why every instruction differs. The actual 22-copy observation and
 counterexamples are summarized in
 [`evidence/division_padding_review20261113.json`](evidence/division_padding_review20261113.json).
 
+`cop1_branches.py` and `branch_operands.py` give new rough listings explicit
+local labels for supported raw COP1 and nonlink integer branches. Rabbitizer
+can print their operand as a relative expression that m2c cannot parse; the
+adapter now takes the mnemonic, register operands and signed PC-relative
+target from the original word. COP1 false/true/likely forms and the integer
+conditions supported by the existing CFG screen retain their condition,
+register order, likely behavior and delay instruction. Every native word and
+the subsequent EE register alias normalization remain unchanged.
+
+The entire function must pass the existing CFG screen, and each target must
+be inside its complete catalogue window. Unsupported condition-code/register
+fields, link branches, external targets and incomplete/control delay slots
+receive no recovered labels. Other branches and calls retain their existing
+handling. Saved drafts, types, ABI, compiler profiles and budgets are unchanged.
+
+Three immutable native input/context pairs originally failed on relative
+operands. Changing only the evidenced operands made each same m2c command
+emit the function, including normal, likely and mixed integer/COP1 examples.
+Nineteen native placements were independently checked, and two existing real
+compiler objects corroborate normal and likely COP1 encodings. VU/type
+placeholders and the objects' other byte differences remain. Summary evidence
+and limitations are in
+[`evidence/branch_operand_review20261113.json`](evidence/branch_operand_review20261113.json).
+
 The adapter's `additional_search_children` hook offers a bounded set of extra
 search roots. They use the normal queue, negative history, claims, compiler
 profiles, time limit and attempt limit. A root is not a semantic approval.
@@ -142,6 +166,30 @@ The hook can compose independently proven zero-store recovery and scalar size
 metadata from the same original source. This happens before the helper include
 and metadata leave the shared AST parser's deliberately limited input subset.
 The parser and search budgets are not relaxed.
+
+Before m2c generates a new rough draft, `gp_identity.py` can name a moving
+level object used by direct GP-relative byte, halfword or word memory
+instructions. It reuses the checker's complete hash/ELF/GP/CFG-checked
+catalogue references and requires the original opcode, base and destination
+at every instruction offset. Every use of one primary address must have one
+consistent target in each copy, with valid width, alignment and data rights.
+Both absolute targets and GP displacements must move; a stable GP slot or a
+resident address seen through different GPs does not qualify.
+
+Only the evidenced memory operands change. GP address formation/copies,
+unsupported memory widths, mixed access identities and primary or secondary
+overlaps exclude recovery. A LUI high half that could form an observed target
+through ORI or signed-low addressing also excludes it, as does an immediate
+absolute address into that access. Calls, branches, unknown instructions and possible
+GP writes before a use exclude that identity. A mismatched listing or missing
+reference leaves the original rough-input path intact. Existing drafts and
+history are not rewritten. The new `gpIdentities` result field records each
+placement and reference hash; `gpResolutions` retains its symbol-list API.
+No type, declaration, runtime value, statement order, compiler profile or search
+budget is chosen by this recovery. Actual compiler relocations and every
+placement still need normal verification. Two unchanged compiled objects and
+the symbol-only compiler-pair counterexample are summarized in
+[`evidence/gp_identity_review0896.json`](evidence/gp_identity_review0896.json).
 
 For named `D_LNN_XXXXXXXX` globals in other levels, `check_worker.py` can now
 reuse the project's unchanged `level_symbols.derive` policy on one supported

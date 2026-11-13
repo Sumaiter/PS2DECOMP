@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "scope": "RAC3 PAL pre-m2c GP memory operand identity recovery; summary only, no game bytes, compiled objects, proprietary tools or private paths",
+  "baseline": "44bf411 named GPREL16 target checker",
+  "observations": [
+    {
+      "name": "func_L19_00335408",
+      "generatedSymbol": "D_L19_001DCD10",
+      "actualCompiledGpSymbol": "D_L19_001DCD10",
+      "nativeInstructionOffset": 4,
+      "access": "LWC1 four-byte runtime read",
+      "sourceSha256": "4ab586405f51385ead964aa5de7d7f20f50dd5a93b2b807d1cd03695c8f4d700",
+      "objectSha256": "509d0de9302374203ecfeded3a73747189ba31b18959101a3ea9940b5b7f7104",
+      "compiledTextSha256": "8999ccc7761cbfbb9b56b1e1358fc550d6a00379b6658347b67ef7293e6b59ab",
+      "placements": [
+        {"level": 19, "gpOffset": 1120, "actualTarget": "001DCD10"},
+        {"level": 23, "gpOffset": 608, "actualTarget": "001DCB10"},
+        {"level": 27, "gpOffset": 736, "actualTarget": "001DCB90"}
+      ],
+      "remainingOrdinaryWordDifferences": 4
+    },
+    {
+      "name": "func_L19_0030D928",
+      "generatedSymbol": "D_L19_001DC610",
+      "actualCompiledGpSymbol": "D_L19_001DC610",
+      "nativeInstructionOffset": 4,
+      "access": "LWC1 four-byte runtime read",
+      "sourceSha256": "d9aa62862076abbc5ddc4ba979724b59d4e9b5222c56dff084144e39da369157",
+      "objectSha256": "15f4c079876f25140d3d7ec77ee431fb3d54d4d7749eb12705ea587bf69fc0e4",
+      "compiledTextSha256": "a268d57e3f28e4d7b7ff1b2513c946373fa309106d25765b3eabfe5d2e254de0",
+      "placements": [
+        {"level": 19, "gpOffset": -672, "actualTarget": "001DC610"},
+        {"level": 23, "gpOffset": -616, "actualTarget": "001DC648"},
+        {"level": 27, "gpOffset": -688, "actualTarget": "001DC600"}
+      ],
+      "remainingOrdinaryWordDifferences": 12
+    }
+  ],
+  "nativeCompilerCounterexample": {
+    "name": "func_L19_00335408",
+    "fixedSlotSymbol": "D_001DCD10_sda",
+    "fixedSourceSha256": "fa7f16c0ba81aedfd89e71eba4f72f0f48200404128f67b461346970e9154ca1",
+    "fixedObjectSha256": "5d26c28e8acab2ea52aa997c779af53be7fab2b2d5de8e5e15e9d5829321f54d",
+    "sourceDifference": "Exactly two identifier occurrences change from the fixed-slot name to the named level object; type, ABI, runtime read, statement order and source-file profile are unchanged.",
+    "compilerObservation": "Both actual objects have identical 76-byte text and identical relocation offsets/types; only the GP relocation symbol identity changes.",
+    "allPlacementObservation": "The fixed-slot object remains wrong in levels 23 and 27; the named object resolves the actual targets with the baseline named-GPREL checker. Four ordinary word differences still reject the function."
+  },
+  "validation": {
+    "nativeExistingObjectProtocolCases": 2,
+    "canonicalPlacementsPerCase": 3,
+    "generatedNamesEqualActualCompiledGpSymbols": true,
+    "originalNativeInstructionWordsPreserved": true,
+    "compilerInvocationsDuringProtocolReplay": 0,
+    "m2cInvocationsDuringProtocolReplay": 0,
+    "immutableSourcesAndObjectsPreserved": true,
+    "focusedSyntheticAndAdapterIntegrationTestsPassed": 17,
+    "regularPythonTestsRun": 405,
+    "regularPythonTestsPassed": 397,
+    "regularPythonOptionalSkips": 8,
+    "javascriptTestsPassed": 15
+  },
+  "syntheticCounterexamples": [
+    "Fixed GP slots with moving absolute addresses, and resident absolute addresses accessed through different GPs",
+    "Changed opcode, base, destination, listing register, immediate or native word",
+    "Primary address formation, GP copies, unsupported memory widths and secondary-only address escapes",
+    "Either LUI high-half convention or a zero-base immediate can expose an independent absolute identity; unrelated -1.0f high halves do not imply an initializer",
+    "Read/write targets that agree only in the primary copy; mixed widths, signedness or float/integer identities",
+    "Primary or secondary-only overlaps between separately named objects",
+    "GP writes, R5900 multiply destinations, FP transfers, calls and branches before the access",
+    "Missing catalogue placements, duplicate placements, failed reference hashes and missing GP evidence",
+    "Invalid data alignment, allocation bounds or write rights"
+  ],
+  "limitations": [
+    "This generates operand identities for new rough drafts; it does not rewrite existing drafts, sessions, history, immutable snapshots or compiler objects.",
+    "The normal checker must verify the compiler's actual object format, symbol/relocation inventory and every native placement.",
+    "Allocation extents, cross-function data identity and ownership, types, ABI, runtime values and semantics remain independently reviewable requirements.",
+    "No function match, game-source promotion or complete game build is claimed.",
+    "No shared rule, new ABI/type/initializer, compiler flag, search-budget change or fixed-SDA retargeting is introduced."
+  ]
+}

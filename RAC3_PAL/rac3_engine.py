@@ -266,6 +266,9 @@ class Engine(ManualEngine):
         import rabbitizer
         place = self.place(name)
         raw = self.disc_bytes(place)
+        from . import branch_operands, cop1_branches
+        cop1 = cop1_branches.labels(raw, place[2])
+        integer = branch_operands.integer_labels(raw, place[2])
         labels = set()
         records = []
         for off in range(0, len(raw), 4):
@@ -273,7 +276,15 @@ class Engine(ManualEngine):
             value = struct.unpack_from('<I', raw, off)[0]
             ins = rabbitizer.Instruction(value, address, rabbitizer.InstrCategory.R5900)
             text = ins.disassemble()
-            if ins.isBranch():
+            if off in cop1:
+                mnemonic, target = cop1[off]
+                labels.add(target)
+                text = mnemonic + ' .L%08X' % target
+            elif off in integer:
+                mnemonic, registers, target = integer[off]
+                labels.add(target)
+                text = mnemonic + ' ' + ', '.join([*('$' + register for register in registers), '.L%08X' % target])
+            elif ins.isBranch():
                 target = ins.getBranchVramGeneric()
                 labels.add(target)
                 text = re.sub(r'0x[0-9A-Fa-f]+\s*$', '.L%08X' % target, text)
@@ -298,10 +309,13 @@ class Engine(ManualEngine):
         assembly = self.asm(name)
         (directory / 'original.s').write_text(assembly, encoding='utf-8', newline='\n')
         assembly, decoded = rough.normalize_raw_cop1(assembly)
+        from . import gp_identity
+        assembly, gp_identities = gp_identity.normalize(self, name, assembly)
         gp = self.validated_gp(self.place(name)[0]) if re.search(r'\$gp\b', assembly) else 0
         if re.search(r'\*/\s*\w+\s+\$gp\s*,', assembly):
             raise ValueError('Die Funktion verändert GP; automatische Auflösung bleibt offen.')
-        resolved = []
+        resolved = [symbol for _, symbol in sorted(
+            (offset, identity['symbol']) for identity in gp_identities for offset in identity['offsets'])]
         def memory(m):
             symbol = 'D_%08X' % ((gp + int(m[2], 0)) & 0xffffffff)
             # Shared RAC3 code names GP slots, not one multiplayer address.
@@ -326,8 +340,8 @@ class Engine(ManualEngine):
         (directory / 'context.c').write_text(rough.TYPES + '\n'.join(declarations) + '\n', encoding='utf-8', newline='\n')
         command = [sys.executable, str(rough.tool(self.root)), '-t', 'mipsee-gcc-c', '--valid-syntax', '--no-cache',
                    '--context', str(directory / 'context.c'), '-f', name, str(directory / 'input.s')]
-        run = subprocess.run(command, cwd=directory, capture_output=True, text=True, encoding='utf-8', errors='replace',
-                             timeout=timeout, creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
+        from local_process import run as execute
+        run = execute(command, cwd=directory, text=True, encoding='utf-8', errors='replace', timeout=timeout)
         (directory / 'm2c-output.c').write_text(run.stdout, encoding='utf-8', newline='\n')
         (directory / 'm2c.log').write_text(run.stderr, encoding='utf-8', newline='\n')
         ok = run.returncode == 0 and bool(re.search(r'\b' + name + r'\s*\([^;]*\)\s*\{', run.stdout))
@@ -348,7 +362,7 @@ class Engine(ManualEngine):
             forwarded = dict(findings=[], warnings=[str(exc)])
         result = dict(name=name, ok=ok, source=source, warnings=[*skipped, *division_padding.warnings(padding), 'RAC3-Grobentwurf; Typen, ABI, Datenbesitz und Funktionsgrenzen prüfen.'],
                       log=run.stderr, directory=str(directory), command=command, adapterVersion=rough.ADAPTER_VERSION,
-                      contextDeclarations=declarations, abiProblems=abi_problems, gpResolutions=resolved, instructionDecodings=decoded,
+                      contextDeclarations=declarations, abiProblems=abi_problems, gpResolutions=resolved, gpIdentities=gp_identities, instructionDecodings=decoded,
                       registerAliases=register_aliases, unresolvedMarkers=markers, forwardedArguments=forwarded,
                       divisionPadding=padding)
         (directory / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8', newline='\n')
@@ -365,8 +379,8 @@ class Engine(ManualEngine):
             command += ['--object', str(obj), '--address', str(place[2]), '--size', str(place[3])]
             if place[0] == 'boot_elf' and name in self.boot_twins:
                 command += ['--frontbin-copy']
-        run = subprocess.run(command, cwd=self.root, capture_output=True, text=True, encoding='utf-8', errors='replace',
-                             timeout=timeout, creationflags=subprocess.CREATE_NO_WINDOW)
+        from local_process import run as execute
+        run = execute(command, cwd=self.root, text=True, encoding='utf-8', errors='replace', timeout=timeout)
         try:
             result = json.loads(run.stdout)
         except ValueError:

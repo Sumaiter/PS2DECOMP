@@ -159,7 +159,7 @@ class DivisionPaddingTests(unittest.TestCase):
         with patch.object(padding, 'inspect', return_value=evidence), \
                 patch('rough.tool', return_value=Path('synthetic-m2c.py')), \
                 patch('rough.forwarding_evidence', return_value=dict(findings=[], warnings=[])), \
-                patch('subprocess.run', return_value=SimpleNamespace(
+                patch('local_process.run', return_value=SimpleNamespace(
                     returncode=0, stdout='void ' + NAME + '(void) {}', stderr='')) as run, \
                 patch.dict(os.environ, PS2DECOMP_LANGUAGE='en'):
             result = AdapterEngine.decompile(engine, NAME)
@@ -167,7 +167,7 @@ class DivisionPaddingTests(unittest.TestCase):
         self.assertTrue(any('missing-entry' in warning for warning in result['warnings']))
         self.assertEqual((Path(result['directory']) / 'input.s').read_text(), engine.asm(NAME))
         self.assertEqual(run.call_args.kwargs['timeout'], 45)
-        self.assertEqual(run.call_args.kwargs['creationflags'], 0)
+        self.assertNotIn('creationflags', run.call_args.kwargs)
         self.assertEqual(self.table.read_text(), '# table\n')
 
 
