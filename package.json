@@ -1,0 +1,167 @@
+{
+  "name": "ps2decomp",
+  "displayName": "PS2DECOMP",
+  "description": "%extension.description%",
+  "version": "0.1.0",
+  "publisher": "sumaiter",
+  "license": "GPL-3.0-only",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onLanguage:c",
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "ps2decomp.auto",
+        "title": "%command.auto%",
+        "enablement": "ps2decomp.active",
+        "category": "PS2DECOMP"
+      },
+      {
+        "command": "ps2decomp.autoCurrent",
+        "title": "%command.autoCurrent%",
+        "enablement": "ps2decomp.active",
+        "category": "PS2DECOMP"
+      },
+      {
+        "command": "ps2decomp.open",
+        "title": "%command.open%",
+        "enablement": "ps2decomp.active",
+        "category": "PS2DECOMP"
+      },
+      {
+        "command": "ps2decomp.compare",
+        "title": "%command.compare%",
+        "enablement": "ps2decomp.active",
+        "category": "PS2DECOMP"
+      },
+      {
+        "command": "ps2decomp.block",
+        "title": "%command.block%",
+        "enablement": "ps2decomp.active",
+        "category": "PS2DECOMP"
+      },
+      {
+        "command": "ps2decomp.decompile",
+        "title": "%command.decompile%",
+        "enablement": "ps2decomp.active",
+        "category": "PS2DECOMP"
+      },
+      {
+        "command": "ps2decomp.applyRough",
+        "title": "%command.applyRough%",
+        "enablement": "ps2decomp.active",
+        "category": "PS2DECOMP"
+      },
+      {
+        "command": "ps2decomp.refreshBuildable",
+        "title": "%command.refreshBuildable%",
+        "enablement": "ps2decomp.active",
+        "category": "PS2DECOMP"
+      },
+      {
+        "command": "ps2decomp.setup",
+        "category": "PS2DECOMP",
+        "title": "%command.setup%"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "ps2decomp.compare",
+        "key": "ctrl+alt+b",
+        "when": "editorLangId == c && ps2decomp.active"
+      }
+    ],
+    "configuration": {
+      "title": "PS2DECOMP",
+      "properties": {
+        "ps2decomp.openAutomaticOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "description": "%setting.openAutomaticOnStartup%",
+          "scope": "window"
+        },
+        "ps2decomp.repository": {
+          "type": "string",
+          "default": "",
+          "description": "%setting.repository%",
+          "scope": "window"
+        },
+        "ps2decomp.python": {
+          "type": "string",
+          "default": "",
+          "description": "%setting.python%",
+          "scope": "window"
+        }
+      }
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "ps2decomp.auto",
+          "when": "ps2decomp.active"
+        },
+        {
+          "command": "ps2decomp.autoCurrent",
+          "when": "ps2decomp.active"
+        },
+        {
+          "command": "ps2decomp.open",
+          "when": "ps2decomp.active"
+        },
+        {
+          "command": "ps2decomp.compare",
+          "when": "ps2decomp.active"
+        },
+        {
+          "command": "ps2decomp.block",
+          "when": "ps2decomp.active"
+        },
+        {
+          "command": "ps2decomp.decompile",
+          "when": "ps2decomp.active"
+        },
+        {
+          "command": "ps2decomp.applyRough",
+          "when": "ps2decomp.active"
+        },
+        {
+          "command": "ps2decomp.refreshBuildable",
+          "when": "ps2decomp.active"
+        }
+      ]
+    },
+    "jsonValidation": [
+      {
+        "fileMatch": "ps2decomp.json",
+        "url": "./schemas/ps2decomp.schema.json"
+      }
+    ]
+  },
+  "icon": "media/logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sumaiter/PS2DECOMP.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sumaiter/PS2DECOMP/issues"
+  },
+  "homepage": "https://github.com/Sumaiter/PS2DECOMP#readme",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "package": "python package_local.py"
+  }
+}

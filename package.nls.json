@@ -1,0 +1,15 @@
+{
+  "extension.description": "Local PS2 decompilation workbench: C variant search, shared claims and byte comparison. No AI required.",
+  "command.auto": "Open automatic decompilation",
+  "command.autoCurrent": "Continue the current function automatically",
+  "command.open": "Open workbench / select function",
+  "command.compare": "Compare the current draft with the original",
+  "command.block": "Insert a C building block",
+  "command.decompile": "Generate a new rough decompilation",
+  "command.applyRough": "Apply rough draft (replace editor contents)",
+  "command.refreshBuildable": "Find buildable drafts / refresh list",
+  "setting.openAutomaticOnStartup": "Show the automatic search panel when opening this workspace. Never starts jobs automatically.",
+  "setting.repository": "Game repository inside this workspace. Empty: detect ps2decomp.json in an open folder. User-level paths are ignored.",
+  "setting.python": "Python executable with the project dependencies. Empty: use the game repository venv.",
+  "command.setup": "Open game setup guide"
+}

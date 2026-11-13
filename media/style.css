@@ -1,0 +1,40 @@
+:root {color-scheme: light dark;}
+body {padding: 24px; max-width: 1400px; margin: auto; color: var(--vscode-foreground); background: var(--vscode-editor-background); font: 13px/1.6 var(--vscode-font-family);}
+header {border-bottom: 1px solid var(--vscode-panel-border); padding-bottom: 16px;}
+.eyebrow {font-size: 10px; letter-spacing: 2px; color: var(--vscode-textLink-foreground); font-weight: 700;}
+h1 {font-size: 24px; letter-spacing: -.5px; margin: 6px 0; line-height: 1.2;}
+h2 {font-size: 16px; margin-top: 24px;}
+h3 {font-size: 14px; margin-top: 0;}
+p {margin: 8px 0;}
+button {font-family: inherit; color: var(--vscode-button-secondaryForeground); background: var(--vscode-button-secondaryBackground); border: 1px solid var(--vscode-panel-border); border-radius: 5px; padding: 7px 11px; cursor: pointer;}
+button:hover {background: var(--vscode-button-secondaryHoverBackground);}
+button:focus-visible, summary:focus-visible {outline: 2px solid var(--vscode-focusBorder); outline-offset: 2px;}
+button.primary {background: var(--vscode-button-background); color: var(--vscode-button-foreground);}
+button.primary:hover {background: var(--vscode-button-hoverBackground);}
+button:disabled {opacity: .6; cursor: wait;}
+.toolbar {display: flex; flex-wrap: wrap; gap: 8px; padding: 18px 0;}
+kbd {font-size: 10px; margin-left: 6px; opacity: .7;}
+.target {display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px;}
+.target strong {font-size: 20px; font-family: var(--vscode-editor-font-family);}
+.target span, .muted, #connection {color: var(--vscode-descriptionForeground);}
+.warning {background: var(--vscode-inputValidation-warningBackground); border-left: 3px solid var(--vscode-editorWarning-foreground); padding: 10px 12px; border-radius: 3px;}
+.success {border-left: 3px solid var(--vscode-testing-iconPassed);}
+nav {display: flex; gap: 4px; border-bottom: 1px solid var(--vscode-panel-border); margin: 20px 0; overflow-x: auto;}
+nav button {border: none; border-radius: 0; white-space: nowrap; background: transparent; padding: 10px 8px; color: var(--vscode-descriptionForeground);}
+nav button.active {color: var(--vscode-textLink-foreground); border-bottom: 2px solid var(--vscode-textLink-foreground);}
+.tab {display: none;}
+.tab.active {display: block;}
+.card {border: 1px solid var(--vscode-panel-border); border-radius: 7px; padding: 14px; margin: 12px 0; overflow: hidden;}
+.card pre {white-space: pre-wrap; overflow-wrap: anywhere;}
+pre {font: 12px/1.7 var(--vscode-editor-font-family), monospace; tab-size: 4; overflow: auto;}
+.source {font-size: 11px; color: var(--vscode-descriptionForeground); overflow-wrap: anywhere;}
+.tag {font-size: 11px; color: var(--vscode-textLink-foreground);}
+details {margin: 10px 0;}
+summary {cursor: pointer; font-weight: 600;}
+table {width: 100%; border-collapse: collapse; font: 11px/1.6 var(--vscode-editor-font-family), monospace;}
+th, td {text-align: left; vertical-align: top; padding: 7px 9px; border-bottom: 1px solid var(--vscode-panel-border);}
+th {font-family: var(--vscode-font-family); color: var(--vscode-descriptionForeground);}
+.diff-wrap {overflow-x: auto; margin: 18px 0;}
+#diff td {white-space: pre;}
+.different {background: var(--vscode-diffEditor-removedTextBackground);}
+#notice:not(:empty) {padding: 10px; border: 1px solid var(--vscode-textLink-foreground); border-radius: 5px;}

@@ -1,0 +1,15 @@
+{
+  "extension.description": "Lokale PS2-Decompilierung: C-Variantensuche, gemeinsame Reservierungen und Bytevergleich. Ohne KI.",
+  "command.auto": "Automatische Decompilierung öffnen",
+  "command.autoCurrent": "Aktuelle Funktion automatisch weiterbearbeiten",
+  "command.open": "Werkbank öffnen / Funktion auswählen",
+  "command.compare": "Aktuellen Entwurf mit Original vergleichen",
+  "command.block": "C-Baustein einfügen",
+  "command.decompile": "Funktion erneut grob dekompilieren",
+  "command.applyRough": "Grobentwurf übernehmen (Editorinhalt ersetzen)",
+  "command.refreshBuildable": "Baubare Grobentwürfe suchen / Liste aktualisieren",
+  "setting.openAutomaticOnStartup": "Zeigt die automatische Suche beim Öffnen des Arbeitsbereichs. Startet keine Jobs automatisch.",
+  "setting.repository": "Spielrepository in diesem Workspace. Leer: ps2decomp.json in einem geöffneten Ordner erkennen. Globale Pfade werden ignoriert.",
+  "setting.python": "Python mit den Projektabhängigkeiten. Leer: venv des Spielrepositorys verwenden.",
+  "command.setup": "Einrichtungsanleitung für ein Spiel öffnen"
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "name": "func_00100000",
+    "placements": [
+      { "program": "main", "section": ".text", "address": "0x00100000", "size": 12 }
+    ]
+  }
+]

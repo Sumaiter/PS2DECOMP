@@ -1,0 +1,13 @@
+.git/**
+.github/**
+.venv/**
+venv/**
+tests/**
+node_modules/**
+__pycache__/**
+**/__pycache__/**
+build/**
+dist/**
+*.vsix
+package_local.py
+prepare_*.py

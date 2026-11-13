@@ -1,0 +1,49 @@
+label {display: flex; align-items: center; gap: 8px;}
+select, input {font: inherit; color: var(--vscode-input-foreground); background: var(--vscode-input-background); border: 1px solid var(--vscode-input-border, var(--vscode-panel-border)); padding: 6px; border-radius: 3px;}
+.settings {display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; padding: 16px 0;}
+.settings label {flex-direction: column; align-items: flex-start;}
+.settings input {width: 100px;}
+#candidates {max-height: 280px; overflow-y: auto; border-top: 1px solid var(--vscode-panel-border); padding: 8px 0;}
+.candidate {padding: 5px; font-family: var(--vscode-editor-font-family);}
+.candidate:hover {background: var(--vscode-list-hoverBackground);}
+#error:not(:empty) {padding: 12px; background: var(--vscode-inputValidation-errorBackground); border: 1px solid var(--vscode-inputValidation-errorBorder);}
+td button {margin: 0 5px 5px 0;}
+td p {max-width: 460px; font-family: var(--vscode-font-family);}
+section h2 {margin-top: 0;}
+#jobs {overflow-x: auto;}
+.job-status {display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; border: 1px solid currentColor; border-radius: 12px; font-size: 0.9em; white-space: nowrap;}
+.status-icon {font-weight: 700;}
+.status-queued {color: var(--vscode-descriptionForeground, #888);}
+.status-running {color: var(--vscode-progressBar-background, #3794ff); background: var(--vscode-list-inactiveSelectionBackground);}
+.status-review_ready {color: var(--vscode-charts-green, #89d185);}
+.status-blocked {color: var(--vscode-editorWarning-foreground, #cca700);}
+.status-deferred {color: var(--vscode-descriptionForeground, #888);}
+.deferred-entry {padding: 10px 0; border-top: 1px solid var(--vscode-panel-border);}
+.status-error {color: var(--vscode-errorForeground, #f48771);}
+.status-handed_off {color: var(--vscode-charts-purple, #b180d7);}
+.job-running > td:first-child {border-left: 3px solid var(--vscode-progressBar-background, #3794ff); font-weight: 700;}
+.job-queued > td:first-child {border-left: 3px solid var(--vscode-descriptionForeground, #888);}
+.job-counts {display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0;}
+.session-metrics {display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 14px; margin: 18px 0 10px;}
+.session-metric {display: flex; flex-direction: column; gap: 8px; padding: 18px; min-width: 0; border: 1px solid var(--vscode-panel-border); border-top: 3px solid var(--vscode-progressBar-background, #3794ff); background: var(--vscode-editor-background); color: var(--vscode-editor-foreground); border-radius: 5px; overflow-wrap: anywhere;}
+.metric-label {font-size: 1.1em; font-weight: 600; line-height: 1.4;}
+.metric-number {font-size: clamp(30px, 4vw, 44px); line-height: 1.2; font-variant-numeric: tabular-nums;}
+.metric-detail {line-height: 1.5;}
+.session-progress {font-size: clamp(20px, 2.4vw, 30px); font-weight: 700; line-height: 1.4; padding: 16px; margin: 16px 0 10px; border-left: 4px solid var(--vscode-progressBar-background, #3794ff); background: var(--vscode-list-inactiveSelectionBackground); overflow-wrap: anywhere;}
+#loadCount, #selectionAmount {width: 90px;}
+.candidate .job-status {margin-left: auto; font-family: var(--vscode-font-family);}
+.active-jobs {padding: 16px; margin: 16px 0; border: 1px solid var(--vscode-panel-border); border-left: 4px solid var(--vscode-progressBar-background, #3794ff); background: var(--vscode-editor-background); overflow-wrap: anywhere;}
+.active-jobs h3 {margin: 0 0 10px;}
+.active-jobs ul {display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0; padding-left: 20px;}
+.active-jobs li {padding: 4px 0;}
+.active-jobs strong {font-family: var(--vscode-editor-font-family);}
+.active-job-attempts {margin-left: 10px; font-variant-numeric: tabular-nums;}
+.session-update {display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 12px 0; line-height: 1.6; color: var(--vscode-descriptionForeground);}
+.session-update time {font-variant-numeric: tabular-nums;}
+.session-update-stale {color: var(--vscode-editorWarning-foreground, #cca700);}
+.update-error {flex-basis: 100%; overflow-wrap: anywhere;}
+
+.candidate-details {display: flex; flex-direction: column; gap: 4px; min-width: 0; overflow-wrap: anywhere;}
+.candidate-details .muted {font-family: var(--vscode-font-family); font-size: 0.9em;}
+.version-option {display:flex; align-items:center; gap:.5rem; padding:.5rem .75rem; border:1px solid var(--vscode-panel-border); border-radius:.3rem;}
+.version-selection [role="status"] {line-height:1.6; overflow-wrap:anywhere;}

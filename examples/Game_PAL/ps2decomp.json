@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "name": "My Game PAL",
+  "version": "pal-revision-1",
+  "adapter": "generic",
+  "mainProgram": "main",
+  "programs": {
+    "main": { "elf": "baserom/main.elf", "sha256": "REPLACE_WITH_ORIGINAL_ELF_SHA256", "symbols": {} }
+  },
+  "functions": "config/functions.json",
+  "compileCommand": ["{python}", "tools/compile.py", "{source}", "{object}", "{name}", "{program}"],
+  "inputs": {
+    "tools/compile.py": "REPLACE_WITH_WRAPPER_SHA256",
+    "include/common.h": "REPLACE_WITH_HEADER_SHA256",
+    "toolchain/bin/ee-gcc.exe": "REPLACE_WITH_COMPILER_SHA256"
+  },
+  "coordination": { "mode": "local" }
+}

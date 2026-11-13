@@ -1,0 +1,36 @@
+'use strict';
+const assert=require('node:assert/strict'), fs=require('node:fs'), path=require('node:path');
+const vscode=require('vscode');
+exports.run=async function(){
+ const directory=path.join(__dirname,'..','build');fs.mkdirSync(directory,{recursive:true});
+ const checks=[],locale=vscode.env.language;
+ const output=path.join(directory,'vscode-'+process.env.PS2DECOMP_TEST_LOCALE+'.json');
+ try {
+  assert.equal(locale,process.env.PS2DECOMP_TEST_LOCALE,'Install the matching display-language pack in the isolated test extensions directory');
+  const extension=vscode.extensions.getExtension('sumaiter.ps2decomp');assert(extension);
+  const api=await extension.activate();assert(api,'Configured game must activate');
+  const commands=await vscode.commands.getCommands();
+  for(const c of ['setup','open','compare','auto','decompile','block'])assert(commands.includes('ps2decomp.'+c));
+  checks.push('PS2DECOMP commands registered in the real extension host');
+  await vscode.commands.executeCommand('ps2decomp.open','func_00100000');
+  const document=vscode.workspace.textDocuments.find(d=>/[\\/]studio[\\/]func_00100000[\\/]draft.c$/.test(d.uri.fsPath));assert(document);
+  const initial=fs.readFileSync(document.uri.fsPath,'utf8');
+  const replace=async value=>{const edit=new vscode.WorkspaceEdit();edit.replace(document.uri,new vscode.Range(0,0,document.lineCount,0),value);assert(await vscode.workspace.applyEdit(edit));};
+  await replace('#include "common.h"\nint func_00100000(void){return 42;}\n');
+  const match=await vscode.commands.executeCommand('ps2decomp.compare');assert(match?.byteMatch,JSON.stringify(match));
+  assert.equal(fs.readFileSync(document.uri.fsPath,'utf8'),initial,'Unsaved editor contents must not overwrite the draft');
+  await replace('#include "common.h"\nint func_00100000(void){return 43;}\n');
+  const negative=await vscode.commands.executeCommand('ps2decomp.compare');assert.equal(negative?.byteMatch,false);
+  checks.push('Manual panel, unsaved C comparison and changed-body negative control');
+  await api.automatic.open();
+  const deadline=Date.now()+20000;
+  while((!api.automatic.renderState().locale || api.automatic.renderState().sessions === undefined)&&Date.now()<deadline)await new Promise(resolve=>setTimeout(resolve,100));
+  const rendered=api.automatic.renderState();assert(!rendered.error,rendered.error);
+  const de=/^de(?:-|$)/i.test(locale);
+  assert.equal(rendered.locale,de?'de':'en');
+  assert.equal(rendered.heading,de?'Automatische Decompilierung':'Automatic decompilation');
+  assert.equal(rendered.sessions,0);
+  checks.push('Live webview CSP, message handling and '+rendered.locale+' translated heading');
+  fs.writeFileSync(output,JSON.stringify({passed:true,locale,checks,rendered},null,2));
+ }catch(error){fs.writeFileSync(output,JSON.stringify({passed:false,locale,checks,error:error.stack},null,2));throw error;}
+};
