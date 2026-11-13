@@ -8,6 +8,7 @@ import re
 import struct
 
 from .check_worker import _level_references
+from .sqrt_encoding import fields as sqrt_fields
 
 
 TABLE = 'config/levels/divs_nops.txt'
@@ -35,8 +36,8 @@ def native_sites(raw):
         if (word & 0xffe0003f) not in (0x46000003, 0x46000004):
             continue
         sqrt = word & 63 == 4
-        if sqrt and word >> 16 & 31:
-            return None  # Unsupported nonzero unused SQRT.S operand field.
+        if sqrt and sqrt_fields(word) is None:
+            return None  # EE uses FT as source; nonzero unused FS is unsupported.
         offsets, cursor, excluded = [], index - 1, None
         while cursor >= 0 and words[cursor] == 0:
             if cursor > 0 and _control(words[cursor - 1]):
