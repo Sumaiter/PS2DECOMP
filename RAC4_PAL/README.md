@@ -98,3 +98,10 @@ failures and incomplete coordination fail closed.
 NTSC-U remains unavailable: the PAL adapter never relabels PAL bytes as US data.
 Submit RAC4 PAL-specific improvements as PRs in this folder. Shared improvements
 need evidence of applicability across games.
+
+The m2c rough-draft path uses the shared `rough` adapter with this engine's
+assembly, reference, GP and ownership services. RAC4 does not override
+`decompile`; the shared dispatcher retains that fallback. The manual
+**Decompile together** preview uses the same preprocessing for each selected
+function and the native coordination policy before temporary claims. It starts
+no automatic jobs and does not approve m2c's inferred types or ABI.

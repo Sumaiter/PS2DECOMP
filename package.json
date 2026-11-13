@@ -2,7 +2,7 @@
   "name": "ps2decomp",
   "displayName": "PS2DECOMP",
   "description": "%extension.description%",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "publisher": "sumaiter",
   "license": "GPL-3.0-only",
   "engines": {
@@ -57,6 +57,12 @@
       {
         "command": "ps2decomp.decompile",
         "title": "%command.decompile%",
+        "enablement": "ps2decomp.active",
+        "category": "PS2DECOMP"
+      },
+      {
+        "command": "ps2decomp.decompileGroup",
+        "title": "%command.decompileGroup%",
         "enablement": "ps2decomp.active",
         "category": "PS2DECOMP"
       },

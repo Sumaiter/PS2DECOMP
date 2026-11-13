@@ -81,6 +81,40 @@ sources and attempt histories in its copied archives. Listing alone starts no
 work. Every selected case is checked again while acquiring the new session's
 claims, and each job receives the configured budget for its new search pass.
 
+## m2c analysis coverage
+
+The adapter uses `mipsee-gcc-c`, `--valid-syntax`, `--no-cache` and evidenced
+primitive prototypes through `--context`. m2c's two translation passes, unknown
+type inference, control-flow reconstruction, switch detection and stack-spill
+detection are enabled by default. Single-function previews pass one `-f` name.
+RAC3-specific decoding and GP diagnostics are dispatched through its adapter;
+RAC4 uses the shared m2c adapter with its own engine's reference and GP services.
+
+Use **Decompile together** in the manual workbench, or the corresponding command,
+to add up to seven known direct callees in the same canonical program. All selected
+functions are passed to one m2c invocation with repeated `-f` flags and two passes.
+Each function receives its normal adapter preprocessing. The action acquires
+temporary manual claims for the whole selection, checks all reference windows,
+rejects overlaps and checks pinned inputs again after decompilation. Reserved,
+integrated or out-of-scope functions cannot be added. Input is capped at 64 KiB
+and the group shares one 45-second preparation/decompilation deadline.
+
+The result opens as a separate unsaved C document; the output, inputs, log and
+provenance remain under `build/studio`. It does
+not create search jobs, replace drafts, change contracts or approve inferred
+types/ABI. A failed group can contain partial output and is labelled incomplete.
+Cross-function inference is limited: a better helper prototype does not prove
+that m2c recovered every forwarded caller argument.
+
+Remaining integration gaps are full preprocessed project context (custom structs,
+globals and typedefs), evidenced `.data`/`.rodata`/`.bss` input including jump
+tables, explicit stack-struct context, and CFG visualization. m2c supports these,
+but this workbench does not yet supply their required inputs or UI. Default
+`--globals=used` emits inferred declarations; without data sections it does not
+recover their initial values. Formatting switches and diagnostic options are
+also not exposed as arbitrary flags. They are not prerequisites for ordinary
+decompilation, and unsafe assumptions such as forcing `--void` are not enabled.
+
 ## Search budgets and resume
 
 Each function's search pass shares its configured time and attempt limits across

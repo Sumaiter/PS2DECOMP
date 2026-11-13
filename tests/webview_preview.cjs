@@ -121,6 +121,9 @@ const selectedTab = page => page.locator('[role="tab"][aria-selected="true"]').g
    await send(page,{type:'status',data:{contracts:142,compiler:true,retail:true}});
    await send(page,{type:'detail',data:{name:'func_00100000',size:128,address:'0x00100000',section:'.text',asm:'/* synthetic listing */\n    jr $ra\n    nop',warnings:[],suggestions:[{title:'Belegte Signaturen',text:'Keine Werte geraten.'}],contracts:{func_00100000:[{declaration:'int func_00100000(int value);',status:'Manuell offen',evidence:['Synthetic fixture'],source:'synthetic.h'}]},fields:[{address:'0x00100004',operation:'lw',offset:'0x8',base:'a0'}],examples:[]}});
    await page.screenshot({path:path.join(out,`workbench-${lang}-${theme}.png`),fullPage:true});
+   assert.equal(await page.locator('#decompileGroup').textContent(),lang==='de'?'Gemeinsam dekompilieren':'Decompile together');
+   await page.locator('#decompileGroup').click();
+   assert.equal(await page.evaluate(()=>window.hostMessages.at(-1).type),'decompileGroup');
    await page.locator('[data-tab="guide"]').focus(); await page.keyboard.press('End'); assert.equal(await selectedTab(page),'result');
    await page.keyboard.press('Home'); assert.equal(await selectedTab(page),'guide');
    for(const width of [360,520]) {

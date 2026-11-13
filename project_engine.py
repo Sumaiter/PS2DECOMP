@@ -210,10 +210,10 @@ class Engine(EditorEngine):
                 return matches.pop()
         return None
 
-    def decompile(self, name, owner=None, timeout=45):
+    def decompile(self, name, owner=None, timeout=45, *, prepare_only=False):
         import rough
         self._decompile_program = self.place(name)[0]
-        return rough.decompile(self, name, owner, timeout)
+        return rough._decompile(self, name, owner, timeout, prepare_only=prepare_only)
 
     @staticmethod
     def reloc_masks(elf, index):

@@ -47,6 +47,15 @@ dependencies in the same venv. Preserve its license and record the revision you
 use. Manual draft comparison does not require m2c. Nothing is downloaded or
 started automatically by opening a game workspace.
 
+For related-function analysis, open a function in the workbench and choose
+**Decompile together**. Select up to seven direct callees; the current function
+is always included. The selection must be available under your project's manual
+coordination policy and use the same canonical program. PS2DECOMP temporarily
+claims all selected functions, runs one bounded m2c process and opens a separate
+unsaved preview. This action does not update drafts or start automatic searches.
+See [m2c analysis coverage](README.md#m2c-analysis-coverage) for supported inputs
+and current limitations. No additional m2c installation is needed.
+
 ## 2. Pick the integration
 
 | Your repository | Integration |
