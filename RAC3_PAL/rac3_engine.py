@@ -356,7 +356,8 @@ class Engine(ManualEngine):
                 rows.append(dict(address='%08X' % (place[2] + off), offset=off, ours=decode(left), retail=decode(right), equal=left is not None and left == right,
                     relocated=False, oursHex=ours[off:off + 4].hex(' ').upper() if left is not None else '—',
                     retailHex=theirs[off:off + 4].hex(' ').upper() if right is not None else '—', mask='00000000'))
-            relocs = dict(passed=not meta['unresolvedRelocations'], checked=meta.get('relocations', []),
+            checked = meta.get('relocations', [])
+            relocs = dict(passed=not meta['unresolvedRelocations'] and all(r.get('ok') is True for r in checked), checked=checked,
                           unresolved=[dict(offset=int(off, 16), reason='RAC3-Symbolziel nicht aufgelöst.') for off in meta['unresolvedRelocations']],
                           coveredRelocations=meta.get('coveredRelocations', []))
             base.update(verdict='Byte-Match' if meta['technicalExact'] else 'Code abweichend', byteMatch=meta['technicalExact'],

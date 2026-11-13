@@ -25,6 +25,11 @@ and toolchain setup must be completed first. This folder does not supply them.
 `rac3_engine.py` handles repository/ABI integration; `check_worker.py` isolates
 compilation and real relocation resolution using the project's checker.
 `build_native.py` provides the existing full native build helper.
+The comparison's relocation verdict requires every checked target to agree at
+its native instruction offset as well as having no unresolved relocations.
+Resolved symbol names alone do not pass that verdict. A relocation pass can
+coexist with different non-relocation instructions; byte equality and the
+every-placement strict check remain separate requirements.
 `rac3_coordination.py` reads upstream issue 3 and fresh `master` coverage. No
 comments are posted. By default (`coordination.workflow: "public-first"`),
 establish your own authorized public scope before starting work.
