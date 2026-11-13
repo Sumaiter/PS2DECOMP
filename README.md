@@ -51,6 +51,10 @@ This repository contains the tool, adapter source and synthetic tests. Supply
 your own game repository, original references and appropriate toolchain locally.
 Adding an ELF alone does not establish function boundaries, ABI or compiler flags.
 
+Shared guard files acquire their OS lock before initializing an empty file.
+[The lock evidence](FILE_LOCK_EVIDENCE.md) covers Windows contention, cleanup
+failures, process crashes and retained claim ownership.
+
 ## Search budgets and resume
 
 Each function's search pass shares its configured time and attempt limits across
