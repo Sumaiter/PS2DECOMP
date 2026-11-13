@@ -360,11 +360,13 @@ class Engine(ManualEngine):
             forwarded = rough.forwarding_evidence(self, name)
         except Exception as exc:
             forwarded = dict(findings=[], warnings=[str(exc)])
-        result = dict(name=name, ok=ok, source=source, warnings=[*skipped, *division_padding.warnings(padding), 'RAC3-Grobentwurf; Typen, ABI, Datenbesitz und Funktionsgrenzen prüfen.'],
+        from . import context_inputs
+        context_evidence = context_inputs.inspect(self, declarations)
+        result = dict(name=name, ok=ok, source=source, warnings=[*skipped, *division_padding.warnings(padding), *context_inputs.warnings(context_evidence), 'RAC3-Grobentwurf; Typen, ABI, Datenbesitz und Funktionsgrenzen prüfen.'],
                       log=run.stderr, directory=str(directory), command=command, adapterVersion=rough.ADAPTER_VERSION,
                       contextDeclarations=declarations, abiProblems=abi_problems, gpResolutions=resolved, gpIdentities=gp_identities, instructionDecodings=decoded,
                       registerAliases=register_aliases, unresolvedMarkers=markers, forwardedArguments=forwarded,
-                      divisionPadding=padding)
+                      divisionPadding=padding, contextInputs=context_evidence)
         (directory / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8', newline='\n')
         return result
 
