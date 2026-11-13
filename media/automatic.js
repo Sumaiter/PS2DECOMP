@@ -6,7 +6,23 @@ let candidates = [], current, starting = false, candidateMode = 'free', candidat
 let jobPage = 0, jobSession;
 let requestedSession, updateSession, lastSuccessfulUpdate, updateState = 'idle', updateFailure = '', updateStale = false;
 const jobPageSize = 100;
-const settingKeys = ['workers', 'maxAttempts', 'seconds'];
+const settingKeys = ['workers', 'maxAttempts', 'seconds', 'minBytes', 'maxBytes'];
+for (const preset of window.PS2DECOMP_SIZE_RANGE.presets) {
+  const option = document.createElement('option');
+  option.value = preset.id;
+  option.textContent = window.PS2DECOMP_L10N.translate(`${preset.label} (${preset.minBytes}\u2013${preset.maxBytes} Byte)`);
+  $('sizePreset').appendChild(option);
+}
+function updateSizePreset() {
+  const match = window.PS2DECOMP_SIZE_RANGE.presets.find(preset =>
+    preset.minBytes === Number($('minBytes').value) && preset.maxBytes === Number($('maxBytes').value));
+  $('sizePreset').value = match?.id || 'custom';
+}
+updateSizePreset();
+function readSizeRange() {
+  if (!$('minBytes').value.trim() || !$('maxBytes').value.trim()) throw new Error('Byte-Bereich vollständig eingeben.');
+  return window.PS2DECOMP_SIZE_RANGE.parse({minBytes: Number($('minBytes').value), maxBytes: Number($('maxBytes').value)});
+}
 const selectionButtons = ['select10', 'select50', 'select100', 'select1000', 'selectCustom', 'selectionAmount', 'selectAll', 'selectNone'];
 function updateSelection() {
   const inputs = [...document.querySelectorAll('#candidates input')];
@@ -21,6 +37,9 @@ function loadingCandidates(active) {
   $('scope').disabled = active || starting;
   $('retryScope').disabled = active || starting;
   $('loadCount').disabled = active || starting;
+  $('minBytes').disabled = active || starting;
+  $('maxBytes').disabled = active || starting;
+  $('sizePreset').disabled = active || starting;
   $('start').disabled = active || starting || !candidateReady || !candidates.length;
   for (const id of selectionButtons) $(id).disabled = active || starting;
   if (active && candidateMode === 'retry') $('candidateStatus').textContent = `Bis zu ${$('loadCount').value || 1000} freigegebene offene Ergebnisse werden geprüft und geladen …`;
@@ -236,11 +255,13 @@ $('jobPrev').onclick = () => {if (current && jobPage > 0) {jobPage--; renderSess
 $('jobNext').onclick = () => {if (current) {jobPage++; renderSession(current);}};
 $('loadDeferred').onclick = () => send('loadDeferred');
 function loadCandidates(mode) {
+  let sizeRange;
+  try {sizeRange = readSizeRange();} catch (error) {$('error').textContent = error.message; return;}
   const limit = Number($('loadCount').value);
   if (!Number.isSafeInteger(limit) || limit < 1) {$('error').textContent = 'Zum Laden eine positive, exakt darstellbare ganze Zahl eingeben.'; return;}
   candidateMode = mode; candidateReady = false; candidates = [];
   $('candidates').replaceChildren(); updateSelection();
-  loadingCandidates(true); send(mode === 'retry' ? 'loadRetry' : 'load', {scope: $('scope').value, retryScope: $('retryScope').value || 'incomplete', limit});
+  loadingCandidates(true); send(mode === 'retry' ? 'loadRetry' : 'load', {scope: $('scope').value, retryScope: $('retryScope').value || 'incomplete', limit, sizeRange});
 }
 $('load').onclick = () => loadCandidates($('retryScope').value === 'free' || !$('retryScope').value ? 'free' : 'retry');
 function invalidateCandidates() {
@@ -250,6 +271,21 @@ function invalidateCandidates() {
 }
 $('retryScope').onchange = invalidateCandidates;
 $('scope').onchange = invalidateCandidates;
+for (const id of ['minBytes', 'maxBytes']) {
+  $(id).oninput = () => {updateSizePreset(); invalidateCandidates();};
+  $(id).onchange = () => {
+    invalidateCandidates();
+    try {send('sizeRangeChanged', {sizeRange: readSizeRange()});}
+    catch (error) {$('error').textContent = error.message;}
+  };
+}
+$('sizePreset').onchange = () => {
+  const preset = window.PS2DECOMP_SIZE_RANGE.presets.find(preset => preset.id === $('sizePreset').value);
+  if (!preset) return;
+  $('minBytes').value = preset.minBytes; $('maxBytes').value = preset.maxBytes;
+  invalidateCandidates();
+  send('sizeRangeChanged', {sizeRange: readSizeRange()});
+};
 $('selectCustom').onclick = () => {
   const count = Number($('selectionAmount').value);
   if ($('selectionAmount').value.trim() === '' || !Number.isSafeInteger(count) || count < 0) {$('error').textContent = 'Zum Markieren eine exakt darstellbare ganze Zahl ab 0 eingeben.'; return;}
@@ -261,6 +297,7 @@ $('selectAll').onclick = () => selectFirst(Infinity);
 $('selectNone').onclick = () => selectFirst(0);
 $('start').onclick = () => {
   if (!candidateReady || starting) return;
+  try {readSizeRange();} catch (error) {$('error').textContent = error.message; return;}
   const names = [...document.querySelectorAll('#candidates input:checked')].map(n => n.value);
   if (!names.length) {$('error').textContent = 'Mindestens eine freie Funktion auswählen.'; return;}
   starting = true; loadingCandidates(false);
@@ -270,6 +307,12 @@ $('start').onclick = () => {
 for (const action of ['refresh', 'stop', 'resume', 'retry', 'retryDeferred', 'review', 'prompt', 'handoffAll']) $(action).onclick = () => send(action);
 $('sessions').onchange = () => selectSession($('sessions').value);
 window.addEventListener('message', ({data: m}) => {
+  if (m.type === 'sizeRange') {
+    $('minBytes').value = m.data.minBytes; $('maxBytes').value = m.data.maxBytes;
+    updateSizePreset();
+    invalidateCandidates();
+    vscode.postMessage({type: 'rendered', kind: 'sizeRange', sizeRange: readSizeRange()});
+  }
   if (m.type === 'versions') renderVersions(m.data, m.selected);
   if (m.type === 'preparing') {
     const stages = {validate: 'Frühere Ergebnisse prüfen', reserve: 'Funktionen reservieren', revalidate: 'Reservierungen und Platzierungen erneut prüfen', archive: 'Quellen und Versuchshistorien übernehmen', final: 'Abschlussprüfung vor dem Suchstart'};
@@ -308,4 +351,5 @@ window.addEventListener('message', ({data: m}) => {
   if (m.type === 'error') {$('error').textContent = m.text; starting = false; loadingCandidates(false);}
 });
 window.addEventListener('error', e => vscode.postMessage({type: 'viewError', text: e.message}));
-send('ready', {language: document.documentElement.lang, heading: document.querySelector('h1').textContent});
+send('ready', {language: document.documentElement.lang, heading: document.querySelector('h1').textContent,
+  sizeRange: readSizeRange(), sizePresets: [...$('sizePreset').options].map(option => option.textContent)});

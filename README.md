@@ -39,6 +39,8 @@ silently attach an unrelated game.
   C transformations and compilation with the game's configured toolchain.
 - Shared atomic claims, persistent budgets, negative attempt history, source
   and object deduplication, best-candidate retention and explicit handoff.
+- An inclusive workspace byte range (default 8–640) with editable Tiny, Small,
+  Medium, Big and Giant recommendations for loading functions and released retries.
 - A manifest-driven ELF32 little-endian MIPS adapter for new EE projects.
 - Existing game integrations in **[`RAC3_PAL`](RAC3_PAL)** and
   **[`RAC4_PAL`](RAC4_PAL)**, with separate compiler, catalogue and coordination

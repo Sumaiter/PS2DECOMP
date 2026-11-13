@@ -21,6 +21,7 @@ from bisect import bisect_left
 import candidates
 import rough
 import candidate_preflight
+import function_size
 import pointer_seeds
 import structural_seeds
 import address_variants
@@ -52,7 +53,7 @@ from search_rules import Variants, code_only, source_key
 ID = re.compile(r'[0-9a-f]{32}\Z')
 # Review08: all 301 observed best candidates (17 strict technical matches) were
 # reached by attempt8 and58.365s. Keep headroom rather than stop at a plateau.
-DEFAULTS = dict(workers=16, maxAttempts=30, seconds=90, stall=20, target=90, nearAfter=15)
+DEFAULTS = dict(workers=16, maxAttempts=30, seconds=90, stall=20, target=90, nearAfter=15, **function_size.DEFAULTS)
 LIMITS = dict(workers=(1, 32), maxAttempts=(1, 2000), seconds=(5, 3600), stall=(1, 200), target=(80, 99), nearAfter=(1, 2000))
 FINAL = {'review_ready', 'blocked', 'error', 'handed_off'}
 DEFAULT_LOAD_LIMIT = 1000
@@ -131,6 +132,7 @@ def write(path, value):
 
 def options(value=None):
     result = dict(DEFAULTS)
+    result.update(function_size.settings(value))
     for key, bounds in LIMITS.items():
         if key in (value or {}):
             v = value[key]
@@ -367,7 +369,8 @@ def launch_names(manager, data):
             if read(folder / 'jobs' / name / 'job.json').get('status') == 'queued']
 
 
-def plan(engine, limit=DEFAULT_LOAD_LIMIT, scope='both', progress=None):
+def plan(engine, limit=DEFAULT_LOAD_LIMIT, scope='both', progress=None, *, settings=None):
+    size_range = function_size.settings(settings)
     if scope not in ('both', 'main', 'overlays'):
         raise ValueError('Unbekannter Bereich.')
     if type(limit) is not int or limit < 1:
@@ -384,7 +387,7 @@ def plan(engine, limit=DEFAULT_LOAD_LIMIT, scope='both', progress=None):
     for checked, (name, p) in enumerate(engine.places.items(), 1):
         in_scope = (scope == 'both' or scope == 'main' and p[0] == engine.program
                     or scope == 'overlays' and p[0] != engine.program)
-        if (name not in publicly_blocked and in_scope and 8 <= p[3] <= 640 and eligible(engine, name, inventory=inventory, finals=finals,
+        if (name not in publicly_blocked and in_scope and function_size.contains(p[3], size_range) and eligible(engine, name, inventory=inventory, finals=finals,
                                                      history=set(), placement_index=placement_index)):
             possible.add(name)
         if progress and (checked % 500 == 0 or checked == total):
@@ -742,6 +745,8 @@ class Manager:
         if not isinstance(names, list) or not names or len(set(names)) != len(names):
             raise ValueError('Mindestens eine eindeutige Funktion auswählen; keine Duplikate.')
         settings = options(settings)
+        if any(not function_size.contains(self.engine.place(name)[3], settings) for name in names):
+            raise ValueError('Auswahl liegt außerhalb des eingestellten Byte-Bereichs. Funktionen neu laden.')
         assert_public_free(self.engine, names)
         seeds = seeds or {}
         if any(not isinstance(v, str) or not v.strip() or len(v) > 256000 for v in seeds.values()) or set(seeds) - set(names):
@@ -833,7 +838,7 @@ class Manager:
                 latest.setdefault(name, (data, path))
         return latest
 
-    def _retry_entry(self, name, latest, inventory, finals, owner=None, placement_index=None):
+    def _retry_entry(self, name, latest, inventory, finals, owner=None, placement_index=None, size_range=None):
         if not isinstance(name, str) or not FUNCTION.fullmatch(name):
             raise ValueError('Ungültiger Funktionsname.')
         if name not in latest:
@@ -849,7 +854,7 @@ class Manager:
                 not eligible(self.engine, name, owner, inventory=inventory, finals=finals, history=set(), placement_index=placement_index)):
             raise ValueError('Funktion ist zugeordnet, reserviert oder besitzt einen Editorentwurf: ' + name)
         place = self.engine.place(name)
-        if not 8 <= place[3] <= 640:
+        if not function_size.contains(place[3], size_range):
             raise ValueError('Funktionsgröße wird nicht unterstützt: ' + name)
         for p in self.engine.all_places(name):
             raw = self.engine.check.disc_bytes(p)
@@ -876,8 +881,9 @@ class Manager:
         return dict(data=data, job=job, sessionPath=session_path, jobpath=jobpath,
                     sessionHash=sha(session_path), jobHash=sha(jobpath), source=source)
 
-    def retry_plan(self, limit=DEFAULT_LOAD_LIMIT, scope='incomplete', program_scope='both'):
+    def retry_plan(self, limit=DEFAULT_LOAD_LIMIT, scope='incomplete', program_scope='both', *, settings=None):
         """Read-only, explicitly handed-off unfinished results; never claim here."""
+        size_range = function_size.settings(settings)
         if type(limit) is not int or limit < 1:
             raise ValueError('Zum Laden eine positive ganze Zahl eingeben.')
         if scope not in ('incomplete', 'all') or program_scope not in ('both', 'main', 'overlays'):
@@ -890,7 +896,7 @@ class Manager:
             if name in publicly_blocked:
                 continue
             try:
-                entry = self._retry_entry(name, latest, inventory, finals, placement_index=placement_index)
+                entry = self._retry_entry(name, latest, inventory, finals, placement_index=placement_index, size_range=size_range)
                 data, job = entry['data'], entry['job']; p = self.engine.place(name)
                 analysis_required = bool(is_deferred(job) or not job.get('best'))
                 if scope == 'incomplete' and analysis_required:
@@ -914,8 +920,11 @@ class Manager:
         if (not isinstance(names, list) or not names or any(not isinstance(n, str) for n in names) or
                 len(set(names)) != len(names)):
             raise ValueError('Mindestens eine eindeutige Funktion auswählen; keine Duplikate.')
+        settings = options(settings)
+        if any(not function_size.contains(self.engine.place(name)[3], settings) for name in names):
+            raise ValueError('Auswahl liegt außerhalb des eingestellten Byte-Bereichs. Funktionen neu laden.')
         assert_public_free(self.engine, names)
-        settings = options(settings); latest = self._latest_jobs()
+        latest = self._latest_jobs()
         def report(stage, done):
             if progress and (done % 100 == 0 or done == len(names)):
                 progress(dict(stage=stage, done=done, total=len(names)))
@@ -924,7 +933,7 @@ class Manager:
         entries = {}
         report('validate', 0)
         for i, name in enumerate(names, 1):
-            entries[name] = self._retry_entry(name, latest, inventory, finals, placement_index=placement_index)
+            entries[name] = self._retry_entry(name, latest, inventory, finals, placement_index=placement_index, size_range=settings)
             report('validate', i)
         session = uuid.uuid4().hex; folder = self.folder(session); owner = 'ps2decomp-auto-' + session
         claims = claim_api(self.engine); acquired = []
@@ -941,7 +950,7 @@ class Manager:
             placement_index = PlacementIndex(self.engine, inventory)
             report('revalidate', 0)
             for i, name in enumerate(names, 1):
-                checked = self._retry_entry(name, latest, inventory, finals, owner, placement_index)
+                checked = self._retry_entry(name, latest, inventory, finals, owner, placement_index, size_range=settings)
                 if any(checked[k] != entries[name][k] for k in ('sessionHash', 'jobHash')):
                     raise ValueError('Früheres Ergebnis während der Reservierung verändert: ' + name)
                 report('revalidate', i)
@@ -1000,7 +1009,7 @@ class Manager:
             placement_index = PlacementIndex(self.engine, inventory)
             report('final', 0)
             for i, name in enumerate(names, 1):
-                checked = self._retry_entry(name, latest, inventory, finals, owner, placement_index)
+                checked = self._retry_entry(name, latest, inventory, finals, owner, placement_index, size_range=settings)
                 if any(checked[k] != entries[name][k] for k in ('sessionHash', 'jobHash')):
                     raise ValueError('Früheres Ergebnis während der Archivierung verändert: ' + name)
                 report('final', i)
@@ -1648,11 +1657,12 @@ def main():
     for key in DEFAULTS:
         ap.add_argument('--' + key, type=int, default=DEFAULTS[key])
     args = ap.parse_args(); manager = Manager(args.repo)
+    settings = options({k: getattr(args, k) for k in DEFAULTS})
     if args.command == 'plan':
-        result = plan(manager.engine, args.limit, args.scope)
+        result = plan(manager.engine, args.limit, args.scope, settings=settings)
     elif args.command == 'start':
-        names = args.names or [r['name'] for r in plan(manager.engine, args.limit, args.scope)]
-        session = manager.create(names, {k: getattr(args, k) for k in DEFAULTS})['id']
+        names = args.names or [r['name'] for r in plan(manager.engine, args.limit, args.scope, settings=settings)]
+        session = manager.create(names, settings)['id']
         result = manager.start(session)
     elif args.command == 'run':
         run(manager, args.session); result = manager.status(args.session)

@@ -84,7 +84,7 @@ function rpc(op, params = {}, progress) {
     const timeout = ['autoPlan', 'autoStart', 'autoRetryPlan', 'autoRetryStart', 'autoHandoffMany'].includes(op) ? 600000 : 120000;
     const timer = setTimeout(() => {pending.delete(id); reject(new Error('Zeitlimit beim lokalen Prüfkern.'));}, timeout);
     pending.set(id, {resolve, reject, timer, child, progress});
-    child.stdin.write(JSON.stringify({id, op, ...params}) + '\n', err => {
+    child.stdin.write(JSON.stringify({id, op, sizeRange: context.workspaceState.get('automaticSizeRange', {minBytes: 8, maxBytes: 640}), ...params}) + '\n', err => {
       if (err && pending.has(id)) {clearTimeout(timer); pending.delete(id); reject(err);}
     });
   });

@@ -441,5 +441,19 @@
   "Breite": "Width",
   "Basisregister": "Base register",
   "Versatz": "Displacement",
-  "Manuell offen": "Manual review pending"
+  "Manuell offen": "Manual review pending",
+  "Funktionsgröße von (Byte)": "Function size from (bytes)",
+  "bis (Byte)": "to (bytes)",
+  "Byte-Bereich einschließlich der Grenzen; Standard 8–640 Byte. Die Kontrollfluss-Vorprüfung unterstützt bis zu 32768 Byte.": "Inclusive byte range; default 8–640 bytes. Control-flow preflight supports up to 32768 bytes.",
+  "Ungültiger Byte-Bereich: ganze Zahlen von 0 bis 32768, bis mindestens 8 und von nicht größer als bis.": "Invalid byte range: use whole numbers from 0 to 32768; the upper bound must be at least 8 and must not be smaller than the lower bound.",
+  "Byte-Bereich vollständig eingeben.": "Enter both byte range bounds.",
+  "Auswahl liegt außerhalb des eingestellten Byte-Bereichs. Funktionen neu laden.": "The selection is outside the configured byte range. Reload functions.",
+  "Filter während des Ladens geändert. Funktionen neu laden.": "Filters changed while loading. Reload functions.",
+  "Größenempfehlung": "Size preset",
+  "Eigener Bereich": "Custom range",
+  "Tiny (8–64 Byte)": "Tiny (8–64 bytes)",
+  "Small (65–256 Byte)": "Small (65–256 bytes)",
+  "Medium (257–640 Byte)": "Medium (257–640 bytes)",
+  "Big (641–2048 Byte)": "Big (641–2048 bytes)",
+  "Giant (2049–32768 Byte)": "Giant (2049–32768 bytes)"
 }

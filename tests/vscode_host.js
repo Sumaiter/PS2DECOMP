@@ -31,6 +31,15 @@ exports.run=async function(){
   assert.equal(rendered.heading,de?'Automatische Decompilierung':'Automatic decompilation');
   assert.equal(rendered.sessions,0);
   checks.push('Live webview CSP, message handling and '+rendered.locale+' translated heading');
+  assert.deepEqual(rendered.sizeRange,{minBytes:8,maxBytes:640});
+  assert.equal(rendered.sizePresets.length,6);
+  assert.equal(rendered.sizePresets[0],de?'Eigener Bereich':'Custom range');
+  assert.equal(rendered.sizePresets[5],de?'Giant (2049\u201332768 Byte)':'Giant (2049\u201332768 bytes)');
+  await api.automatic.setSizeRange({minBytes:641,maxBytes:2048});
+  const rangeDeadline=Date.now()+10000;
+  while(api.automatic.renderState().sizeRange?.minBytes!==641&&Date.now()<rangeDeadline)await new Promise(resolve=>setTimeout(resolve,50));
+  assert.deepEqual(api.automatic.renderState().sizeRange,{minBytes:641,maxBytes:2048});
+  checks.push('Live inclusive byte fields and five localized size recommendations');
   fs.writeFileSync(output,JSON.stringify({passed:true,locale,checks,rendered},null,2));
  }catch(error){fs.writeFileSync(output,JSON.stringify({passed:false,locale,checks,error:error.stack},null,2));throw error;}
 };

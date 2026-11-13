@@ -114,6 +114,9 @@ class Engine:
 
 
     def _dispatch(self, request):
+        if 'sizeRange' in request:
+            from function_size import settings
+            self.function_size_range = settings(request['sizeRange'])
         op = request.get("op")
         if op.startswith('auto'):
             from auto_jobs import Manager, plan, DEFAULT_LOAD_LIMIT
@@ -127,8 +130,8 @@ class Engine:
             if not hasattr(self, '_automatic'):
                 self._automatic = Manager(self.root)
             manager = self._automatic
-            if op == 'autoPlan': return plan(manager.engine, request.get('limit', DEFAULT_LOAD_LIMIT), request.get('scope', 'both'), progress=getattr(self, '_progress', None))
-            if op == 'autoRetryPlan': return manager.retry_plan(request.get('limit', DEFAULT_LOAD_LIMIT), request.get('scope', 'incomplete'), request.get('programScope', 'both'))
+            if op == 'autoPlan': return plan(manager.engine, request.get('limit', DEFAULT_LOAD_LIMIT), request.get('scope', 'both'), progress=getattr(self, '_progress', None), settings=request.get('settings'))
+            if op == 'autoRetryPlan': return manager.retry_plan(request.get('limit', DEFAULT_LOAD_LIMIT), request.get('scope', 'incomplete'), request.get('programScope', 'both'), settings=request.get('settings'))
             if op == 'autoRetryStart':
                 session = manager.create_retry(request['names'], request.get('settings'), progress=getattr(self, '_progress', None))
                 return manager.start(session['id'])
