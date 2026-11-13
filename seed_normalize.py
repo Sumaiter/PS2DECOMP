@@ -72,10 +72,9 @@ def normalize(source, *, generated=False, assembly='', contracts=()):
                     notes.append(instruction + ': synthetische m2c-Operation als Compiler-Builtin ausgegeben')
     declarations = []
     text = code_only(source)
-    for typ, declaration in [('s128', 'typedef long long s128;'), ('u128', 'typedef unsigned long long u128;')]:
-        if re.search(r'\b' + typ + r'\b', text) and not re.search(r'\btypedef\b[^;]*\b' + typ + r'\s*;', text):
-            declarations.append(declaration)
-            notes.append(typ + ': vorhandenen SN-128-Bit-Typ ergänzt (src/pal/core/00158998.c)')
+    # Type names do not establish a compiler ABI. Preserve source/header-owned
+    # definitions and let the compiler reject missing types; do not synthesize
+    # aliases whose width or signedness can change with the selected profile.
     # Locally documented libm contracts; avoid implicit-int/default promotions.
     for name, declaration in [('fabsf', 'extern f32 fabsf(f32);'), ('fabs', 'extern f64 fabs(f64);')]:
         if re.search(r'\b' + name + r'\s*\(', text) and not re.search(r'\b(?:float|double|f32|f64)\s+' + name + r'\s*\(', text):

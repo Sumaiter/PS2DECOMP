@@ -37,7 +37,7 @@ class ExactCacheSource(unittest.TestCase):
         folder=Path(self.temp.name)/'build/autodecomp'/('a'*32)
         archive=folder/'history'/'explicit-pass';name='func_00100000'
         pins={str(Path(self.temp.name)/'app'/filename): {'sha256': str(i)*64}
-              for i,filename in enumerate(('auto_jobs.py','project_engine.py','project_config.py','unknown_checker.py'),1)}
+              for i,filename in enumerate(('auto_jobs.py','project_engine.py','project_config.py','unknown_checker.py','seed_normalize.py'),1)}
         data=dict(pins=pins,history=[str(archive)])
         jobdir=archive/'jobs'/name;jobdir.mkdir(parents=True)
         jobs.write(archive/'session.json',dict(pins=pins))
@@ -52,7 +52,7 @@ class ExactCacheSource(unittest.TestCase):
         cache=jobs.reusable_attempts(folder,data,name)
         self.assertEqual(len(cache),1)
         self.assertTrue(jobs.same_cached_source(next(iter(cache.values())),self.source))
-        for filename in ('project_engine.py','project_config.py','unknown_checker.py'):
+        for filename in ('project_engine.py','project_config.py','unknown_checker.py','seed_normalize.py'):
             key=next(k for k in data['pins'] if Path(k).name==filename)
             original=data['pins'][key];data['pins'][key]={'sha256':'f'*64}
             self.assertEqual(jobs.reusable_attempts(folder,data,name),{})
