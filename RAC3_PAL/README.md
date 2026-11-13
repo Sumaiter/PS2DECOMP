@@ -28,6 +28,12 @@ compilation and real relocation resolution using the project's checker.
 `rac3_coordination.py` reads upstream issue 3 and fresh `master` coverage. No
 comments are posted. Establish your own authorized scope before starting work.
 
+Loading candidates also shows functions in unclaimed scopes when your contributor
+comment has no active reservations. It still excludes fresh upstream matches,
+other contributors' source units and overlapping placements. Loading the list
+does not claim functions, compile drafts or publish a comment. Starting or
+resuming work separately requires your own current public scope.
+
 All generic rule guards remain in force. Source-file compiler flags are not
 automatically changed to RAC4 profiles. NTSC-U remains unavailable.
 

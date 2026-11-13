@@ -14,6 +14,13 @@ def coordination_state(engine):
     from . import rac3_coordination as service
     state = service.snapshot(engine)
     blocked = service.blocked(engine, state=state)
-    # Selection and start must both respect the contributor's existing scope.
+    # Starting work requires the contributor's existing public scope.
     allowed = {n for n in engine.places if any(service.covers(n, engine.owners.get(n), scope) for scope in state['mine'])}
     return blocked, allowed
+
+
+def candidate_coordination_state(engine):
+    """Browse unclaimed scopes without granting permission to start work."""
+    from . import rac3_coordination as service
+    state = service.snapshot(engine)
+    return service.blocked(engine, state=state), None

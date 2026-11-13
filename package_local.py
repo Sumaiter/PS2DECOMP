@@ -13,11 +13,12 @@ GAME_SUFFIXES = {'.elf', '.iso', '.bin', '.rom', '.img', '.chd', '.cso', '.mdf',
 
 def validate_distribution(files, root):
     """Reject local game inputs and archives before writing a VSIX."""
-    root = Path(root).resolve()
+    root = Path(root)
+    resolved_root = root.resolve()
     for file in files:
         p = Path(file)
         relative = p.relative_to(root)
-        if (not p.resolve().is_relative_to(root) or
+        if (not p.resolve().is_relative_to(resolved_root) or
                 any(part.lower() in {'baserom', 'roms', 'isos'} for part in relative.parts) or
                 p.suffix.lower() in GAME_SUFFIXES or
                 not (p.suffix.lower() in SOURCE_SUFFIXES or p.name in SOURCE_NAMES)):
