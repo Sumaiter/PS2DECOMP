@@ -46,9 +46,9 @@ public reservation. It still excludes foreign reservations, verified results
 awaiting integration (including the contributor's own), fresh upstream matches
 and every physically overlapping placement. Local claims, drafts and previous
 attempts retain their normal filters. Listing functions does not claim them or
-start compilation. Before starting or resuming matching, reserve the selected
-functions in issue 112: the native start gate requires the contributor's current
-public scope and rechecks fresh conflicts and upstream coverage.
+start compilation. With the default `public-first` workflow, starting or
+resuming matching requires the contributor's current public scope in issue 112,
+plus fresh conflict and upstream coverage checks.
 
 ## Explicit local matching workflow
 
@@ -61,9 +61,10 @@ public reservation, configure the game workspace's `ps2decomp.json` with:
 
 Free functions can then be claimed and compiled locally without an existing
 own public reservation. Fresh foreign reservations, unresolved scopes,
-integrated functions and overlapping placements still block matching. The
-queue retains its atomic shared local claims until explicit review handoff;
-manual compilation, resume and retry use the same current public checks.
+integrated functions and overlapping placements still block matching. An
+ambiguous own entry also blocks an otherwise valid reservation for the same
+function. The queue retains its atomic shared local claims until explicit review
+handoff; manual compilation, resume and retry use the same current public checks.
 Listing candidates and opening a workspace do not start work or post comments.
 
 After independent review, reserve only the results actually selected for a PR.

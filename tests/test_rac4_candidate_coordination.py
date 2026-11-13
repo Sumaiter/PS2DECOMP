@@ -104,6 +104,23 @@ class RAC4CandidateCoordinationTests(unittest.TestCase):
             project_coordination.assert_free(self.engine, [self.own])
         self.assertNotIn(self.own, self.candidates())
 
+    def test_ambiguous_own_entry_blocks_valid_own_scopes_and_overlapping_selections(self):
+        for mode in ('public-first', 'local-first'):
+            self.engine.config['coordination']['workflow'] = mode
+            for status in ('active', 'verified'):
+                self.entries = [
+                    self.reservation(self.pending, owner='CurrentContributor', status=status),
+                    self.reservation(self.pending, owner='currentcontributor', status='ambiguous'),
+                ]
+                for name in (self.pending, self.pending_overlap):
+                    with self.subTest(workflow=mode, status=status, name=name):
+                        self.assertNotIn(name, self.candidates())
+                        with self.assertRaises(ValueError):
+                            project_coordination.assert_free(self.engine, [name])
+                        with self.assertRaises(ValueError):
+                            assert_publication_ready(self.engine, iter([name]))
+        self.assertFalse((self.root / 'build').exists())
+
     def test_missing_reservations_or_upstream_coverage_fail_closed(self):
         for mode in ('public-first', 'local-first'):
             self.engine.config['coordination']['workflow'] = mode

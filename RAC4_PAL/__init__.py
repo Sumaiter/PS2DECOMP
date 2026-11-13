@@ -91,8 +91,10 @@ def _coordination_state(engine, *, discovery, publication=False, selected=()):
                              'Select fewer results or release finished/dropped reservations first.')
     own = {e['name'] for e in snapshot['entries'] if e['owner'].casefold() == login
            and e['version'] == engine.version and e['status'] in ('active', 'verified')}
+    # Exempt explicit own entries individually. A valid reservation for a name
+    # must not hide an ambiguous entry for that same name in another comment.
     foreign = dict(snapshot, entries=[e for e in snapshot['entries'] if e['owner'].casefold() != login
-                                    or e['name'] not in own or e['version'] != engine.version])
+                                    or e['version'] != engine.version or e['status'] not in ('active', 'verified')])
     aliases = public_aliases(engine)
     held = set(service.blocked_for_version(foreign, engine.version, aliases=aliases))
     if discovery:
