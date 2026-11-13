@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "scope": "RAC3 PAL adapter; evidence summary only, no retail bytes or proprietary tools",
+  "compiler": {
+    "name": "SN Systems ee-gcc 2.95.3 v1.36",
+    "sha256": "522d28f9d74ddfce89568437156c8ee323c806de525d99907f698050dee8d81e"
+  },
+  "observations": [
+    {
+      "name": "func_L31_00346998",
+      "rule": "native quadword read before clear",
+      "automaticBytes": 24,
+      "automaticDifferentWords": 5,
+      "generatedBytes": 20,
+      "generatedDifferentWords": 0,
+      "strictPlacements": 5,
+      "generatedSourceSha256": "5f3bb346620489f5fa6534ac1d04d39cecfb7101159d5b28f33dce651567c82a",
+      "limitations": [
+        "No game-source promotion; independent Pvar allocation/ownership and cross-region review remain separate."
+      ]
+    },
+    {
+      "name": "func_L24_0034EC40",
+      "rule": "existing qzero helper and evidenced scalar size metadata",
+      "automaticBytes": 236,
+      "automaticDifferentWords": 45,
+      "qzeroBytes": 232,
+      "qzeroDifferentWords": 24,
+      "jointBytes": 228,
+      "jointDifferentWords": 15,
+      "relocationTargetsPassed": 4,
+      "existingManualDraftDifferentWords": 6,
+      "limitations": [
+        "Existing manual draft remains stronger and unresolved.",
+        "A changed checker pin rejects older size-metadata records; a new search needs fresh compatible evidence."
+      ]
+    },
+    {
+      "name": "func_L02_003A0058",
+      "rule": "native symbolic memory",
+      "beforeDifferentWords": 43,
+      "afterDifferentWords": 23,
+      "placements": 7,
+      "namedGlobalPairsResolved": 7,
+      "limitations": [
+        "Literal pool remains unresolved; technicalExact is false at every placement."
+      ]
+    },
+    {
+      "name": "func_L02_00310368",
+      "rule": "symbolic-memory scheduling counterexample",
+      "placements": 22,
+      "limitations": [
+        "All existing object comparisons remain negative; symbol names alone do not establish instruction placement."
+      ]
+    },
+    {
+      "name": "func_L10_003B0940",
+      "rule": "quadword width, value and alias counterexamples",
+      "placements": 4,
+      "beforeBytes": 404,
+      "afterBytes": 400,
+      "limitations": [
+        "Native size is 512; fourteen literal-pool relocations and all required independent review gates remain open."
+      ]
+    }
+  ],
+  "counterexamples": [
+    "64-bit zero versus 16-byte zero; nonzero quadword payload",
+    "load-before-clear with overlapping source and output",
+    "R5900 MULT/MULTU destination and JAL link-register writes before delay slots",
+    "local typedef shadows, changed preprocessor contexts, and TI-to-DI helper macro substitution",
+    "overlapping data objects, escaped addresses and changed secondary-placement targets",
+    "missing or conflicting primary anchors, GP evidence, relocation fields and pinned compiler/checker inputs"
+  ],
+  "fullPalLevelBuilds": [
+    {
+      "target": "level_31",
+      "sha1": "7de4e9c7fd22ea0ff0cce7c18427ca1a5239e654",
+      "bytes": "0x31F80C"
+    },
+    {
+      "target": "level_32",
+      "sha1": "ba78563b050ce9b24f140db9df80da69a719343b",
+      "bytes": "0x328CFC"
+    },
+    {
+      "target": "level_33",
+      "sha1": "51592e036338094c4f5f53a748875187678c9aba",
+      "bytes": "0x321344"
+    },
+    {
+      "target": "level_35",
+      "sha1": "e35bec5c2e797d9f2eb1b032cd7aaa9c2e25674c",
+      "bytes": "0x3209EC"
+    },
+    {
+      "target": "level_36",
+      "sha1": "7394d30609ee0b8a8e40b1792923b3501cd0720d",
+      "bytes": "0x3265CC"
+    }
+  ],
+  "windowsLinkTransport": {
+    "failure": "WinError206 on 1326 ld -r input objects",
+    "proof": "Direct native link and implicit INPUT object script produce identical bytes with paths containing spaces.",
+    "defaultLinkerScriptPreserved": true
+  },
+  "limits": {
+    "timeAndAttemptBudgets": "unchanged",
+    "sourceFileCompilerFlags": "unchanged",
+    "independentlyApprovedGameFunctions": 0
+  }
+}

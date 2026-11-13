@@ -182,6 +182,31 @@ class Engine(ManualEngine):
     def all_places(self, name):
         return self.aliases.get(name, [self.place(name)[:4]])
 
+    def additional_search_children(self, name, source, variants):
+        """Offer native-evidenced PAL reconstructions under the shared budgets.
+
+        These are search candidates. Normal byte, relocation, placement and
+        independent semantic review gates still decide what can be accepted.
+        """
+        from . import quadword_zero, symbolic_memory, extern_sizes
+        zero_children = quadword_zero.children(self, name, source, variants)
+        yield from zero_children
+        yield from symbolic_memory.children(self, name, source, variants)
+        size_children = extern_sizes.children(self, name, source, variants)
+        yield from size_children
+        # Both proofs apply to the unchanged root. Offer their composition now:
+        # the shared AST parser intentionally cannot parse the helper include
+        # or assembly metadata in a later-generation parent. No parser policy,
+        # history exclusion or search budget is relaxed for the composition.
+        for _, hinted in size_children:
+            if not source or not hinted.endswith(source):
+                continue
+            prefix = hinted[:-len(source)]
+            if not re.fullmatch(r'(?:__asm__\("\.extern D_[0-9A-F]{8}(?:_sda)?, 4"\);\n)+', prefix):
+                continue
+            for label, child in zero_children:
+                yield label + '-with-proven-gp-size', prefix + child
+
     def status(self):
         from workbench_core import BLOCKS
         return dict(repository=str(self.root), python=sys.executable,

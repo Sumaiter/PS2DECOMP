@@ -46,7 +46,9 @@ def main():
         cflags = ('-I include -I . -Wa,-I,include,-mips3,-mcpu=5900,-mabi=eabi '
                   '-DINCLUDE_ASM_USE_MACRO_INC=1 -B' + (tc / 'bin/ee-').as_posix())
         for u in t.units:
-            run([sys.executable, 'tools/build_text.py', '--target', t.name,
+            run([sys.executable, Path(__file__).with_name('link_response.py'),
+                 '--repo', root, '--linker', tc / 'bin/ee-ld.exe', '--',
+                 'tools/build_text.py', '--target', t.name,
                  '--unit', u.name, '--cc', tc / 'bin/ee-gcc2953.exe',
                  '--ld', tc / 'bin/ee-ld.exe', '--cflags', cflags,
                  '--ee29', ee29, '-j', str(a.j), '-o', t.obj(u)])
