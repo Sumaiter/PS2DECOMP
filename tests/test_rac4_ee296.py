@@ -243,6 +243,77 @@ class PinAndProbeTests(unittest.TestCase):
             with self.subTest(key=key), patch.dict(os.environ, {key: 'unverified'}):
                 with self.assertRaises(ValueError): profile.environment(FIXTURE)
 
+    def test_transport_inputs_follow_real_absolute_imports_not_file_presence_or_text(self):
+        legacy = ('# from search_time import tool_timeout\n'
+                  'note = "import search_time"\n'
+                  'def run():\n    return None\n')
+        imports = ('def run():\n    from search_time import tool_timeout\n',
+                   'import search_time\n', 'import search_time as timing\n')
+        with tempfile.TemporaryDirectory() as tmp:
+            shared = Path(tmp); importer = shared / 'local_process.py'; dependency = shared / 'search_time.py'
+            importer.write_text(legacy)
+            self.assertEqual(profile.transport_inputs(shared), {importer})
+            dependency.write_text('VERSION = 1\n')
+            self.assertEqual(profile.transport_inputs(shared), {importer})
+            dependency.unlink()
+            for source in imports:
+                with self.subTest(source=source):
+                    importer.write_text(source)
+                    # The genuine 892dc7a import is local to run(), not top-level.
+                    self.assertEqual(profile.transport_inputs(shared), {importer, dependency})
+                    self.assertFalse(dependency.exists())
+            for source in ('from .search_time import tool_timeout\n', 'from other_module import search_time\n'):
+                importer.write_text(source)
+                self.assertEqual(profile.transport_inputs(shared), {importer})
+            importer.write_text('def run(:\n')
+            with self.assertRaisesRegex(ValueError, 'local_process.py import contract'):
+                profile.transport_inputs(shared)
+
+    def test_transport_dependency_switch_changes_availability_cache_and_loss_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            shared = Path(tmp) / 'workbench'; adapter = shared / 'RAC4_PAL'; adapter.mkdir(parents=True)
+            module = adapter / 'ee296_profile.py'; module.write_text('# synthetic profile input\n')
+            importer = shared / 'local_process.py'; importer.write_text('def run():\n    return None\n')
+            dependency = shared / 'search_time.py'
+            repository = Path(tmp) / 'game'; repository.mkdir(); (repository / 'ps2decomp.json').write_text('{}')
+            def fake_probe(command, **kwargs):
+                (repository / command[3]).write_bytes(empty_object())
+                return SimpleNamespace(returncode=0, stdout='', stderr='')
+            with patch.object(profile, '__file__', str(module)), patch.object(profile, 'FILES', {}), \
+                 patch.object(profile, 'ASSEMBLER_FILES', {}), patch.object(profile, 'SUPPORT', ()), \
+                 patch.object(profile, 'environment', return_value={}), \
+                 patch('local_process.run', side_effect=fake_probe) as probe:
+                # No actual tool/compiler process runs in this test.
+                before = profile.inspect(repository)
+                self.assertTrue(before['available']); self.assertEqual(probe.call_count, 1)
+                dependency.write_text('VERSION = 1\n')
+                self.assertEqual(profile.inspect(repository)['probeObject'], before['probeObject'])
+                self.assertEqual(probe.call_count, 1)  # Unimported files are irrelevant.
+                importer.write_text('def run():\n    from search_time import tool_timeout\n')
+                imported = profile.inspect(repository)
+                self.assertTrue(imported['available']); self.assertEqual(probe.call_count, 2)
+                self.assertIn(str(dependency.resolve()), imported['inputHashes'])
+                dependency.write_text('VERSION = 2\n')
+                changed = profile.inspect(repository)
+                self.assertTrue(changed['available']); self.assertEqual(probe.call_count, 3)
+                self.assertNotEqual(imported['inputHashes'], changed['inputHashes'])
+                dependency.write_text('VERSION = 3\n')
+                def changed_during_probe(command, **kwargs):
+                    result = fake_probe(command, **kwargs)
+                    dependency.write_text('VERSION = 4\n')
+                    return result
+                probe.side_effect = changed_during_probe
+                interrupted = profile.inspect(repository)
+                self.assertFalse(interrupted['available']); self.assertEqual(probe.call_count, 4)
+                self.assertIn('inputs changed during the ABI probe', interrupted['reason'])
+                dependency.unlink()
+                self.assertIn(dependency, profile.required_inputs(repository))
+                self.assertFalse(profile.inspect(repository)['available'])
+                self.assertEqual(probe.call_count, 4)  # Never reuse availability after module loss.
+                importer.write_text('def run(:\n')
+                self.assertFalse(profile.inspect(repository)['available'])
+                self.assertEqual(probe.call_count, 4)
+
     def test_disappearing_optional_profile_setting_or_header_fails_closed(self):
         for relative in ('build/isolated/ee-gcc2.96/workbench.json', 'include/removed.h'):
             with self.subTest(relative=relative), tempfile.TemporaryDirectory() as tmp:

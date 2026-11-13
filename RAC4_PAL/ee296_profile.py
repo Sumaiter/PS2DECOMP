@@ -5,6 +5,7 @@ installing a compiler during a queued/running session never enables a new trial.
 """
 from __future__ import annotations
 
+import ast
 import datetime
 import hashlib
 import io
@@ -80,11 +81,27 @@ def required_inputs(repository):
     paths.update(repository / relative for relative in SUPPORT)
     paths.update((repository / 'include').rglob('*.h'))
     paths.update(Path(__file__).parent.glob('*.py'))
-    paths.add(Path(__file__).parents[1] / 'local_process.py')
+    paths.update(transport_inputs(Path(__file__).parents[1]))
     paths.add(repository / 'ps2decomp.json')
     if (directory / 'workbench.json').is_file():
         paths.add(directory / 'workbench.json')
     return sorted(paths)
+
+
+def transport_inputs(shared):
+    """Bind the transport's actual absolute search_time import, when present."""
+    shared = Path(shared)
+    importer = shared / 'local_process.py'
+    try:
+        tree = ast.parse(importer.read_text(encoding='utf-8'), filename=str(importer))
+    except SyntaxError as exc:
+        raise ValueError('EE296 cannot read the local_process.py import contract: ' + str(exc)) from exc
+    imports_time = any(
+        isinstance(node, ast.ImportFrom) and node.level == 0 and node.module == 'search_time'
+        or isinstance(node, ast.Import) and any(alias.name == 'search_time' for alias in node.names)
+        for node in ast.walk(tree))
+    # A missing required module must fail hashing, not silently remove a pin.
+    return {importer, shared / 'search_time.py'} if imports_time else {importer}
 
 
 def inputs(repository):

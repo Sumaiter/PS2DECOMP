@@ -68,6 +68,14 @@ actual driver, backend and specs have explicit hashes and join the required
 inputs, session pins and probe-cache key. Unverified compiler/specs/include
 environment overrides disable this profile instead of changing its execution.
 
+The hashed `local_process.py` transport also binds its actual absolute
+`search_time` import, if present in that transport version. Python AST inspection
+distinguishes real imports from comments or strings; the imported neighboring
+`search_time.py` is mandatory even when missing. Legacy transports without the
+import need no new module. Changes invalidate the availability-probe cache.
+Missing imported files or a syntactically invalid import contract fail closed
+before a probe.
+
 On Windows, choose the registered WSL distribution either with the existing
 `EE296_WSL_DISTRO` environment variable or a private `workbench.json` in the
 profile directory:

@@ -29,7 +29,7 @@ test('new parser diagnostics preserve English and German coverage', () => {
 
 test('RAC4 EE296 profile messages localize and preserve raw evidence', () => {
   const pairs = Object.entries(require('../i18n.json')).filter(([de,en]) => /EE296|EE2\.9\/2\.96/.test(en));
-  assert.equal(pairs.length,24);
+  assert.equal(pairs.length,25);
   const raw='func_00100000 7f504e571215fead2a15a14520bd22dc13507a1f13b479ca8c06a165f4a886a4 C:/synthetic/as.exe';
   for(const [de,en] of pairs) {
     assert.equal(translate(en+' '+raw,'de-DE'),de+' '+raw);

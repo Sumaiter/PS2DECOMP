@@ -492,5 +492,6 @@
   "EE296 erfordert einen bestehenden eigenen Claim; hier wird keine Reservierung angelegt.": "EE296 needs the caller's existing own claim; no reservation is acquired here.",
   "Eigener EE296-Claim oder Eingaben wurden während der Profilprüfung geändert.": "EE296 own claim or inputs changed during profile validation.",
   "EE296: ursprüngliches Compiler-/Zeitlimit bereits erreicht.": "EE296: original compiler/time limit already reached.",
-  "Zeilenformat des alternativen EE2.9/2.96-Compilers wird noch nicht unterstützt.": "The alternative EE2.9/2.96 compiler's debug-line format is not supported yet."
+  "Zeilenformat des alternativen EE2.9/2.96-Compilers wird noch nicht unterstützt.": "The alternative EE2.9/2.96 compiler's debug-line format is not supported yet.",
+  "EE296 kann den Importvertrag von local_process.py nicht lesen:": "EE296 cannot read the local_process.py import contract:"
 }
