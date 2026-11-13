@@ -12,6 +12,7 @@ import re
 import struct
 import subprocess
 import sys
+import time
 import uuid
 import rough
 import candidates
@@ -310,11 +311,19 @@ class Engine(SharedEditor):
         if not isinstance(source, str) or len(source.encode("utf-8")) > 256_000:
             raise ValueError("C-Entwurf fehlt oder ist größer als256KB.")
         flags = self.layout.cflags(source)
-        if any(flag not in SAFE_FLAGS for flag in flags):
+        ee296_env = None
+        if '@ee296' in flags:
+            profile_started = time.monotonic()
+            from . import ee296_profile
+            ee296_env, remaining = ee296_profile.comparison_environment(self, name, flags, owner, timeout)
+            timeout = min(remaining, timeout - (time.monotonic() - profile_started))
+            if timeout <= 0:
+                raise ValueError('EE296: ursprüngliches Compiler-/Zeitlimit bereits erreicht.')
+        elif any(flag not in SAFE_FLAGS for flag in flags):
             raise ValueError("Nicht unterstützte Dateiflags. Erlaubt: " + ", ".join(sorted(SAFE_FLAGS)))
         if '@ee29-01' in flags and flags != ['@ee29-01', '-O2', '-G0', '-Wa,-G0']:
             raise ValueError('Originalcompilerprofil verlangt genau @ee29-01 -O2 -G0 -Wa,-G0; keine gemischten Profile.')
-        if '@ee29-01' not in flags and set(flags) & {'-O2', '-G0', '-Wa,-G0'}:
+        if ee296_env is None and '@ee29-01' not in flags and set(flags) & {'-O2', '-G0', '-Wa,-G0'}:
             raise ValueError('Diese zusätzlichen Dateiflags sind nur im geprüften Originalcompilerprofil erlaubt.')
         inserted_line = None
         if '#include "common.h"' not in source:
@@ -330,7 +339,7 @@ class Engine(SharedEditor):
         path, obj = directory / "candidate.c", directory / "candidate.o"
         path.write_text(source, encoding="utf-8", newline="\n")
         bash = Path(r"C:\Program Files\Git\bin\bash.exe")
-        env = os.environ.copy()
+        env = ee296_env if ee296_env is not None else os.environ.copy()
         if '@ee29-01' in flags:
             import compiler_variants
             env = compiler_variants.environment(self.root)

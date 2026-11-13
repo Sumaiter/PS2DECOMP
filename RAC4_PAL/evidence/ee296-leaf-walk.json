@@ -1,0 +1,504 @@
+{
+  "schemaVersion": 1,
+  "scope": "RAC4_PAL optional unchanged-source EE296 leaf pointer loop",
+  "evidenceOnly": true,
+  "selectorUsesFunctionNamesOrAddresses": false,
+  "compilerVersion": "2.96-ee-001003-1",
+  "compilerFileSha256": {
+    "bin/ee-gcc": "b8c284d16c9c0a0e8788e9522c46881e224ad01fa1c732aed43f821cc32f168b",
+    "lib/gcc-lib/ee/2.96-ee-001003-1/cc1": "59ec92b3f9f3513e0633331af304733e3094de30884e662a8cb584a51c1c42b5",
+    "lib/gcc-lib/ee/2.96-ee-001003-1/cpp0": "f6f6b598f39649edfe171d6da8c7f91d07f2b87c2aeeffffbc5f566bfb1a39a9",
+    "runtime/ld-2.3.6.so": "d5a16aee4a04db7fa27a5c071a0bef62002ee679bf5ecce51e383003cf840fd8",
+    "runtime/libc.so.6": "7b091aee7173e3a7cbddc6630fa6b0d0106944b5618b0b27c2c058ea9c3d92eb"
+  },
+  "positiveCount": 1,
+  "excludedCounterexampleCount": 15,
+  "cases": [
+    {
+      "function": "func_01EB66E8",
+      "sourceSha256": "e7e6849fdcb878b3f6c24f85594960846a346b9af3c273b5f33da9ede166013c",
+      "objectSha256": "fd75c220ccd3a5cd99fd5e7f468a3251a46a3db8432436c26bd8fc230460de80",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 92,
+      "recordedStrictPass": true,
+      "recordedByteMatch": true,
+      "objectRelocations": 0,
+      "sourceShapeAccepted": true,
+      "nativeShapeAccepted": true,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01EB66E8",
+          "nativeBytes": 92,
+          "nativeSha256": "9a10e8adda059ed355122ca9582fef01089496010f95fba201be57b24aaafba5",
+          "unmaskedByteMatch": true,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": true
+        }
+      ],
+      "unchangedSourceSnapshotSha256": "b93f44e310f71401620a3ca86980925b4cb1e890ee8777e0ea7f903ef4154519",
+      "defaultObjectSha256": "bf7c74a0b439b682c141e98971930abc5ba12a7046ce4c803b888d8637afb54d",
+      "defaultCompiledBytes": 80,
+      "sourceAndNativeLoadOffsets": [
+        0,
+        4,
+        8,
+        12
+      ]
+    },
+    {
+      "function": "func_01E9DA40",
+      "sourceSha256": "2028d526c45ecc4f885306e4bdfae464afbf4f2a3c30bf8af52f953bdc74f9e1",
+      "objectSha256": "7f2d23c8d82cf5deba0f0f7b056ca8dbbf7247ba73c3121888071f77d25f8081",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 76,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 0,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01E9DA40",
+          "nativeBytes": 76,
+          "nativeSha256": "5214d0ad36fd001159ec2ed7057d3a9c3d372104e048a376aa84ea27ed8c5343",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01E9E668",
+      "sourceSha256": "258e39e88480de72d9b37d9a43131cec0c21424687728d952d815a4d0ab5c626",
+      "objectSha256": "e4a4821ea41d6c78b93a813b1a715ea7015d5fee553bba8c0cddd226b561833c",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 64,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 1,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01E9E668",
+          "nativeBytes": 68,
+          "nativeSha256": "9bf0fef5074c45173e0e69f63078706a36fbd03b6f6d0b4d860e8056f37aff3f",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01EB3060",
+      "sourceSha256": "fcedcceb6f07a2f43ff6b5585861f4144a52869362d6fe8317d2db48ea303bad",
+      "objectSha256": "8be54f0d34308eba35c2e5a0fdec25f427ad00c02ff88ba9dd99def7efdf9633",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 72,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 0,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01EB3060",
+          "nativeBytes": 76,
+          "nativeSha256": "7cc1a78608cace08d32d1b596db2b52d14178c5f786577cb44f055d47d59b8f3",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01EC3D98",
+      "sourceSha256": "b9a32dc905966e7caa639e8b427b056575ac815c73c179eb25039270c40325b3",
+      "objectSha256": "91bd44b47850123f59319d7b9ab77dba86f109ca7eb6962ccdfec9f8790ca9d4",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 68,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 3,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01EC3D98",
+          "nativeBytes": 68,
+          "nativeSha256": "1d9b6451b340650af5d2e7b5c3169681b9ca27ef8acf2331618ee42048c2d6ff",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01EC40C8",
+      "sourceSha256": "c5d68f8eef56a0def8979a1b58f6269280054997c6cb976d8fc401a53d62b68c",
+      "objectSha256": "31aa3062d6540ff76518e8c89d418f38f25adadefb4613cea81b09dd38edd47b",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 128,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 3,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01EC40C8",
+          "nativeBytes": 132,
+          "nativeSha256": "ad1dcc7895ff501122bd94e0bba77e428388c96c119edf2cfa7997a91b466adf",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01EC4250",
+      "sourceSha256": "57e5d10406f9cfbaf62101511d1b180ec258e51f924097b79a5e53bfd2dea365",
+      "objectSha256": "80eaa88c7291f91f6a55faf24e192ab7f8295137cc1bbfab583415068f0d26cf",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 68,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 3,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01EC4250",
+          "nativeBytes": 64,
+          "nativeSha256": "8e143faa34e87e0fbdc34b1ed720b671795951a53ff57420d41236baeca4878f",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01EC9858",
+      "sourceSha256": "7b09807b8fc8c6b3c6f176a1191b059cde12c0950bc7df3faf85ead21de39124",
+      "objectSha256": "d608ab428471fe57ecb7c3d05b3a4f99bcb3a4a37682e182c925d126b16b5c7b",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 152,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 1,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01EC9858",
+          "nativeBytes": 144,
+          "nativeSha256": "a2a56fdb6c18a604a1a1d0524cfc80ad08ab4038204ba0345ab6837d89c15a88",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01ECFD78",
+      "sourceSha256": "9806f2392b7fd73d1d6c10551ce31855ceb94e535c4ebc2ef9d2641656420189",
+      "objectSha256": "83e357fdb3e753a98d770d77c949154d4245ab480b9a824133afcd7cb07b2fd1",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 256,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 3,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01ECFD78",
+          "nativeBytes": 252,
+          "nativeSha256": "dd21183ea0ae33447f4aad9a16cc93da04b55acd37beb9509375120248e3c818",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01ED9A30",
+      "sourceSha256": "64a424ad30658c072bc8e9d82d925a5d2a15d1ea4b41cc94b91672a401b18e38",
+      "objectSha256": "3208f789d6532d7402c5d5fa7fec23eacb7353c6e681ed70317aea9c1de7587c",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 152,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 2,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01ED9A30",
+          "nativeBytes": 152,
+          "nativeSha256": "8aeb4e25ce24d872b5f85d7c5bf693afe81a45323d7d485abaae4594a4058694",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01EE39E0",
+      "sourceSha256": "ce3fcf9b1889fda0f1b513ed47a2463a5e85c41c2c50a5103b04ea90a2d4a06e",
+      "objectSha256": "426844234a3854f7a949c41e4098d32e6f77f1c4009bdd5fbd66f655a687d1e7",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 52,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 1,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01EE39E0",
+          "nativeBytes": 56,
+          "nativeSha256": "472380e2f1914a919881b26c1584338208e6d7ea0203846009157124e31d4299",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01EF2E24",
+      "sourceSha256": "447df8430d4e9ca56085d5fba762f5c849f95fcbe453fd4c3b781b775ddd490a",
+      "objectSha256": "6f742da59e98b3e75ec55dfa39a399c88bcf537eded74f49e376f480fe3c6872",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 612,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 59,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01EF2E24",
+          "nativeBytes": 616,
+          "nativeSha256": "902e37af03bbb6a86534a2f7652d23923de2cb5f1d1170a2c6a18895aa67824b",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01EF9E18",
+      "sourceSha256": "c609b4ff9201669d5dde9ba784205fc4055d2b9f2753735e9ca1a9cea6a71255",
+      "objectSha256": "c967cfa93861d8cae72e2374cd30fc440ba520a6901d9d9cf5d781d92c878474",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 120,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 0,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01EF9E18",
+          "nativeBytes": 120,
+          "nativeSha256": "82da9e5807139353c69329e5011842ee171d7da2a1fd78c6badd86fc389b11fd",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01EFB38C",
+      "sourceSha256": "37079af59d720b10b0954cc70133162e8ad6f641e452c23de9bf46fdd591aad1",
+      "objectSha256": "36aac06bf1aed55c940c3b452e5ef9a584bbf6c7cf67ed7ffaf660799ac2f908",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 164,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 0,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01EFB38C",
+          "nativeBytes": 192,
+          "nativeSha256": "1eaa7b4939efcc1b6cbe2fc5abcbabd366e4f92d928dc764aa3ad1897523da9b",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01F040B0",
+      "sourceSha256": "d98c8d215befea1877167986e091bf22279825b6769cf72104c67de843dd2a44",
+      "objectSha256": "f4639aa520ab2b0fdb47ef482254b66bbad13b99cb6522f98c54e9f34095b790",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 108,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 3,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01F040B0",
+          "nativeBytes": 92,
+          "nativeSha256": "f211503b942d09bf64b9523e6e26d44f04fcb214faf2160b039c79578945f0f8",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    },
+    {
+      "function": "func_01F07320",
+      "sourceSha256": "813ae7eb66534f16e423a9e576f9915ed103d630da698e83ebd5e029d729a3e1",
+      "objectSha256": "0a9ee839fd2c8647240bae2cc8369cfcfc443cff4176222540ea16a94cfdea84",
+      "recordedCompilerFlags": [
+        "@ee296",
+        "-O2",
+        "-G0"
+      ],
+      "compiledBytes": 136,
+      "recordedStrictPass": false,
+      "recordedByteMatch": false,
+      "objectRelocations": 1,
+      "sourceShapeAccepted": false,
+      "nativeShapeAccepted": false,
+      "placements": [
+        {
+          "program": "main",
+          "section": "net.text",
+          "address": "01F07320",
+          "nativeBytes": 140,
+          "nativeSha256": "138c0db5f9bc12a28ab9c846d7b720bbbde173e179eded1fa292d10687f20878",
+          "unmaskedByteMatch": false,
+          "completeNativeCFG": true,
+          "nativeShapeAccepted": false
+        }
+      ]
+    }
+  ],
+  "limitation": "Search alternative only. No compiler attribution for a section, semantic approval, or full game build is implied.",
+  "assemblerDriverBackendSpecsSha256": {
+    "toolchain/sn-prodg-3.01/usr/local/sce/ee/gcc/bin/ee-gcc2953.exe": "522d28f9d74ddfce89568437156c8ee323c806de525d99907f698050dee8d81e",
+    "toolchain/sn-prodg-3.01/usr/local/sce/ee/gcc/ee/bin/as.exe": "7f504e571215fead2a15a14520bd22dc13507a1f13b479ca8c06a165f4a886a4",
+    "toolchain/sn-prodg-3.01/usr/local/sce/ee/gcc/lib/gcc-lib/ee/2.95.3/specs": "7b5520c0d9d04623b899ba80dbd713635a0aa17f0e58f7ba58b30c443cd48d76"
+  },
+  "assemblerResolutionEvidence": [
+    "ee-gcc2953.exe -print-prog-name=as",
+    "ee-gcc2953.exe -print-file-name=specs"
+  ],
+  "interfaceLanguages": [
+    "en",
+    "de"
+  ],
+  "gameFunctionsCompiledForThisAudit": 0,
+  "functionFreeABI": {
+    "sourceSha256": "9196af4dabf358fb87228f1b014fe0facc29757f2faf491be0c1d1071a4ba700",
+    "objectSha256": "cfa87dff67815a2ef71179be4c251abaa09c08349c725c79dac390ddbfc8e398",
+    "originalAndSupportInputsVerified": 59,
+    "format": "ELF32 little-endian EM_MIPS ET_REL",
+    "functionSymbols": 0,
+    "objectSymbols": 0,
+    "allocatedCodeOrDataBytes": 0,
+    "relocations": 0,
+    "intBytes": 4,
+    "pointerBytes": 4,
+    "longBytes": 8,
+    "scalarAndFloatingTypedefWidthsVerified": true
+  }
+}

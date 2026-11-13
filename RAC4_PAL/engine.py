@@ -75,7 +75,9 @@ class AutoEngine(Engine):
     def additional_search_children(self, name, source, variants):
         """PAL-only native ordering evidence, after a positive C shape."""
         from .native_local_after_call_wrapper import generate_for_engine
-        return generate_for_engine(self, name, source, rules=variants)
+        from .ee296_leaf_walk import generate_for_engine as ee296_children
+        return [*generate_for_engine(self, name, source, rules=variants),
+                *ee296_children(self, name, source, rules=variants)]
 
     program = "main"
 
@@ -99,6 +101,8 @@ class AutoEngine(Engine):
             raise ValueError(self.version_availability(repository)[1]['reason'])
         self.version = version
         super().__init__(repository)
+        from .ee296_profile import fresh_jobs
+        self._ee296_fresh_jobs = fresh_jobs(self.root)
         import level_catalogue
         catalogue = list(level_catalogue.read_catalogue())
         self.places = {n: p for n, p in self.check.places().items() if FUNCTION.fullmatch(n)}

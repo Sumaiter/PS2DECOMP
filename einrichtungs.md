@@ -59,6 +59,13 @@ started automatically by opening a game workspace.
 Keep regions/revisions in separate workspaces. PAL references never stand in for
 NTSC-U/NTSC-J. Do not mark an unverified version as available.
 
+RAC4 PAL's optional original EE296 profile requires user-supplied compiler,
+runtime, assembler and helper files installed before a new automatic session.
+Follow the [EE296 setup and evidence guide](RAC4_PAL/EE296_EVIDENCE.md#required-local-setup)
+for exact inputs and WSL configuration. Automatic trials require a witnessed
+first execution; an explicit manual `@ee296 -O2 -G0` file requires an existing
+own claim and the same file/ABI validation.
+
 ## 3. Prepare a generic game repository
 
 Use this structure as a starting point:

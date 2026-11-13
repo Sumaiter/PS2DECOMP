@@ -14,8 +14,8 @@ def build(engine, name, source, canonical, flags, env, inserted_line):
               'message': 'Keine verifizierte C-Zeilen-Zuordnung verfügbar. Abweichende Bytes bleiben in der Tabelle sichtbar.'}
     before = hashlib.sha256(source.read_bytes()).hexdigest()
     try:
-        if '@ee29' in flags or '@ee29-01' in flags:
-            raise ValueError('Zeilenformat des alternativen EE2.9-Compilers wird noch nicht unterstützt.')
+        if '@ee29' in flags or '@ee29-01' in flags or '@ee296' in flags:
+            raise ValueError('Zeilenformat des alternativen EE2.9/2.96-Compilers wird noch nicht unterstützt.')
         run = subprocess.run(command, cwd=engine.root, env=env, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=45, creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
         (folder / 'line-map.log').write_text(run.stdout + run.stderr, encoding='utf-8')
         if run.returncode:

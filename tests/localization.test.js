@@ -26,6 +26,19 @@ test('new parser diagnostics preserve English and German coverage', () => {
   assert.equal(translate('Präprozessor-Zeilenfortsetzungen erfordern eine manuelle Prüfung.','en'),
     'Preprocessor line splices require manual review.');
 });
+
+test('RAC4 EE296 profile messages localize and preserve raw evidence', () => {
+  const pairs = Object.entries(require('../i18n.json')).filter(([de,en]) => /EE296|EE2\.9\/2\.96/.test(en));
+  assert.equal(pairs.length,25);
+  const raw='func_00100000 7f504e571215fead2a15a14520bd22dc13507a1f13b479ca8c06a165f4a886a4 C:/synthetic/as.exe';
+  for(const [de,en] of pairs) {
+    assert.equal(translate(en+' '+raw,'de-DE'),de+' '+raw);
+    assert.equal(translate(de+' '+raw,'en'),en+' '+raw);
+  }
+  assert.equal(translate('EE296: read-only pointer loop','de'),'EE296: nur lesende Zeigerschleife');
+  assert.equal(translate('EE296: ursprüngliches Compiler-/Zeitlimit bereits erreicht.','en'),
+    'EE296: original compiler/time limit already reached.');
+});
 test('unknown cumulative search time explains explicit retry in both languages', () => {
   const de='Suchzeit nicht zuverlässig belegt; ausdrücklich neuen Suchpass starten. Belege und Reservierung bleiben erhalten.';
   const en='Search time has no reliable provenance; explicitly start a new search pass. Evidence and reservation are retained.';
