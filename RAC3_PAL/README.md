@@ -104,6 +104,30 @@ Types, ABI, ownership, complete function semantics and retail-matching builds
 still require independent review. This change supplies no new game source,
 compiler profile, search candidate, search budget or verdict policy.
 
+### Unrecovered GP operands
+
+New rough-decompile results include `gpIdentityDiagnostics` when native GP
+operand groups vary across canonical copies but remain outside the existing
+identity recovery. The optional observation reuses that recovery's complete,
+hash/ELF/GP/CFG-checked references and requires matching instruction/register
+fields at the same offsets. It records signed native GP offsets, body hashes
+and whether the existing entry-to-use GP prefix proof passes. Successfully
+recovered groups and fixed native SDA displacements do not produce warnings.
+
+Branches, calls, possible aliases and every other recovery restriction remain
+in force. Static operand variation does not establish runtime GP preservation,
+addresses, object identity, types, values, extent or ownership. In particular,
+the presence of fallback `_sda` names in a rough draft is not identity proof.
+English/German warnings direct the reviewer to this distinction without
+changing the normalized listing, source, declarations, ABI checks, relocation
+verdict or search policy. Observation failures leave existing recovery intact.
+
+The [read-only evidence summary](evidence/gp_diagnostics_review20261113.json)
+includes three newly preserved worker cases, a mixed varying/fixed-slot
+counterexample and existing compiler REL objects. Those objects remain
+byte/offset-inexact; no game function was compiled, decompiled or approved by
+this diagnostic replay.
+
 Submit RAC3 PAL-specific improvements as PRs in this folder. General rules belong
 in shared code only after evidence establishes applicability across games.
 

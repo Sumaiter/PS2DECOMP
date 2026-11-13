@@ -313,7 +313,7 @@ class Engine(ManualEngine):
         assembly, sqrt_decoded = sqrt_encoding.normalize(assembly)
         decoded += sqrt_decoded
         from . import gp_identity
-        assembly, gp_identities = gp_identity.normalize(self, name, assembly)
+        assembly, gp_identities, gp_diagnostics = gp_identity.normalize_with_diagnostics(self, name, assembly)
         gp = self.validated_gp(self.place(name)[0]) if re.search(r'\$gp\b', assembly) else 0
         if re.search(r'\*/\s*\w+\s+\$gp\s*,', assembly):
             raise ValueError('Die Funktion verändert GP; automatische Auflösung bleibt offen.')
@@ -365,11 +365,12 @@ class Engine(ManualEngine):
             forwarded = dict(findings=[], warnings=[str(exc)])
         from . import context_inputs
         context_evidence = context_inputs.inspect(self, declarations)
-        result = dict(name=name, ok=ok, source=source, warnings=[*skipped, *division_padding.warnings(padding), *context_inputs.warnings(context_evidence), 'RAC3-Grobentwurf; Typen, ABI, Datenbesitz und Funktionsgrenzen prüfen.'],
+        from .gp_diagnostics import warnings as gp_warnings
+        result = dict(name=name, ok=ok, source=source, warnings=[*skipped, *division_padding.warnings(padding), *context_inputs.warnings(context_evidence), *gp_warnings(gp_diagnostics), 'RAC3-Grobentwurf; Typen, ABI, Datenbesitz und Funktionsgrenzen prüfen.'],
                       log=run.stderr, directory=str(directory), command=command, adapterVersion=rough.ADAPTER_VERSION,
                       contextDeclarations=declarations, abiProblems=abi_problems, gpResolutions=resolved, gpIdentities=gp_identities, instructionDecodings=decoded,
                       registerAliases=register_aliases, unresolvedMarkers=markers, forwardedArguments=forwarded,
-                      divisionPadding=padding, contextInputs=context_evidence)
+                      divisionPadding=padding, contextInputs=context_evidence, gpIdentityDiagnostics=gp_diagnostics)
         (directory / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8', newline='\n')
         return result
 
