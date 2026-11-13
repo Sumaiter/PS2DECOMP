@@ -31,6 +31,10 @@ def generate(source, repository):
         return
     a = rules.a
     nodes = [n for *_, n in rules._nodes(tree)]
+    # Emission reformats the whole translation unit, including global
+    # initializers and array bounds. Source-context builtins must stay manual.
+    if any(isinstance(n, a.ID) and n.name.startswith('__') for n in nodes):
+        return
     # Never copy or move extension-bearing declarations or expressions. Hidden
     # cleanup/alignment/register-label behavior is outside this scalar rule.
     if any(getattr(n, field, None) for n in nodes

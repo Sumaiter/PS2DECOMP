@@ -93,6 +93,10 @@ class Variants:
         tree, fn = self.parse(source)
         a = self.a
         nodes = list(self._nodes(fn.body))
+        # The emitter also regenerates declarations outside the function.
+        # Checking only its body misses __LINE__ etc. in global initializers.
+        source_context_builtin = any(isinstance(n, a.ID) and n.name.startswith('__')
+                                     for *_, n in self._nodes(tree))
         signature = self.generator.visit(fn.decl)
         declarations = [n for n in tree.ext if isinstance(n, a.Decl) and n.name and not isinstance(n.type, a.FuncDecl)]
         declarations += [n for *_, n in self._nodes(fn) if isinstance(n, a.Decl) and n.name]
@@ -191,9 +195,8 @@ class Variants:
             # fall-through code, else body or extra side effects to relocate.
             if (parent is not fn.body or attr != 'block_items' or index != len(parent.block_items) - 2
                     or not isinstance(node, a.If) or node.iffalse is not None
-                    or any(isinstance(child, a.Typedef)
-                           or isinstance(child, a.ID) and child.name.startswith('__')
-                           for *_, child in nodes)):
+                    or source_context_builtin
+                    or any(isinstance(child, a.Typedef) for *_, child in nodes)):
                 return None
             left = node.iftrue
             if isinstance(left, a.Compound):

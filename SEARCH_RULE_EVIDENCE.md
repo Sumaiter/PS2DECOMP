@@ -25,6 +25,13 @@ The parser also rejects displaced/duplicate compiler-profile comments and line
 splices. Otherwise regenerating C could activate a previously inactive profile.
 Unknown attributes, alias cycles and ambiguous aliases fail closed.
 
+The private integer callback rule and terminal-return join inspect identifiers
+throughout the translation unit before offering a candidate. Source-context
+builtins such as `__LINE__`, `__FILE__` and `__COUNTER__` keep the case manual,
+including when they occur in global initializers or array bounds: regeneration
+can change their values outside the function too. The same spellings inside
+comments or string literals do not trigger this identifier guard.
+
 ## Adapter-owned native evidence
 
 `RAC4_PAL` additionally shortens the lifetime of a private signed-integer literal
