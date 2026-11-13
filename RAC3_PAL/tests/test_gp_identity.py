@@ -2,6 +2,7 @@
 import copy
 from pathlib import Path
 import struct
+import subprocess
 import tempfile
 from types import SimpleNamespace
 import unittest
@@ -241,11 +242,13 @@ class GpIdentityTests(unittest.TestCase):
         engine.contracts = {}
         with tempfile.TemporaryDirectory() as directory:
             engine.root = Path(directory)
-            with patch('RAC3_PAL.gp_identity._level_references', return_value=(2, self.refs)), \
+            with patch.dict('subprocess.__dict__'), \
+                    patch('RAC3_PAL.gp_identity._level_references', return_value=(2, self.refs)), \
                     patch('rough.tool', return_value=Path('synthetic-m2c.py')), \
                     patch('rough.forwarding_evidence', return_value=dict(findings=[], warnings=[])), \
                     patch('subprocess.run', return_value=SimpleNamespace(
                         returncode=0, stdout='void ' + NAME + '(void) {}', stderr='')) as run:
+                subprocess.__dict__.pop('CREATE_NO_WINDOW', None)
                 result = AdapterEngine.decompile(engine, NAME)
             self.assertTrue(result['ok'])
             self.assertEqual(result['gpResolutions'], ['D_L02_00200400'])
@@ -254,6 +257,7 @@ class GpIdentityTests(unittest.TestCase):
             self.assertIn('%gp_rel(D_L02_00200400)($gp)', supplied)
             self.assertNotIn('_sda', supplied)
             self.assertIn('--valid-syntax', run.call_args.args[0])
+            self.assertEqual(run.call_args.kwargs['creationflags'], 0)
 
 
 if __name__ == '__main__':

@@ -328,7 +328,7 @@ class Engine(ManualEngine):
         command = [sys.executable, str(rough.tool(self.root)), '-t', 'mipsee-gcc-c', '--valid-syntax', '--no-cache',
                    '--context', str(directory / 'context.c'), '-f', name, str(directory / 'input.s')]
         run = subprocess.run(command, cwd=directory, capture_output=True, text=True, encoding='utf-8', errors='replace',
-                             timeout=timeout, creationflags=subprocess.CREATE_NO_WINDOW)
+                             timeout=timeout, creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
         (directory / 'm2c-output.c').write_text(run.stdout, encoding='utf-8', newline='\n')
         (directory / 'm2c.log').write_text(run.stderr, encoding='utf-8', newline='\n')
         ok = run.returncode == 0 and bool(re.search(r'\b' + name + r'\s*\([^;]*\)\s*\{', run.stdout))
