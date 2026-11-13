@@ -305,7 +305,7 @@ class ToolDeadlineTests(unittest.TestCase):
                 budget = self.budget(clock)
                 with budget.tools():
                     clock.value += 9
-                    self.assertEqual(ClaimAPI(root).DIR, root / 'build/claims')
+                    self.assertEqual(ClaimAPI(root).DIR, (root / 'build/claims').resolve())
                     self.assertEqual(seen, [1])
                     clock.value += 1
                     with self.assertRaises(subprocess.TimeoutExpired):
