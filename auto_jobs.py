@@ -73,29 +73,33 @@ def sha(path):
 def file_lock(path):
     """OS lock: automatically released on crashes; never steal by age or delete it."""
     path = Path(path); path.parent.mkdir(parents=True, exist_ok=True)
-    stream = path.open('a+b')
-    if not path.stat().st_size:
-        stream.write(b'0'); stream.flush()
-    stream.seek(0)
-    try:
-        if os.name == 'nt':
-            import msvcrt
-            msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
-        else:
-            import fcntl
-            fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except OSError:
-        stream.close()
-        raise ValueError('Sitzung ist beschäftigt; laufenden Vorgang zuerst beenden.')
-    try:
-        yield
-    finally:
+    # No buffered write may be retried by close() after the region is unlocked.
+    with path.open('a+b', buffering=0) as stream:
         stream.seek(0)
-        if os.name == 'nt':
-            msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
-        else:
-            fcntl.flock(stream, fcntl.LOCK_UN)
-        stream.close()
+        try:
+            if os.name == 'nt':
+                import msvcrt
+                # CRT byte locks may extend past EOF. Acquire before the first
+                # write: concurrent append seeks on an empty file can otherwise
+                # race a winner's mandatory Windows byte-range lock.
+                msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
+            else:
+                import fcntl
+                fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            raise ValueError('Sitzung ist beschäftigt; laufenden Vorgang zuerst beenden.')
+        try:
+            # Retain the existing guard-byte format, but initialize it only
+            # under the acquired lock and inspect the open file, not its path.
+            if not os.fstat(stream.fileno()).st_size:
+                stream.write(b'0'); stream.flush()
+            yield
+        finally:
+            stream.seek(0)
+            if os.name == 'nt':
+                msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+            else:
+                fcntl.flock(stream, fcntl.LOCK_UN)
 
 
 def read(path):
