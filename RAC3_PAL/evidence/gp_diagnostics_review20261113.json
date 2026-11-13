@@ -1,0 +1,1088 @@
+{
+  "schemaVersion": 1,
+  "baseline": "ba6406838d6df782055f00716da3af5b68052524",
+  "scope": "RAC3 PAL static unrecovered GP-operand diagnostic; hashes and offsets only, no game bytes, values, objects, proprietary tools or private paths",
+  "cases": [
+    {
+      "name": "func_L31_003AC578",
+      "placements": [
+        {
+          "program": "level_31",
+          "address": 3851640,
+          "bytes": 548,
+          "bodySha256": "74b83e2ddcbd31dc8d9595b04672dc10a99135d4bb7eae9a63ffa475ca3f5a13",
+          "referenceSha256": "f38f1e490eb716ff95dc306465b900e8525622ba15f6e71da7093a56958860d0",
+          "referenceSha1": "7de4e9c7fd22ea0ff0cce7c18427ca1a5239e654",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_32",
+          "address": 3861072,
+          "bytes": 548,
+          "bodySha256": "a73740b75ec45db5ec3acae8eca66d5823eb30892173e85488aed163c53ceef7",
+          "referenceSha256": "733810e1642619729f6d02cfb398a9ce65afdf378ea950dbc972718266447b99",
+          "referenceSha1": "ba78563b050ce9b24f140db9df80da69a719343b",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_33",
+          "address": 3848200,
+          "bytes": 548,
+          "bodySha256": "c3a229d2b0ded577653a87ccb6fb1ed0427663b3b120fafa9dbd02ae9c38f381",
+          "referenceSha256": "818664d7ae854ca6a5ba20c0c8a7e02560000515ca86479dd0f32f5d6eb66c17",
+          "referenceSha1": "51592e036338094c4f5f53a748875187678c9aba",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_34",
+          "address": 3854304,
+          "bytes": 548,
+          "bodySha256": "c0b6dd6ce5cd3553fc69efa12ee86313085a0683605bd1e106d899c172ef69e4",
+          "referenceSha256": "071b6bbb72054098dd02b9224263e553e7c01ae5512013ec74d2a149b6b49475",
+          "referenceSha1": "07e0404f5789cdf55a145091053b429217fb5b6f",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_35",
+          "address": 3850312,
+          "bytes": 548,
+          "bodySha256": "098ea485250c7ccaf7b12a2b863732f11d54b836f8637a3afea094af47c3feb1",
+          "referenceSha256": "f2be24601a2234c4ba9249443c588d562e3274de0c74c1bbeb2f6d7a5da09e1b",
+          "referenceSha1": "e35bec5c2e797d9f2eb1b032cd7aaa9c2e25674c",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_36",
+          "address": 3881808,
+          "bytes": 548,
+          "bodySha256": "843a898a336f95585c8df03c10c92a523bf0b89410fd53154d68670695b9d9df",
+          "referenceSha256": "3077562d0dbcec52a7a85cfd8bc89d9a05a2c0bbda5ffcd608f1aec23bc61564",
+          "referenceSha1": "7394d30609ee0b8a8e40b1792923b3501cd0720d",
+          "gp": 1951920,
+          "completeCfg": true
+        }
+      ],
+      "normalizationUnchanged": true,
+      "normalizationSha256": "b1eac0bce7b8bb301ad396eab16ff43570dcfee6e8aca3127bbe4f8385b9504d",
+      "existingRecoveredIdentities": 0,
+      "unrecoveredNativeOperandGroups": [
+        {
+          "primaryGpOffset": 8780,
+          "offsets": [
+            88
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_31": [
+              8780
+            ],
+            "level_32": [
+              9076
+            ],
+            "level_33": [
+              9452
+            ],
+            "level_34": [
+              8684
+            ],
+            "level_35": [
+              8908
+            ],
+            "level_36": [
+              9676
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 8772,
+          "offsets": [
+            92
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_31": [
+              8772
+            ],
+            "level_32": [
+              9068
+            ],
+            "level_33": [
+              9444
+            ],
+            "level_34": [
+              8676
+            ],
+            "level_35": [
+              8900
+            ],
+            "level_36": [
+              9668
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 8776,
+          "offsets": [
+            100
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_31": [
+              8776
+            ],
+            "level_32": [
+              9072
+            ],
+            "level_33": [
+              9448
+            ],
+            "level_34": [
+              8680
+            ],
+            "level_35": [
+              8904
+            ],
+            "level_36": [
+              9672
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 8812,
+          "offsets": [
+            108,
+            204,
+            256
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_31": [
+              8812,
+              8812,
+              8812
+            ],
+            "level_32": [
+              9108,
+              9108,
+              9108
+            ],
+            "level_33": [
+              9484,
+              9484,
+              9484
+            ],
+            "level_34": [
+              8716,
+              8716,
+              8716
+            ],
+            "level_35": [
+              8940,
+              8940,
+              8940
+            ],
+            "level_36": [
+              9708,
+              9708,
+              9708
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 8816,
+          "offsets": [
+            128,
+            200,
+            252
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_31": [
+              8816,
+              8816,
+              8816
+            ],
+            "level_32": [
+              9112,
+              9112,
+              9112
+            ],
+            "level_33": [
+              9488,
+              9488,
+              9488
+            ],
+            "level_34": [
+              8720,
+              8720,
+              8720
+            ],
+            "level_35": [
+              8944,
+              8944,
+              8944
+            ],
+            "level_36": [
+              9712,
+              9712,
+              9712
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 8768,
+          "offsets": [
+            208
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_31": [
+              8768
+            ],
+            "level_32": [
+              9064
+            ],
+            "level_33": [
+              9440
+            ],
+            "level_34": [
+              8672
+            ],
+            "level_35": [
+              8896
+            ],
+            "level_36": [
+              9664
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 8800,
+          "offsets": [
+            264
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_31": [
+              8800
+            ],
+            "level_32": [
+              9096
+            ],
+            "level_33": [
+              9472
+            ],
+            "level_34": [
+              8704
+            ],
+            "level_35": [
+              8928
+            ],
+            "level_36": [
+              9696
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 8796,
+          "offsets": [
+            280
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_31": [
+              8796
+            ],
+            "level_32": [
+              9092
+            ],
+            "level_33": [
+              9468
+            ],
+            "level_34": [
+              8700
+            ],
+            "level_35": [
+              8924
+            ],
+            "level_36": [
+              9692
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 8792,
+          "offsets": [
+            348
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_31": [
+              8792
+            ],
+            "level_32": [
+              9088
+            ],
+            "level_33": [
+              9464
+            ],
+            "level_34": [
+              8696
+            ],
+            "level_35": [
+              8920
+            ],
+            "level_36": [
+              9688
+            ]
+          }
+        }
+      ],
+      "fixedNativeGpOperands": [],
+      "compilerEvidence": [
+        {
+          "attempt": "candidate01.comparison.json",
+          "sourceSha256": "519c3de236e72ec101bd6204889f4335d3cb3198a927fdee18aa2b18b11a5577",
+          "objectSha256": "fd46d8d3a167f7ea7d799acffda2efddc0fc9865d1ffcb2f850e019903786628",
+          "emittedTextSha256": "31a0bb890c31b0ed749fb8cf03cf9cc1f63137959ec67f758bb7f3db231bb716",
+          "compiledBytes": 548,
+          "nativeBytes": 548,
+          "differentWords": 86,
+          "checkedRelocations": 22,
+          "exactRelocations": 8,
+          "unresolved": 0,
+          "relocationPassed": false,
+          "byteMatch": false,
+          "strictPassed": false,
+          "gprel16Relocations": 13,
+          "gprel16Symbols": [
+            "D_L31_001DEAF0",
+            "D_L31_001DEAF4",
+            "D_L31_001DEAF8",
+            "D_L31_001DEAFC",
+            "D_L31_001DEB08",
+            "D_L31_001DEB0C",
+            "D_L31_001DEB10",
+            "D_L31_001DEB1C",
+            "D_L31_001DEB20"
+          ]
+        },
+        {
+          "attempt": "candidate02.comparison.json",
+          "sourceSha256": "90d789a99c17a67c1af3009b1c052b6a396870b70e44a9e25b111deebc6b7d7e",
+          "objectSha256": "826af278d75464aca9232a5e2067bfc284568cf6fe30f80384eb15451950393a",
+          "emittedTextSha256": "cac64217b1ecd829d46c208e2cb0e23e01acdcc0f81fb1f7f5a2f1bde107d76c",
+          "compiledBytes": 544,
+          "nativeBytes": 548,
+          "differentWords": 102,
+          "checkedRelocations": 22,
+          "exactRelocations": 11,
+          "unresolved": 0,
+          "relocationPassed": false,
+          "byteMatch": false,
+          "strictPassed": false,
+          "gprel16Relocations": 13,
+          "gprel16Symbols": [
+            "D_L31_001DEAF0",
+            "D_L31_001DEAF4",
+            "D_L31_001DEAF8",
+            "D_L31_001DEAFC",
+            "D_L31_001DEB08",
+            "D_L31_001DEB0C",
+            "D_L31_001DEB10",
+            "D_L31_001DEB1C",
+            "D_L31_001DEB20"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "func_L17_003B8748",
+      "placements": [
+        {
+          "program": "level_17",
+          "address": 3901256,
+          "bytes": 976,
+          "bodySha256": "a80553a91f02c46b9b0bcaa184a01f6637079d80f1d48cce6c9de63b2bd65951",
+          "referenceSha256": "b82ca68506c9e0ab8f555b213aedbf08d3511de7ddc96d55555eb8b596e70fe8",
+          "referenceSha1": "d55d5aca3b00159ec224c9d04b53dd8bfca20141",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_20",
+          "address": 4152512,
+          "bytes": 976,
+          "bodySha256": "4a6f81ef1b0d5d6475973dae0490c06e71420df1dc8147a57eb2842f128365f5",
+          "referenceSha256": "c014918135b0152f59bb224479386769a7c1212f61af6b4b3d60edb2a4826bfc",
+          "referenceSha1": "307bb72dc2327ac7e9df9429261d56d275d93add",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_21",
+          "address": 3898024,
+          "bytes": 976,
+          "bodySha256": "63bdca066fcfce6153480ce2d18cec8f65f933ad8c0a91b48ebffad4e53b49d4",
+          "referenceSha256": "6b72569e0b1aa76a9d9f4e284d4fbb6ab3d5cfaa15a4935466f734829aa1e396",
+          "referenceSha1": "97188a12babe1657cd2249aa484cfb692e576c5f",
+          "gp": 1951920,
+          "completeCfg": true
+        }
+      ],
+      "normalizationUnchanged": true,
+      "normalizationSha256": "7073efaf7f2f51009e23bce115e528dafd65baf8cde68616cd0f3039f8f63fad",
+      "existingRecoveredIdentities": 0,
+      "unrecoveredNativeOperandGroups": [
+        {
+          "primaryGpOffset": 7344,
+          "offsets": [
+            4,
+            120,
+            248,
+            832,
+            852,
+            896
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_17": [
+              7344,
+              7344,
+              7344,
+              7344,
+              7344,
+              7344
+            ],
+            "level_20": [
+              11392,
+              11392,
+              11392,
+              11392,
+              11392,
+              11392
+            ],
+            "level_21": [
+              6792,
+              6792,
+              6792,
+              6792,
+              6792,
+              6792
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 7352,
+          "offsets": [
+            68
+          ],
+          "reason": "identity-not-recovered",
+          "entryGpPrefixVerified": true,
+          "nativeGpOffsets": {
+            "level_17": [
+              7352
+            ],
+            "level_20": [
+              11400
+            ],
+            "level_21": [
+              6800
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 7356,
+          "offsets": [
+            100
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_17": [
+              7356
+            ],
+            "level_20": [
+              11404
+            ],
+            "level_21": [
+              6804
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 7380,
+          "offsets": [
+            104
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_17": [
+              7380
+            ],
+            "level_20": [
+              11428
+            ],
+            "level_21": [
+              6828
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 7376,
+          "offsets": [
+            108,
+            128,
+            564
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_17": [
+              7376,
+              7376,
+              7376
+            ],
+            "level_20": [
+              11424,
+              11424,
+              11424
+            ],
+            "level_21": [
+              6824,
+              6824,
+              6824
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 7360,
+          "offsets": [
+            116,
+            412
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_17": [
+              7360,
+              7360
+            ],
+            "level_20": [
+              11408,
+              11408
+            ],
+            "level_21": [
+              6808,
+              6808
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 7444,
+          "offsets": [
+            292
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_17": [
+              7444
+            ],
+            "level_20": [
+              11492
+            ],
+            "level_21": [
+              6892
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 7396,
+          "offsets": [
+            328,
+            348,
+            376
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_17": [
+              7396,
+              7396,
+              7396
+            ],
+            "level_20": [
+              11444,
+              11444,
+              11444
+            ],
+            "level_21": [
+              6844,
+              6844,
+              6844
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 7400,
+          "offsets": [
+            332,
+            360,
+            364
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_17": [
+              7400,
+              7400,
+              7400
+            ],
+            "level_20": [
+              11448,
+              11448,
+              11448
+            ],
+            "level_21": [
+              6848,
+              6848,
+              6848
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 7364,
+          "offsets": [
+            420
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_17": [
+              7364
+            ],
+            "level_20": [
+              11412
+            ],
+            "level_21": [
+              6812
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 7384,
+          "offsets": [
+            556
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_17": [
+              7384
+            ],
+            "level_20": [
+              11432
+            ],
+            "level_21": [
+              6832
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 7368,
+          "offsets": [
+            596
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_17": [
+              7368
+            ],
+            "level_20": [
+              11416
+            ],
+            "level_21": [
+              6816
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 7372,
+          "offsets": [
+            740
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_17": [
+              7372
+            ],
+            "level_20": [
+              11420
+            ],
+            "level_21": [
+              6820
+            ]
+          }
+        }
+      ],
+      "fixedNativeGpOperands": [],
+      "compilerEvidence": [
+        {
+          "attempt": "attempt-01.comparison.json",
+          "sourceSha256": "5b27c6cbfe41e375ad68bb704f320b3aa7503033121285be3121b111a5a6459f",
+          "objectSha256": "982a2f37cb9b40283517a1662a77e002e4e411f74785a768378b383b99f1c5b6",
+          "emittedTextSha256": "3596eb4084e72c9b505cc6f905a1ba495297014722479250cce85fee8d39a921",
+          "compiledBytes": 984,
+          "nativeBytes": 976,
+          "differentWords": 223,
+          "checkedRelocations": 55,
+          "exactRelocations": 4,
+          "unresolved": 0,
+          "relocationPassed": false,
+          "byteMatch": false,
+          "strictPassed": false,
+          "gprel16Relocations": 25,
+          "gprel16Symbols": [
+            "D_001DE560_sda",
+            "D_001DE568_sda",
+            "D_001DE56C_sda",
+            "D_001DE570_sda",
+            "D_001DE574_sda",
+            "D_001DE578_sda",
+            "D_001DE57C_sda",
+            "D_001DE580_sda",
+            "D_001DE584_sda",
+            "D_001DE588_sda",
+            "D_001DE594_sda",
+            "D_001DE598_sda",
+            "D_001DE5C4_sda"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "func_L19_003AE108",
+      "placements": [
+        {
+          "program": "level_19",
+          "address": 3858696,
+          "bytes": 1180,
+          "bodySha256": "ccd97951e11136a869b2ce65c8298f112ba81708f2b78c95a93dc88c59771123",
+          "referenceSha256": "a0edbbd7ca6919d688f60607d36e5d004bad4f86d1d937231a23d69bd7c15dc2",
+          "referenceSha1": "7290b9a16e4bb3548998097535b8353aaed944a7",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_23",
+          "address": 3772704,
+          "bytes": 1180,
+          "bodySha256": "0f2e04b14d0b42de024ff22d5da2ef19ee016bde1d8066e3377cbdfb0e780d50",
+          "referenceSha256": "c51a109db069727f5e50042241ab0edebb1c42006200e402e71a3188f6280f5d",
+          "referenceSha1": "97743112f3df9b815b627265450f6fc1f82a35f6",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_27",
+          "address": 3821056,
+          "bytes": 1180,
+          "bodySha256": "8872a9fc7a673499b2b9c7b3079aff3060f5d11a0da1f50879c182b04a6c54bd",
+          "referenceSha256": "3235defbafbcbc93d27386137ac596e466f2795b1131e68c3894554bd4335484",
+          "referenceSha1": "42595aa7b0f7a50068ce253bf87317804e408416",
+          "gp": 1951920,
+          "completeCfg": true
+        }
+      ],
+      "normalizationUnchanged": true,
+      "normalizationSha256": "1336db08e7de55cd85bfc110dbdaecc8ab8b19101d5a991a00b10ef4fc31e05d",
+      "existingRecoveredIdentities": 0,
+      "unrecoveredNativeOperandGroups": [
+        {
+          "primaryGpOffset": 12112,
+          "offsets": [
+            1060
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_19": [
+              12112
+            ],
+            "level_23": [
+              10640
+            ],
+            "level_27": [
+              9552
+            ]
+          }
+        }
+      ],
+      "fixedNativeGpOperands": [],
+      "compilerEvidence": [
+        {
+          "attempt": "attempt-01.comparison.json",
+          "sourceSha256": "1da9e4835a03e826b1893720ba69b42441483645ff79dfac580d2dc87072fe44",
+          "objectSha256": "a74787dcebac03b9720055c7b5c5d47d116b23dc1b0b1643a5f8d2c8d5043be6",
+          "emittedTextSha256": "111212ba8a625adab916d96b31dab5c8bf6c15f03812c4a6d8e75299b42385f9",
+          "compiledBytes": 1140,
+          "nativeBytes": 1180,
+          "differentWords": 251,
+          "checkedRelocations": 29,
+          "exactRelocations": 3,
+          "unresolved": 0,
+          "relocationPassed": false,
+          "byteMatch": false,
+          "strictPassed": false,
+          "gprel16Relocations": 2,
+          "gprel16Symbols": [
+            "D_001DF800",
+            "D_001DF800_sda"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "func_L09_003C6D50",
+      "placements": [
+        {
+          "program": "level_09",
+          "address": 3960144,
+          "bytes": 876,
+          "bodySha256": "f591a190c031ea4ffa8640cb3e33c6952441ed5823adf77cdc70accf0e726e89",
+          "referenceSha256": "31adaf5ab8a733b253e09485da06904a822d461520e274899dc3f6c3b66a1b82",
+          "referenceSha1": "cdb30aea6a0e72f76cf4db8c41c57aa413c1aecf",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_18",
+          "address": 3946952,
+          "bytes": 876,
+          "bodySha256": "6213a8af4bb27218c11fe0b6dc0a43265dbf782e95aeeecaeebff6c47db569d7",
+          "referenceSha256": "42f2c19df299c0a05d0a0dcf62b3d9fbf3b4d5b93eca8908595b755ee172f14e",
+          "referenceSha1": "cacebbfe178be73d42a950584a58ebd00d6f8bac",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_20",
+          "address": 3907720,
+          "bytes": 876,
+          "bodySha256": "b65b37477e66fc55b41fc1eb3a9395783f5a9064d6c4a54428f6bdfbebe176bc",
+          "referenceSha256": "c014918135b0152f59bb224479386769a7c1212f61af6b4b3d60edb2a4826bfc",
+          "referenceSha1": "307bb72dc2327ac7e9df9429261d56d275d93add",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_24",
+          "address": 3285224,
+          "bytes": 876,
+          "bodySha256": "750b08ac0e2d5a9113b958cf1a4e10254e64b73405e580acd053cf4fd7cb90e3",
+          "referenceSha256": "e5cfd5f262d60f5802f6fc5497a777b1e8db66ab093f106cd4013226ff4878f9",
+          "referenceSha1": "79e9d151e51d6cc987b0327fcca186175052ded3",
+          "gp": 1951920,
+          "completeCfg": true
+        },
+        {
+          "program": "level_29",
+          "address": 3927744,
+          "bytes": 876,
+          "bodySha256": "67f11e4329ea48928ddf5529ee84d5457d1f9ad49b2ac3330f4bc595471cfcde",
+          "referenceSha256": "6ed43f25e65c1e627da85fccff8dae790fabed606cff6fc5672fac78f7b1f519",
+          "referenceSha1": "5fa06bcc68b3f7f1579865b6d854ec9438212eb3",
+          "gp": 1951920,
+          "completeCfg": true
+        }
+      ],
+      "normalizationUnchanged": true,
+      "normalizationSha256": "93ce734571bb7565ff25ac71d876554133c9cfe94200f4892e0306ad61bb12db",
+      "existingRecoveredIdentities": 0,
+      "unrecoveredNativeOperandGroups": [
+        {
+          "primaryGpOffset": 8396,
+          "offsets": [
+            624
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_09": [
+              8396
+            ],
+            "level_18": [
+              8252
+            ],
+            "level_20": [
+              7324
+            ],
+            "level_24": [
+              412
+            ],
+            "level_29": [
+              7020
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 8400,
+          "offsets": [
+            692
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_09": [
+              8400
+            ],
+            "level_18": [
+              8256
+            ],
+            "level_20": [
+              7328
+            ],
+            "level_24": [
+              416
+            ],
+            "level_29": [
+              7024
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": -7872,
+          "offsets": [
+            740
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_09": [
+              -7872
+            ],
+            "level_18": [
+              -8128
+            ],
+            "level_20": [
+              -7808
+            ],
+            "level_24": [
+              -8192
+            ],
+            "level_29": [
+              -8128
+            ]
+          }
+        },
+        {
+          "primaryGpOffset": 8208,
+          "offsets": [
+            812
+          ],
+          "reason": "unproven-entry-gp-prefix",
+          "entryGpPrefixVerified": false,
+          "nativeGpOffsets": {
+            "level_09": [
+              8208
+            ],
+            "level_18": [
+              8064
+            ],
+            "level_20": [
+              7136
+            ],
+            "level_24": [
+              224
+            ],
+            "level_29": [
+              6832
+            ]
+          }
+        }
+      ],
+      "fixedNativeGpOperands": [
+        {
+          "offset": 528,
+          "gpOffset": -30132
+        }
+      ],
+      "compilerEvidence": [
+        {
+          "attempt": "attempt-01.comparison.json",
+          "sourceSha256": "f3f7c5881a07647f77042683d1ecf13b1446f30c269b85970b89632abe917b0f",
+          "objectSha256": "99204b46e3684f5e7d18ed8f0231c8c54d45de79ea2e676dd74df4bc450b8df8",
+          "emittedTextSha256": "f17ae677d1b07625889d451a646805affb6828f2e810507f43cc18764dc3b4ed",
+          "compiledBytes": 868,
+          "nativeBytes": 876,
+          "differentWords": 167,
+          "checkedRelocations": 31,
+          "exactRelocations": 6,
+          "unresolved": 0,
+          "relocationPassed": false,
+          "byteMatch": false,
+          "strictPassed": false,
+          "gprel16Relocations": 6,
+          "gprel16Symbols": [
+            "D_001D52FC",
+            "D_001D545C",
+            "D_001DA9F0_sda",
+            "D_001DE8C0_sda",
+            "D_001DE97C_sda",
+            "D_001DE980_sda"
+          ]
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "focusedGpTestsPassed": 25,
+    "pythonTestsRun": 509,
+    "pythonTestsPassed": 501,
+    "optionalSkips": 8,
+    "javascriptTestsPassed": 17,
+    "canonicalPlacements": 17,
+    "immutableFilesUnchanged": true,
+    "newCompilerInvocations": 0,
+    "m2cInvocations": 0,
+    "gameFunctionDecompilations": 0,
+    "gameClaimsReadOrWritten": 0,
+    "engineConstructed": false,
+    "gameSourceWrites": 0,
+    "functionApprovals": 0
+  },
+  "counterexamples": [
+    "B has nine varying groups across six copies; every GP use follows branch/call barriers, so existing recovery correctly remains empty.",
+    "New A cases have thirteen groups across three copies and one group across three copies.",
+    "The mixed A case has four varying groups across five copies and one fixed signed native operand at offset 528; that fixed operand does not generate a finding.",
+    "Real REL GPREL16 symbols resolve in existing objects while byte/instruction-offset mismatches keep their relocation and strict verdicts false.",
+    "Synthetic fixed SDA displacements and successfully recovered objects do not warn; a resident target through differing GPs remains only a static operand observation.",
+    "Calls, branches, delay slots, changed register/opcode fields, listing mismatch, missing references and diagnostic exceptions never widen normalization."
+  ],
+  "limitations": [
+    "Static signed GP-operand variation does not prove runtime GP preservation, target addresses, object identity, data values, types, extent, aliases or ownership.",
+    "The same existing canonical-reference check supplies the optional diagnostic; no extra reference-read path or game Engine/claim API was introduced.",
+    "All recovery rules, fallback SDA names, normalized input, source, declarations, ABI gates, relocation verdicts, profiles and search budgets retain their previous behavior.",
+    "Existing compiler objects are counterexamples, not game-function approval; no new compilation, function decompilation or full game build was performed.",
+    "The mixed-case fixed native displacement is an encoding control, not proof of object identity or runtime state."
+  ]
+}

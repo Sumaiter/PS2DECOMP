@@ -58,10 +58,26 @@ def normalize(engine, name, assembly):
         return assembly, []
 
 
-def _normalize(engine, name, assembly):
+def normalize_with_diagnostics(engine, name, assembly):
+    """Preserve recovery policy while explaining unrecovered native variation."""
+    evidence = dict(status='not-applicable', findings=[], mutatesInputs=False, semanticApproval=False,
+                    scope='Static signed native GP operands; not a proof of runtime GP, addresses or object identity.')
+    try:
+        normalized, identities = _normalize(engine, name, assembly, evidence)
+    except Exception:
+        evidence.update(status='unavailable', findings=[])
+        return assembly, [], evidence
+    recovered = {offset for row in identities for offset in row['offsets']}
+    evidence['findings'] = [row for row in evidence['findings'] if not set(row['offsets']) <= recovered]
+    return normalized, identities, evidence
+
+
+def _normalize(engine, name, assembly, diagnostics=None):
     match = re.fullmatch(r'func_L(\d\d)_([0-9A-F]{8})', name)
     if not match or '$gp' not in assembly or name in engine.remnants:
         return assembly, []
+    if diagnostics is not None:
+        diagnostics['status'] = 'unavailable'
     checked = _level_references(name)
     if checked is None:
         return assembly, []
@@ -83,6 +99,14 @@ def _normalize(engine, name, assembly):
             or int(line[2], 16) != struct.unpack_from('<I', raw, offset)[0]
             for offset, line in zip(range(0, len(raw), 4), lines))):
         return assembly, []
+
+    if diagnostics is not None:
+        from . import gp_diagnostics
+        try:
+            diagnostics.update(status='available', findings=gp_diagnostics.observe(primary, references))
+        except Exception:
+            # Optional observations must not change existing normalization.
+            diagnostics.update(status='unavailable', findings=[])
 
     # Address formation, GP copies and unsupported GP memory widths in ANY
     # copy could expose another identity. Do not split possible aliases.
