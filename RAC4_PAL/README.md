@@ -16,6 +16,16 @@ profiles are inferred. See [rule evidence](../SEARCH_RULE_EVIDENCE.md) and
 bundled game data. Native block reordering remains unimplemented because a
 general compiler-call/inline provenance contract is not yet established.
 
+An optional original EE296 whole-file alternative now uses the same adapter
+hook for a conservative complete, read-only pointer-loop form. It preserves
+the C source and existing explicit flags. Profile files, headers and support
+code must be pinned before the automatic session starts; hashes, a function-free
+ABI probe, every placement and a witnessed first execution gate availability.
+Explicit manual EE296 files use an existing own manual claim and fresh profile
+validation. See [setup, compiler evidence and limits](EE296_EVIDENCE.md).
+The existing shared worker's cumulative resume-time issue remains unchanged;
+only this new alternative is disabled when its first-run budget is unproven.
+
 Configure a **prepared RAC4 decompilation repository** with:
 
 ```json
@@ -35,7 +45,7 @@ original compiler installations. Optional profiles retain their original file
 hash and ABI probes. No toolchain or game data is included in PS2DECOMP.
 
 `manual_engine.py` and `engine.py` preserve the existing native integration.
-`compiler_variants.py`, `native_sd16_profile.py` and `line_map.py` hold the
+`compiler_variants.py`, `native_sd16_profile.py`, `ee296_profile.py` and `line_map.py` hold the
 game-specific compiler and debug-line logic. `inputs.py` pins its dependencies.
 `public_reservations.py` and `upstream_matches.py` read issue 112 and fresh
 upstream `main` coverage. **Public comment writing and the original user's
