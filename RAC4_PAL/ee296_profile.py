@@ -122,11 +122,11 @@ def current_hashes(repository):
 
 
 def fresh_jobs(repository):
-    """Read queued first-run identities before search_job overwrites started.
+    """Read queued first-run identities before search_job starts a segment.
 
-    The shared worker does not persist cumulative elapsed time on resume. No
-    elapsed value is reconstructed here: an existing execution marker means
-    this optional profile is unavailable for that job's automatic owner.
+    The shared worker accounts for cumulative time separately. This optional
+    profile additionally requires a witnessed first execution: an existing
+    execution marker makes it unavailable for that job's automatic owner.
     """
     repository = Path(repository).resolve()
     found, sessions = {}, {}

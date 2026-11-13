@@ -106,17 +106,17 @@ owner and the PAL job must be running and non-deferred, with every required
 input present in the original session pins. The adapter never acquires,
 reclaims, hands off or releases any reservation.
 
-The shared worker currently overwrites `started` and `elapsed` on a resumed
-execution. Consequently the adapter does **not** infer a cumulative budget
-from those fields. During engine construction, before the worker starts the
+The shared worker retains cumulative monotonic time across pause/resume
+segments. This optional adapter profile additionally requires a witnessed
+first execution; it does not reconstruct a budget from historical display
+fields. During engine construction, before the worker starts the
 job, it records only identities of fresh queued automatic jobs with no previous
 execution, retry, elapsed-time or worker markers. At the child hook that
 process-local witness must match the active job and worker PID. Resumed jobs,
 retry passes and jobs with an unknown first-execution witness receive no EE296
 alternative, even if earlier time consumption left no compiler attempt.
-The existing shared worker's cumulative resume-time issue is not repaired by
-this adapter change. This conservative exclusion applies only to the new
-EE296 alternative; the shared queue and its other candidates are unchanged.
+This conservative exclusion remains in place alongside the shared cumulative
+budget and applies only to the new EE296 alternative.
 
 The witness also records monotonic time before the original job timer starts.
 Remaining time is bounded by both that monotonic witness and UTC job time, so

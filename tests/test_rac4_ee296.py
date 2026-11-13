@@ -180,8 +180,8 @@ class PinAndProbeTests(unittest.TestCase):
                              inputMode='automatic', attempts=0)
                 first.update(previous); path.write_text(json.dumps(first))
                 engine = SimpleNamespace(root=root, _ee296_fresh_jobs=profile.fresh_jobs(root))
-                # Shared search_job has overwritten started AND elapsed. There
-                # need not have been any earlier compiler attempt or snapshot.
+                # Simulate a running first segment or a resumed historical job.
+                # An earlier segment need not have reached a compiler attempt.
                 first.update(status='running', attempts=1, workerPid=os.getpid(), elapsed=2,
                              started=datetime.datetime.now(datetime.timezone.utc).isoformat())
                 path.write_text(json.dumps(first))

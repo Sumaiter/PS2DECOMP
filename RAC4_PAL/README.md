@@ -23,8 +23,8 @@ code must be pinned before the automatic session starts; hashes, a function-free
 ABI probe, every placement and a witnessed first execution gate availability.
 Explicit manual EE296 files use an existing own manual claim and fresh profile
 validation. See [setup, compiler evidence and limits](EE296_EVIDENCE.md).
-The existing shared worker's cumulative resume-time issue remains unchanged;
-only this new alternative is disabled when its first-run budget is unproven.
+The shared queue retains cumulative time across pause/resume. This profile
+additionally requires a first-run witness and stays disabled on resumed jobs.
 
 Configure a **prepared RAC4 decompilation repository** with:
 

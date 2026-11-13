@@ -116,6 +116,30 @@ metadata from the same original source. This happens before the helper include
 and metadata leave the shared AST parser's deliberately limited input subset.
 The parser and search budgets are not relaxed.
 
+Before m2c generates a new rough draft, `gp_identity.py` can name a moving
+level object used by direct GP-relative byte, halfword or word memory
+instructions. It reuses the checker's complete hash/ELF/GP/CFG-checked
+catalogue references and requires the original opcode, base and destination
+at every instruction offset. Every use of one primary address must have one
+consistent target in each copy, with valid width, alignment and data rights.
+Both absolute targets and GP displacements must move; a stable GP slot or a
+resident address seen through different GPs does not qualify.
+
+Only the evidenced memory operands change. GP address formation/copies,
+unsupported memory widths, mixed access identities and primary or secondary
+overlaps exclude recovery. A LUI high half that could form an observed target
+through ORI or signed-low addressing also excludes it, as does an immediate
+absolute address into that access. Calls, branches, unknown instructions and possible
+GP writes before a use exclude that identity. A mismatched listing or missing
+reference leaves the original rough-input path intact. Existing drafts and
+history are not rewritten. The new `gpIdentities` result field records each
+placement and reference hash; `gpResolutions` retains its symbol-list API.
+No type, declaration, runtime value, statement order, compiler profile or search
+budget is chosen by this recovery. Actual compiler relocations and every
+placement still need normal verification. Two unchanged compiled objects and
+the symbol-only compiler-pair counterexample are summarized in
+[`evidence/gp_identity_review0896.json`](evidence/gp_identity_review0896.json).
+
 For named `D_LNN_XXXXXXXX` globals in other levels, `check_worker.py` can now
 reuse the project's unchanged `level_symbols.derive` policy on one supported
 HI16/LO16 group. It requires the actual named primary address, unchanged

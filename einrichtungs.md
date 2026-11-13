@@ -59,6 +59,13 @@ started automatically by opening a game workspace.
 Keep regions/revisions in separate workspaces. PAL references never stand in for
 NTSC-U/NTSC-J. Do not mark an unverified version as available.
 
+RAC4 PAL's optional original EE296 profile requires user-supplied compiler,
+runtime, assembler and helper files installed before a new automatic session.
+Follow the [EE296 setup and evidence guide](RAC4_PAL/EE296_EVIDENCE.md#required-local-setup)
+for exact inputs and WSL configuration. Automatic trials require a witnessed
+first execution; an explicit manual `@ee296 -O2 -G0` file requires an existing
+own claim and the same file/ABI validation.
+
 ## 3. Prepare a generic game repository
 
 Use this structure as a starting point:
@@ -313,6 +320,19 @@ Paused jobs never restart simply because VS Code opens. Deferred/blocked cases
 are skipped in ordinary follow-up runs. Existing drafts and recorded unsuccessful
 variants are preserved. Logs for your independent reviews belong under
 `build/verifylog/<batch>/<function>.log` and stay local.
+
+A pause preserves the current pass's consumed time and attempt count. All seeds,
+variants and compiler/availability subprocesses share its remaining budget;
+resuming does not grant another full time limit. The queue uses completed
+monotonic segments, so time spent paused is excluded. Old executed jobs with an
+unknown time history, interrupted active segments and inconsistent records cannot
+resume automatically. Their claims and evidence remain intact. Use an explicit
+retry to archive that pass and begin a new one with the same configured limits.
+Only an old queue with no execution markers/artifacts can start from zero.
+Each function's pass stays bound to its original pinned inputs. Retrying other
+selected jobs does not authorize that pass to resume with newer compiler/checker
+inputs. An unknown or changed provenance requires its own explicit retry; old
+snapshots and negative history remain available.
 
 Review released candidates scoring at least 70 first. Scores are search hints,
 not percentages of correctness. A technical match still needs independent byte,

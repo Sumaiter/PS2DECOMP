@@ -39,6 +39,12 @@ test('RAC4 EE296 profile messages localize and preserve raw evidence', () => {
   assert.equal(translate('EE296: ursprüngliches Compiler-/Zeitlimit bereits erreicht.','en'),
     'EE296: original compiler/time limit already reached.');
 });
+test('unknown cumulative search time explains explicit retry in both languages', () => {
+  const de='Suchzeit nicht zuverlässig belegt; ausdrücklich neuen Suchpass starten. Belege und Reservierung bleiben erhalten.';
+  const en='Search time has no reliable provenance; explicitly start a new search pass. Evidence and reservation are retained.';
+  assert.equal(translate(de,'en'),en);
+  assert.equal(translate(en,'de-DE'),de);
+});
 test('RAC4 coordination diagnostics cover both languages and preserve selection details', () => {
   const details='func_00100000 C:/synthetic project/reservation-comment-proposal.txt';
   const messages=[
