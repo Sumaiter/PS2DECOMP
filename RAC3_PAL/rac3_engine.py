@@ -266,6 +266,9 @@ class Engine(ManualEngine):
         import rabbitizer
         place = self.place(name)
         raw = self.disc_bytes(place)
+        from . import branch_operands, cop1_branches
+        cop1 = cop1_branches.labels(raw, place[2])
+        integer = branch_operands.integer_labels(raw, place[2])
         labels = set()
         records = []
         for off in range(0, len(raw), 4):
@@ -273,7 +276,15 @@ class Engine(ManualEngine):
             value = struct.unpack_from('<I', raw, off)[0]
             ins = rabbitizer.Instruction(value, address, rabbitizer.InstrCategory.R5900)
             text = ins.disassemble()
-            if ins.isBranch():
+            if off in cop1:
+                mnemonic, target = cop1[off]
+                labels.add(target)
+                text = mnemonic + ' .L%08X' % target
+            elif off in integer:
+                mnemonic, registers, target = integer[off]
+                labels.add(target)
+                text = mnemonic + ' ' + ', '.join([*('$' + register for register in registers), '.L%08X' % target])
+            elif ins.isBranch():
                 target = ins.getBranchVramGeneric()
                 labels.add(target)
                 text = re.sub(r'0x[0-9A-Fa-f]+\s*$', '.L%08X' % target, text)
@@ -292,6 +303,8 @@ class Engine(ManualEngine):
     def decompile(self, name, owner=None, timeout=45):
         import rough
         self.assert_access(name, owner)
+        from . import division_padding
+        padding = division_padding.inspect(self, name)
         directory = rough.directory(self.root, name, 'decompile')
         assembly = self.asm(name)
         (directory / 'original.s').write_text(assembly, encoding='utf-8', newline='\n')
@@ -347,10 +360,11 @@ class Engine(ManualEngine):
             forwarded = rough.forwarding_evidence(self, name)
         except Exception as exc:
             forwarded = dict(findings=[], warnings=[str(exc)])
-        result = dict(name=name, ok=ok, source=source, warnings=[*skipped, 'RAC3-Grobentwurf; Typen, ABI, Datenbesitz und Funktionsgrenzen prüfen.'],
+        result = dict(name=name, ok=ok, source=source, warnings=[*skipped, *division_padding.warnings(padding), 'RAC3-Grobentwurf; Typen, ABI, Datenbesitz und Funktionsgrenzen prüfen.'],
                       log=run.stderr, directory=str(directory), command=command, adapterVersion=rough.ADAPTER_VERSION,
                       contextDeclarations=declarations, abiProblems=abi_problems, gpResolutions=resolved, gpIdentities=gp_identities, instructionDecodings=decoded,
-                      registerAliases=register_aliases, unresolvedMarkers=markers, forwardedArguments=forwarded)
+                      registerAliases=register_aliases, unresolvedMarkers=markers, forwardedArguments=forwarded,
+                      divisionPadding=padding)
         (directory / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8', newline='\n')
         return result
 

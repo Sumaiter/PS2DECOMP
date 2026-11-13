@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "scope": "RAC3 PAL native branch operand labels for new rough listings; summary only, no game bytes, compiled objects, proprietary tools or private paths",
+  "baseline": "02ca945",
+  "problem": "The disassembler can render branch operands as relative expressions. The old trailing-hex replacement leaves them unparsed despite the existing target labels.",
+  "observations": [
+    {
+      "name": "func_L13_003B3DA8",
+      "nativeBytes": 428,
+      "placements": [
+        {
+          "level": 13,
+          "bodySha256": "8a58caf8e68b73238a550c0b8a3d9876dfe6f373ef66cec41c0b17741c993ed3"
+        },
+        {
+          "level": 16,
+          "bodySha256": "6365bff3c0d57edd042dd50bae0f98ceda0cdd21f4334b2b779ab27aba4ed724"
+        },
+        {
+          "level": 18,
+          "bodySha256": "6a9b14f9163653b1be92a2abe866ee7e9c65d2cc646392302c9aef9854ec9899"
+        },
+        {
+          "level": 20,
+          "bodySha256": "f2fa4180bce60f188d42208f052dcc7d82b399aad18a437f6de8756c931f7c1c"
+        },
+        {
+          "level": 22,
+          "bodySha256": "1222c45e600918298b6aa81afdf1128481ac4a4ed0135c71f026dad0f8ba635e"
+        },
+        {
+          "level": 26,
+          "bodySha256": "967f817982a55d219e22b36e806e83526e17235e07eb1aadf620bf98b90eeada"
+        }
+      ],
+      "originalInputSha256": "9c24286ff30ee23f1bfdaee9766ff296b30f1d89b74c1e889831de448624673e",
+      "contextSha256": "0f2b2398801f0cf67c01f43248586e8fc55f04e5b1b375a773d00fd7b7f1102d",
+      "normalizedInputSha256": "d82fb06eb3d9670a3653676b0a45f34f1c4b57cb020ac248fd01207a94549ea8",
+      "normalizedOutputSha256": "30c9f073905400921ddf95316797c7900d59a84fc023d0b6f03b7d067703e32b",
+      "changedOperands": 1,
+      "branchFamilies": [
+        "bc1f"
+      ],
+      "parserFailureBefore": true,
+      "m2cReturnCodeAfter": 0,
+      "afterEmitsFunction": true,
+      "remainingMarkers": [
+        "M2C_ERROR",
+        "M2C_FIELD",
+        "M2C_UNK"
+      ],
+      "rawWordsRegistersDelayInstructionsAndExistingLabelsPreserved": true,
+      "existingCompilerEvidence": {
+        "objectSha256": "6a7c221c7a8632c4ad23b2af77740e53343991e8d8cbb4dcec3c708a5cb366cd",
+        "compiledBytes": 420,
+        "matchingBranchEncodingObserved": true,
+        "remainingDifferentWords": 47
+      }
+    },
+    {
+      "name": "func_L19_0044A860",
+      "nativeBytes": 320,
+      "placements": [
+        {
+          "level": 19,
+          "bodySha256": "6171c31d7aa2af0ac8fe54affc73d42ddb2e14164e2ed8fabbe118141aa9e249"
+        },
+        {
+          "level": 23,
+          "bodySha256": "41c173909e44bf242d0e471cbd4ec37d822632ebb94d40cf02df4403fc743fcd"
+        },
+        {
+          "level": 27,
+          "bodySha256": "f1925ce108d36033a2df06e89c4d5736ee672cd591d752184df25239920abac3"
+        }
+      ],
+      "originalInputSha256": "e6b9c7ca41f97e5b0a40f49f632be337a57f38a94771fec512c5ece7a2d02c13",
+      "contextSha256": "29c724574241436bcde788eea26ce1b10292cf1fd7824cbee431b0f1307d8216",
+      "normalizedInputSha256": "7c0528a8627788d927c5087dbeec4371f483b40c70d6c2b489783c482e8d3fee",
+      "normalizedOutputSha256": "92305d4e1c5dea05ffdee6aa37e5d38bc0b8bbb5db4cfab343ba2ae2a98e22de",
+      "changedOperands": 2,
+      "branchFamilies": [
+        "bc1tl"
+      ],
+      "parserFailureBefore": true,
+      "m2cReturnCodeAfter": 0,
+      "afterEmitsFunction": true,
+      "remainingMarkers": [
+        "M2C_ERROR",
+        "M2C_FIELD"
+      ],
+      "rawWordsRegistersDelayInstructionsAndExistingLabelsPreserved": true,
+      "existingCompilerEvidence": {
+        "objectSha256": "d878afdda188115c71ff384f3494baa7af522680f755e827d0050b2d65286d74",
+        "compiledBytes": 312,
+        "matchingBranchEncodingObserved": true,
+        "remainingDifferentWords": 72
+      }
+    },
+    {
+      "name": "func_L40_004146C8",
+      "nativeBytes": 1212,
+      "placements": [
+        {
+          "level": 40,
+          "bodySha256": "2038de09152e41a342b3745f9c9c583c2c45c368ae5f38e48872528412f9b9b1"
+        },
+        {
+          "level": 41,
+          "bodySha256": "4dc8e4fa334b526e5606b995e37e3d0a36e39f6c4d93de83bac8774bbad372ff"
+        },
+        {
+          "level": 42,
+          "bodySha256": "f7c0ee9208a467e8e5f5f25a366743ccbc22ace88fd8e6719a0ede2c74ca7323"
+        },
+        {
+          "level": 43,
+          "bodySha256": "8164158f7725c269d3d0c6e10383e95a892745276e7f10ed215f8a0a5f7ceda5"
+        },
+        {
+          "level": 44,
+          "bodySha256": "b17a0aa94f0095a83f1e472a058797c0fce5f8653e693485ab196cecb24bccb5"
+        },
+        {
+          "level": 45,
+          "bodySha256": "3e9938e2d2360185b3c96b338d7b9dc8276473a16a29c5132738a1924bb5d6de"
+        },
+        {
+          "level": 50,
+          "bodySha256": "3cb97e33a48aa5db14a03120b3aadf61460e4ff021fd8a03342541759f9f85e4"
+        },
+        {
+          "level": 51,
+          "bodySha256": "a6123dc9154e3b9efa440c614def6b2fae9a6da044b105b9005dce4cf9c5ca0c"
+        },
+        {
+          "level": 52,
+          "bodySha256": "bd65fda6848dfc187fa1dea1e4380eed36a5c892f81e37b3c690a8be51a3a55a"
+        },
+        {
+          "level": 53,
+          "bodySha256": "97815911f487020fa94d476db19d03d18db093725a8278c5437a8cf418144365"
+        }
+      ],
+      "originalInputSha256": "72c24aa10b21f6ef967d15bfdabb4c0c588db1a392e26b485dd2b7c6509bb5c2",
+      "contextSha256": "255a6728def6e1b34f65ab6ca52247df5e97029fdba88c5ef1fa68dfdcaa2df4",
+      "normalizedInputSha256": "ccf4d5368997c94744be3c6a4c1a192699961c40168b773eabc1ffb943d8bebb",
+      "normalizedOutputSha256": "1b549dbc9419ca5ee876f40352f042fab75217e4b68dfb1bc4d06d64987b925c",
+      "changedOperands": 32,
+      "branchFamilies": [
+        "b",
+        "bc1f",
+        "bc1tl",
+        "beq",
+        "beql",
+        "beqz",
+        "bnez"
+      ],
+      "parserFailureBefore": true,
+      "m2cReturnCodeAfter": 0,
+      "afterEmitsFunction": true,
+      "remainingMarkers": [
+        "M2C_ERROR",
+        "M2C_FIELD",
+        "M2C_UNK"
+      ],
+      "rawWordsRegistersDelayInstructionsAndExistingLabelsPreserved": true
+    }
+  ],
+  "supportedRecovery": "Exact raw COP1 false/true/likely and nonlink integer conditions, register fields and signed PC+4 targets. Complete local CFG, aligned nonwrapping window and legal delay slots are required.",
+  "syntheticCounterexamples": [
+    "All four COP1 false/true/likely forms, positive/negative/signed-boundary immediates and decoder PC wrap",
+    "Integer conditions and likely forms, raw register order, existing EE t0-to-a4 normalization and forward/backward loops",
+    "Other coprocessors, nonzero COP1 condition fields, unsupported link branches and reserved integer register fields",
+    "External targets, malformed or wrapping windows, incomplete return/delay boundaries and control instructions in delay slots",
+    "Existing named JAL resolution and all native instruction words remain intact"
+  ],
+  "validation": {
+    "focusedTestsPassed": 16,
+    "regularPythonTestsRun": 404,
+    "regularPythonTestsPassed": 396,
+    "regularPythonOptionalSkips": 8,
+    "javascriptTestsPassed": 15,
+    "offlineVsixValidated": true,
+    "independentlyReplayedNativePlacements": 19,
+    "actualSameInputM2cProtocols": 3,
+    "newCompilerInvocationsForRecovery": 0,
+    "gameSourceEdits": 0,
+    "functionApprovals": 0
+  },
+  "limitations": [
+    "The same immutable inputs and contexts are replayed with evidenced branch operands only; native words, registers, delay instructions and label identities are preserved.",
+    "Existing compiled objects demonstrate BC1F and BC1TL but remain shorter than retail and byte-inexact; these observations do not approve C.",
+    "M2C_ERROR, M2C_FIELD and M2C_UNK remain as applicable. Parser progress is not an approved decompilation.",
+    "No shared rule, type, ABI, initializer, compiler flag, search budget, session state or existing draft/object is changed.",
+    "Unsupported branch forms retain their previous listing path. Normal actual-object relocation/all-placement checks and independent review remain required."
+  ]
+}

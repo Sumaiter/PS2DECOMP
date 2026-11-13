@@ -84,6 +84,57 @@ in shared code only after evidence establishes applicability across games.
 
 ### Native-evidenced search recovery
 
+New rough-decompile results include a read-only `divisionPadding` diagnostic
+and an English/German warning when the existing level `div.s`/`sqrt.s` table
+is missing, malformed or inconsistent with native evidence. The diagnostic
+does not insert NOPs or edit the table. It records each operation's original
+offset, consecutive standalone NOP count and excluded control delay-slot NOP.
+Every relevant canonical placement must pass the existing hash/ELF/GP/CFG
+checks and agree on the ordered counts. A missing entry, a different count,
+a different operation count and disagreement between copies are distinct
+states; none is a match or configuration approval.
+
+A primary function with no relevant operation and no table entry skips the
+expensive all-copy inspection; its result explicitly records that limited
+applicability scope. Missing inputs remain unavailable evidence. The m2c
+input, saved drafts, sources, assembly, compiler profiles and normal search
+budgets are unchanged. The same diagnostic is available without compilation:
+
+```text
+python -m RAC3_PAL.division_padding --repo C:/projects/rac3-decomp --name func_LNN_XXXXXXXX --owner YOUR_MANUAL_OWNER
+```
+
+The existing game's `tools/asm_filter.py` and canonical
+`config/levels/divs_nops.txt` remain the build authority. Any table correction
+needs separate project review and complete builds; a missing row alone does
+not prove why every instruction differs. The actual 22-copy observation and
+counterexamples are summarized in
+[`evidence/division_padding_review20261113.json`](evidence/division_padding_review20261113.json).
+
+`cop1_branches.py` and `branch_operands.py` give new rough listings explicit
+local labels for supported raw COP1 and nonlink integer branches. Rabbitizer
+can print their operand as a relative expression that m2c cannot parse; the
+adapter now takes the mnemonic, register operands and signed PC-relative
+target from the original word. COP1 false/true/likely forms and the integer
+conditions supported by the existing CFG screen retain their condition,
+register order, likely behavior and delay instruction. Every native word and
+the subsequent EE register alias normalization remain unchanged.
+
+The entire function must pass the existing CFG screen, and each target must
+be inside its complete catalogue window. Unsupported condition-code/register
+fields, link branches, external targets and incomplete/control delay slots
+receive no recovered labels. Other branches and calls retain their existing
+handling. Saved drafts, types, ABI, compiler profiles and budgets are unchanged.
+
+Three immutable native input/context pairs originally failed on relative
+operands. Changing only the evidenced operands made each same m2c command
+emit the function, including normal, likely and mixed integer/COP1 examples.
+Nineteen native placements were independently checked, and two existing real
+compiler objects corroborate normal and likely COP1 encodings. VU/type
+placeholders and the objects' other byte differences remain. Summary evidence
+and limitations are in
+[`evidence/branch_operand_review20261113.json`](evidence/branch_operand_review20261113.json).
+
 The adapter's `additional_search_children` hook offers a bounded set of extra
 search roots. They use the normal queue, negative history, claims, compiler
 profiles, time limit and attempt limit. A root is not a semantic approval.
