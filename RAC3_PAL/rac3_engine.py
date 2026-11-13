@@ -292,6 +292,8 @@ class Engine(ManualEngine):
     def decompile(self, name, owner=None, timeout=45):
         import rough
         self.assert_access(name, owner)
+        from . import division_padding
+        padding = division_padding.inspect(self, name)
         directory = rough.directory(self.root, name, 'decompile')
         assembly = self.asm(name)
         (directory / 'original.s').write_text(assembly, encoding='utf-8', newline='\n')
@@ -325,7 +327,7 @@ class Engine(ManualEngine):
         command = [sys.executable, str(rough.tool(self.root)), '-t', 'mipsee-gcc-c', '--valid-syntax', '--no-cache',
                    '--context', str(directory / 'context.c'), '-f', name, str(directory / 'input.s')]
         run = subprocess.run(command, cwd=directory, capture_output=True, text=True, encoding='utf-8', errors='replace',
-                             timeout=timeout, creationflags=subprocess.CREATE_NO_WINDOW)
+                             timeout=timeout, creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
         (directory / 'm2c-output.c').write_text(run.stdout, encoding='utf-8', newline='\n')
         (directory / 'm2c.log').write_text(run.stderr, encoding='utf-8', newline='\n')
         ok = run.returncode == 0 and bool(re.search(r'\b' + name + r'\s*\([^;]*\)\s*\{', run.stdout))
@@ -344,10 +346,11 @@ class Engine(ManualEngine):
             forwarded = rough.forwarding_evidence(self, name)
         except Exception as exc:
             forwarded = dict(findings=[], warnings=[str(exc)])
-        result = dict(name=name, ok=ok, source=source, warnings=[*skipped, 'RAC3-Grobentwurf; Typen, ABI, Datenbesitz und Funktionsgrenzen prüfen.'],
+        result = dict(name=name, ok=ok, source=source, warnings=[*skipped, *division_padding.warnings(padding), 'RAC3-Grobentwurf; Typen, ABI, Datenbesitz und Funktionsgrenzen prüfen.'],
                       log=run.stderr, directory=str(directory), command=command, adapterVersion=rough.ADAPTER_VERSION,
                       contextDeclarations=declarations, abiProblems=abi_problems, gpResolutions=resolved, instructionDecodings=decoded,
-                      registerAliases=register_aliases, unresolvedMarkers=markers, forwardedArguments=forwarded)
+                      registerAliases=register_aliases, unresolvedMarkers=markers, forwardedArguments=forwarded,
+                      divisionPadding=padding)
         (directory / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8', newline='\n')
         return result
 
