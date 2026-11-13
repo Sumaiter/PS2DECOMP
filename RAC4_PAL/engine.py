@@ -181,17 +181,25 @@ class AutoEngine(Engine):
         return self.aliases.get(name, [self.place(name)[:4]])
 
     def assert_reference(self, program):
+        identity = self.reference_identity((program,))
+        path, expected, entry = identity['path'], identity['digest'], identity['entry']
+        blob = path.read_bytes()
+        elf = self.ELFFile(io.BytesIO(blob))
+        if (hashlib.sha1(blob).hexdigest() != expected or elf.elfclass != 32 or not elf.little_endian
+                or elf['e_machine'] != 'EM_MIPS' or elf['e_type'] != 'ET_EXEC' or elf['e_entry'] != entry):
+            raise ValueError(f'{program}: Referenz stimmt nicht mit dem PAL-Katalog überein.')
+
+    def reference_identity(self, place):
+        program = place[0]
         if program == 'main':
             row = next(line.split('\t') for line in (self.root / 'config/pal/programs.tsv').read_text().splitlines() if line.startswith('main\t'))
             path, expected, entry = self.root / row[1], row[2], int(row[4], 16)
         else:
             row = next(r for r in self.levels.read_table() if r['number'] == int(program[6:]))
             path, expected, entry = Path(self.levels.elf_path(row['number'])), row['elf_sha1'], row['entry']
-        blob = path.read_bytes()
-        elf = self.ELFFile(io.BytesIO(blob))
-        if (hashlib.sha1(blob).hexdigest() != expected or elf.elfclass != 32 or not elf.little_endian
-                or elf['e_machine'] != 'EM_MIPS' or elf['e_type'] != 'ET_EXEC' or elf['e_entry'] != entry):
-            raise ValueError(f'{program}: Referenz stimmt nicht mit dem PAL-Katalog überein.')
+        return dict(path=path, algorithm='sha1', digest=expected, entry=entry,
+                    eeSections=['.text', 'core.text', 'net.text'],
+                    eeSectionsEvidence='PAL inventory/check_func EE sections; levels.CODE_SECTIONS also includes non-EE VU code.')
 
     def symbol_address(self, symbol, program='main'):
         if program.startswith('level_') and symbol.startswith('func_'):
@@ -240,8 +248,9 @@ class AutoEngine(Engine):
                                    'byteMatch': same, 'targets': refs, 'passed': same and refs['passed']})
         passed = bool(result.get('byteMatch') and checked.get('passed') and placements and not problems
                       and all(p['passed'] for p in placements))
-        return {'passed': passed, 'problems': problems, 'placements': placements,
-                'review': 'Technischer Treffer. Signaturen, Initialwerte und Semantik benötigen Review.'}
+        import reference_boundaries
+        return reference_boundaries.apply(self, name, {'passed': passed, 'problems': problems, 'placements': placements,
+                'review': 'Technischer Treffer. Signaturen, Initialwerte und Semantik benötigen Review.'})
 
 
 def similarity(result):

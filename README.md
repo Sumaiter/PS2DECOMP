@@ -64,6 +64,24 @@ checks are followed by independent review of types, ABI, initial values,
 semantics, ownership and function boundaries, plus the game's full build checks.
 Unknown relocations and incomplete coordination fail closed.
 
+Exact objects also receive [incoming-boundary checks](BOUNDARY_EVIDENCE.md)
+against every placement's verified reference ELF. External non-call branches
+into the window and direct entries into its interior require manual boundary
+review. Ordinary entry calls and direct entry tail jumps do not block a window.
+This diagnostic does not establish ABI, ownership or complete boundaries.
+
+Adapters whose logical programs span multiple ELFs can provide
+`reference_identity(place)` to select the same file used by their byte reader.
+It returns `path`, `algorithm` (`sha1` or `sha256`) and the expected `digest` from
+the project's reference manifest. The diagnostic hashes the exact immutable
+bytes it inspects; a separate earlier file check is insufficient. All included
+adapters implement this contract. Missing identity evidence fails closed.
+The identity also supplies `eeSections` and `eeSectionsEvidence`: a complete
+list of the file's EE code sections and its architecture evidence. Generic
+projects put these fields under each `programs` entry. Executable VU sections
+must not be classified as EE merely because ELF marks them executable.
+Only statically placed `ET_EXEC` references are supported by this diagnostic.
+
 The generic adapter currently supports ELF32 little-endian MIPS EE objects and
 `R_MIPS_32`, `R_MIPS_26`, paired `R_MIPS_HI16`/`R_MIPS_LO16`, and external
 `R_MIPS_GPREL16` with evidenced GP. Other relocations, compiler-specific layouts,

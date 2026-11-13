@@ -100,6 +100,13 @@ class Engine(EditorEngine):
     def program_path(self, program):
         return config.path(self.root, self.config['programs'][program]['elf'])
 
+    def reference_identity(self, place):
+        program = place[0]
+        return dict(path=self.program_path(program), algorithm='sha256',
+                    digest=self.config['programs'][program]['sha256'],
+                    eeSections=self.config['programs'][program].get('eeSections'),
+                    eeSectionsEvidence=self.config['programs'][program].get('eeSectionsEvidence'))
+
     def assert_reference(self, program):
         path = self.program_path(program)
         blob = path.read_bytes()
@@ -388,9 +395,10 @@ class Engine(EditorEngine):
             refs = self.relocations(obj, code, start, want, place)
             placements.append(dict(program=place[0], address=place[2], size=place[3], byteMatch=same,
                                    targets=refs, passed=same and refs['passed']))
-        return dict(passed=bool(placements and not problems and all(p['passed'] for p in placements)),
+        import reference_boundaries
+        return reference_boundaries.apply(self, name, dict(passed=bool(placements and not problems and all(p['passed'] for p in placements)),
                     problems=problems, placements=placements,
-                    review='Technical match only. Independently verify types, ABI, initial values, semantics, ownership, boundaries and full builds.')
+                    review='Technical match only. Independently verify types, ABI, initial values, semantics, ownership, boundaries and full builds.'))
 
     def pin_inputs(self, names):
         paths = config.verified_inputs(self.root, self.config)

@@ -38,7 +38,8 @@ Path(output).write_bytes(blob)
         self.write('tools/compile.py',script.encode())
         self.inventory=[dict(name=self.name,placements=[dict(program='main',section='.text',address='0x00100000',size=8)])]
         self.settings=dict(schemaVersion=1,name='Synthetic Test Game',version='test-pal',adapter='generic',mainProgram='main',
-            programs={'main':dict(elf='baserom/main.elf',sha256=self.sha('baserom/main.elf'),symbols={})},
+            programs={'main':dict(elf='baserom/main.elf',sha256=self.sha('baserom/main.elf'),symbols={},
+                eeSections=['.text'],eeSectionsEvidence='Synthetic EE-only executable section.')},
             functions='config/functions.json',compileCommand=['{python}','tools/compile.py','{source}','{object}','{name}','{program}'],
             inputs={p:self.sha(p) for p in ('tools/compile.py','tools/template.o','include/common.h')},coordination={'mode':'local'})
         self.save()

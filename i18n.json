@@ -466,5 +466,7 @@
   "RAC4 PR: Ausgewählte Ergebnisse benötigen eine eigene öffentliche Reservierung in Issue #112. Es wurde kein Kommentar veröffentlicht. Lokaler Entwurf:": "RAC4 PR: Selected results need an own public reservation in issue #112. No comment was posted. Local proposal:",
   "RAC4: Über alle Bereiche hinweg dürfen höchstens 500 nicht abgeschlossene Funktionen öffentlich reserviert sein. Weniger Ergebnisse auswählen oder zuerst Reservierungen für abgeschlossene oder aufgegebene Fälle freigeben.": "RAC4: At most 500 unfinished functions may be publicly reserved across all scopes. Select fewer results or release finished/dropped reservations first.",
   "RAC4 erfordert seine native Koordinationsprüfung.": "RAC4 requires its native coordination gate.",
-  "Die Identität des aktuellen Mitwirkenden kann nicht festgestellt werden.": "Cannot establish the current contributor identity."
+  "Die Identität des aktuellen Mitwirkenden kann nicht festgestellt werden.": "Cannot establish the current contributor identity.",
+  "Einsprungbelege zur Funktionsgrenze": "Incoming boundary evidence",
+  "Externe Branches oder innere Einsprünge erfordern eine manuelle Grenzprüfung. Aufrufe und direkte Tail-Sprünge zum Funktionsbeginn allein sperren einen Kandidaten nicht.": "External branches or interior entries require manual boundary review. Entry calls and direct tail jumps alone do not block a candidate."
 }
