@@ -335,3 +335,13 @@ produced identical object bytes before complete level builds were checked.
 These helpers neither supply the game/toolchain nor promote a search result.
 Independent type, ABI, ownership, boundary, relocation and full-build review
 is still required before a game contribution.
+
+### m2c entry points
+
+Editor preparation, buildability probes and automatic searches dispatch through
+this adapter's `decompile` method, including its EE instruction fixes and GP
+identity diagnostics. Shared `rough.decompile` must not bypass this method.
+Its internal `prepare_only` mode writes the usual normalized assembly and context
+without launching m2c; the shared manual group preview uses this for every selected
+function before one joint invocation. Group analysis remains a separate unverified
+preview and does not change recorded contracts or search sessions.

@@ -4,7 +4,7 @@ const $ = id => document.getElementById(id);
 const node = (tag, text, cls) => {const el = document.createElement(tag); if (text !== undefined) el.textContent = text; if (cls) el.className = cls; return el;};
 function send(type, extra = {}) {vscode.postMessage({type, ...extra});}
 const tab = window.PS2DECOMP_TABS(document.querySelector('.tabs'));
-for (const id of ['choose', 'compare', 'block', 'decompile', 'applyRough']) $(id).addEventListener('click', () => send(id));
+for (const id of ['choose', 'compare', 'block', 'decompile', 'decompileGroup', 'applyRough']) $(id).addEventListener('click', () => send(id));
 function detail(data) {
   $('name').textContent = data.name;
   $('meta').textContent = `${data.size} Byte · ${data.address} · ${data.section}`;

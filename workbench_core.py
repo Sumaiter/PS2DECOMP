@@ -107,7 +107,7 @@ class Engine:
 
 
     def dispatch(self, request):
-        if request.get('op') in ('prepare', 'create', 'compare', 'decompile', 'probeBuildable'):
+        if request.get('op') in ('prepare', 'create', 'compare', 'decompile', 'decompileGroupPlan', 'probeBuildable'):
             with self.manual_lease(request['name']):
                 return self._dispatch(request)
         return self._dispatch(request)
@@ -159,6 +159,12 @@ class Engine:
         if op == "create": return self.create(request["name"])
         if op == "prepare": return candidates.prepare(self, request['name']) if request.get('buildable') else self.prepare(request["name"])
         if op == "decompile": return rough.decompile(self, request["name"])
+        if op == 'decompileGroupPlan':
+            import m2c_group
+            return m2c_group.candidates(self, request['name'])
+        if op == 'decompileGroup':
+            import m2c_group
+            return m2c_group.decompile(self, request['name'], request['names'])
         if op == "backup": return rough.backup(self, request["name"], request["source"])
         if op == "compare": return self.compare(request["name"], request["source"])
         if op == "contracts": return {n: p for n, p in self.contracts.items() if request.get("query", "") in n}

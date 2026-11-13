@@ -21,7 +21,7 @@ function workbench(options) {
         <span id="meta">Wähle eine Funktion und bearbeite den Entwurf im C-Editor.</span></div>
       <div class="toolbar"><button id="choose">Funktion wählen</button>
         <button id="compare" class="primary">C-Code vergleichen <kbd>Ctrl Alt B</kbd></button></div>
-      <div class="toolbar secondary-actions"><button id="decompile">Grob dekompilieren</button><button id="block">Baustein einfügen</button></div>
+      <div class="toolbar secondary-actions"><button id="decompile">Grob dekompilieren</button><button id="decompileGroup">Gemeinsam dekompilieren</button><button id="block">Baustein einfügen</button></div>
     </section>
     <div id="notice" role="status"></div><div id="warnings"></div>
     <nav class="tabs" aria-label="Werkbank">

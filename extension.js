@@ -173,6 +173,7 @@ function ensurePanel() {
       if (message.type === 'compare') await compare();
       if (message.type === 'block') await insertBlock();
       if (message.type === 'decompile') await generateRough();
+      if (message.type === 'decompileGroup') await generateGroup();
       if (message.type === 'applyRough') await applyRough();
       if (message.type === 'revealDifference' && lastCompared && current && !opening) {
         const compared = lastCompared, selected = current;
@@ -239,6 +240,25 @@ async function generateRough() {
   ensurePanel();
   panel.webview.postMessage({type: 'rough', data: generated});
   return generated;
+}
+
+async function generateGroup() {
+  const selected = current, generation = openGeneration;
+  if (!selected || opening) throw new Error('Wähle zuerst eine Funktion und warte auf das Ende des Wechsels.');
+  const rows = await rpc('decompileGroupPlan', {name: selected.name});
+  if (generation !== openGeneration || current !== selected) return;
+  if (!rows.length) throw new Error('Keine bekannten direkten Aufrufe im selben Programm für die Gruppenanalyse.');
+  const choices = await vscode.window.showQuickPick(rows.map(row => ({label: row.name, description: `${row.size} Byte`, name: row.name})),
+    {canPickMany: true, title: 'Gemeinsame m2c-Analyse', placeHolder: translate('Bis zu 7 aufgerufene Funktionen ergänzen. Die aktuelle Funktion bleibt enthalten.')});
+  if (!choices || !choices.length || generation !== openGeneration || current !== selected) return;
+  if (choices.length > 7) throw new Error('Höchstens 7 aufgerufene Funktionen auswählen.');
+  const generated = await vscode.window.withProgress({location: vscode.ProgressLocation.Notification, title: 'Gemeinsame m2c-Analyse', cancellable: false},
+    () => rpc('decompileGroup', {name: selected.name, names: [selected.name, ...choices.map(row => row.name)]}));
+  if (generation !== openGeneration || current !== selected) return;
+  const text = fs.readFileSync(generated.preview, 'utf8');
+  await vscode.window.showTextDocument(await vscode.workspace.openTextDocument({content: text, language: 'c'}), {viewColumn: vscode.ViewColumn.Beside});
+  output.appendLine('m2c-Gruppenanalyse: ' + generated.directory);
+  if (!generated.ok) vscode.window.showWarningMessage('m2c-Gruppenanalyse unvollständig. Protokoll im Ergebnisordner prüfen.');
 }
 
 async function applyRough() {
@@ -371,6 +391,7 @@ function activate(ctx) {
     vscode.commands.registerCommand('ps2decomp.compare', () => compare().catch(error)),
     vscode.commands.registerCommand('ps2decomp.block', () => insertBlock().catch(error)),
     vscode.commands.registerCommand('ps2decomp.decompile', () => generateRough().catch(error)),
+    vscode.commands.registerCommand('ps2decomp.decompileGroup', () => generateGroup().catch(error)),
     vscode.commands.registerCommand('ps2decomp.applyRough', () => applyRough().catch(error)),
     vscode.commands.registerCommand('ps2decomp.refreshBuildable', () => scanBuildable().catch(error)),
     vscode.languages.registerHoverProvider('c', {async provideHover(document, position) {

@@ -6,6 +6,7 @@
   "command.compare": "Aktuellen Entwurf mit Original vergleichen",
   "command.block": "C-Baustein einfügen",
   "command.decompile": "Funktion erneut grob dekompilieren",
+  "command.decompileGroup": "Zusammenhängende Funktionen gemeinsam dekompilieren (Vorschau)",
   "command.applyRough": "Grobentwurf übernehmen (Editorinhalt ersetzen)",
   "command.refreshBuildable": "Baubare Grobentwürfe suchen / Liste aktualisieren",
   "setting.openAutomaticOnStartup": "Zeigt die automatische Suche beim Öffnen des Arbeitsbereichs. Startet keine Jobs automatisch.",

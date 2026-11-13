@@ -43,6 +43,16 @@ test('new parser diagnostics preserve English and German coverage', () => {
     'Preprocessor line splices require manual review.');
 });
 
+test('group analysis controls and rejection messages translate in both directions', () => {
+  const catalog = require('../i18n.json');
+  const pairs = Object.entries(catalog).filter(([de,en]) => /group|Group|Joint m2c|Decompile together|Add up to 7|Select at most 7|Select 2 to 8|reference window|function boundary|Local m2c is missing/.test(en));
+  assert(pairs.length >= 16);
+  for(const [de,en] of pairs) {
+    assert.equal(translate(de,'en'),en);
+    assert.equal(translate(en,'de-DE'),de);
+  }
+});
+
 test('RAC4 EE296 profile messages localize and preserve raw evidence', () => {
   const pairs = Object.entries(require('../i18n.json')).filter(([de,en]) => /EE296|EE2\.9\/2\.96/.test(en));
   assert.equal(pairs.length,25);

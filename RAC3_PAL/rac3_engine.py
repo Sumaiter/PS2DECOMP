@@ -300,9 +300,13 @@ class Engine(ManualEngine):
             out.append('/* %08X %08X */  %s' % (address, value, text))
         return '\n'.join(out) + '\n'
 
-    def decompile(self, name, owner=None, timeout=45):
+    def decompile(self, name, owner=None, timeout=45, *, prepare_only=False):
         import rough
         self.assert_access(name, owner)
+        script = rough.tool(self.root)
+        if script is None:
+            return dict(name=name, ok=False, source='', log='', warnings=[
+                'Local m2c is missing under build/ext/m2c or tools/ext/m2c.'])
         from . import division_padding
         padding = division_padding.inspect(self, name)
         directory = rough.directory(self.root, name, 'decompile')
@@ -341,8 +345,13 @@ class Engine(ManualEngine):
         callees = re.findall(r'\bfunc_(?:L\d\d_)?[0-9A-F]{8}\b', assembly)
         declarations, skipped = rough.context(self.contracts, [name, *callees])
         (directory / 'context.c').write_text(rough.TYPES + '\n'.join(declarations) + '\n', encoding='utf-8', newline='\n')
-        command = [sys.executable, str(rough.tool(self.root)), '-t', 'mipsee-gcc-c', '--valid-syntax', '--no-cache',
+        command = [sys.executable, str(script), '-t', 'mipsee-gcc-c', '--valid-syntax', '--no-cache',
                    '--context', str(directory / 'context.c'), '-f', name, str(directory / 'input.s')]
+        if prepare_only:
+            return dict(name=name, directory=str(directory), contextDeclarations=declarations,
+                        warnings=skipped, instructionDecodings=decoded, gpResolutions=resolved,
+                        gpIdentities=gp_identities, gpIdentityDiagnostics=gp_diagnostics,
+                        registerAliases=register_aliases, divisionPadding=padding)
         from local_process import run as execute
         run = execute(command, cwd=directory, text=True, encoding='utf-8', errors='replace', timeout=timeout)
         (directory / 'm2c-output.c').write_text(run.stdout, encoding='utf-8', newline='\n')

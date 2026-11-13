@@ -9,7 +9,7 @@ import sys
 import uuid
 import local_process
 
-ADAPTER_VERSION = 15
+ADAPTER_VERSION = 16
 
 TYPES = '''typedef signed char s8; typedef unsigned char u8;
 typedef short s16; typedef unsigned short u16;
@@ -169,7 +169,16 @@ def forwarding_evidence(engine, name):
     return forwarded_arguments(raw,place[2],targets)
 
 
-def decompile(engine, name, owner=None, timeout=45):
+def decompile(engine, name, owner=None, timeout=45, *, prepare_only=False):
+    """Honor adapter-specific decoding in every editor and search entry point."""
+    implementation = getattr(engine, 'decompile', None)
+    options = dict(prepare_only=True) if prepare_only else {}
+    if implementation is not None:
+        return implementation(name, owner=owner, timeout=timeout, **options)
+    return _decompile(engine, name, owner, timeout, **options)
+
+
+def _decompile(engine, name, owner=None, timeout=45, *, prepare_only=False):
     engine.place(name)
     engine.assert_access(name, owner)
     script = tool(engine.root)
@@ -197,6 +206,11 @@ def decompile(engine, name, owner=None, timeout=45):
         warnings.append('Originalinstruktionen belegen weitergereichte Eingangsargumente; Aufrufe mit forwardedArguments im Ergebnis abgleichen. Keine Signaturen automatisch geändert.')
     (folder / 'context.c').write_text(TYPES + '\n'.join(declarations) + '\n', encoding='utf-8')
     command = [sys.executable, str(script), '-t', 'mipsee-gcc-c', '--valid-syntax', '--no-cache', '--context', str(folder / 'context.c'), '-f', name, str(folder / 'input.s')]
+    if prepare_only:
+        return dict(name=name, directory=str(folder), contextDeclarations=declarations,
+                    warnings=warnings, instructionDecodings=decoded, gpResolutions=resolved,
+                    registerAliases=register_aliases, undecodedInstructions=undecoded,
+                    forwardedArguments=forwarded)
     try:
         run = local_process.run(command, cwd=folder, text=True, encoding='utf-8', errors='replace', timeout=timeout)
         output, log, exitcode = run.stdout, run.stderr, run.returncode
