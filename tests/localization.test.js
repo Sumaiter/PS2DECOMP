@@ -20,6 +20,20 @@ test('English fallback and German regional display languages', () => {
   assert.equal(translate('PS2DECOMP Werkbank','en'),'PS2DECOMP Workbench');
 });
 
+test('workbench navigation and dynamic selection messages retain their Unicode translations', () => {
+  for (const [de, en] of [
+    ['Suchläufe & Review', 'Searches & review'],
+    ['Zurückgestellt', 'Deferred'],
+    ['Funktionen auswählen', 'Select functions'],
+    ['10 Funktionen ausgewählt.', '10 functions selected.'],
+    ['Fortschritt verfolgen, Ergebnisse prüfen und gezielt übergeben.', 'Track progress, inspect results and hand them off for review.'],
+    ['Die Suche läuft. Fortschritt und Ergebnisse stehen unter „Suchläufe & Review“.', 'The search is running. Find progress and results under “Searches & review”.'],
+  ]) {
+    assert.equal(translate(de, 'en'), en);
+    assert.equal(translate(en, 'de-DE'), de);
+  }
+});
+
 test('new parser diagnostics preserve English and German coverage', () => {
   assert.equal(translate('Only one canonical first-line compiler-flags comment is supported.','de'),
     'Nur ein kanonischer Compilerflags-Kommentar in der ersten Zeile wird unterstützt.');

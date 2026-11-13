@@ -286,6 +286,17 @@ editor contents and invokes the configured compiler. Original game sources are
 not overwritten. Applying a new rough draft requires an explicit action and
 backs up the previous editor contents.
 
+In the automatic panel, use **New search** to choose game versions, filter and
+load functions, select candidates and set the per-function budget. **Searches &
+review** shows saved sessions, progress and results; existing sessions open here.
+An empty workspace opens on **New search**. **Deferred** collects cases retained
+for later work. Switching tabs does not start or resume a search.
+
+In each result row, expand **Diagnostics & history** for detailed evidence.
+**More actions & reservations** contains retry and bulk handoff controls. The
+tabs support Left/Right, Home and End keys; both panels follow the editor theme
+and adapt to narrow editor splits.
+
 Automatic search starts only after selecting functions and pressing Start. The
 default budget remains 16 workers, 30 compiler attempts and 90 seconds per
 function. Sessions and `REVIEW.md` are stored in `build/autodecomp/<session>`.

@@ -3,11 +3,7 @@ const vscode = acquireVsCodeApi();
 const $ = id => document.getElementById(id);
 const node = (tag, text, cls) => {const el = document.createElement(tag); if (text !== undefined) el.textContent = text; if (cls) el.className = cls; return el;};
 function send(type, extra = {}) {vscode.postMessage({type, ...extra});}
-function tab(id) {
-  document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.id === id));
-  document.querySelectorAll('nav button').forEach(el => el.classList.toggle('active', el.dataset.tab === id));
-}
-document.querySelectorAll('nav button').forEach(el => el.addEventListener('click', () => tab(el.dataset.tab)));
+const tab = window.PS2DECOMP_TABS(document.querySelector('.tabs'));
 for (const id of ['choose', 'compare', 'block', 'decompile', 'applyRough']) $(id).addEventListener('click', () => send(id));
 function detail(data) {
   $('name').textContent = data.name;
@@ -40,6 +36,7 @@ function detail(data) {
     const card = node('article', undefined, 'card'); card.append(node('strong', `${example.name} · ${example.size} Byte`), node('p', example.reason));
     const button = node('button', 'Als separate Referenzkopie öffnen'); button.addEventListener('click', () => send('example', {path: example.path})); card.append(button); return card;
   }));
+  if (!data.examples.length) $('examples').append(node('p', 'Noch keine passenden Lernbeispiele im lokalen Index.', 'muted'));
   $('summary').textContent = 'Noch kein Vergleich für diesen Entwurf.';
   $('diff').replaceChildren(); $('relocs').replaceChildren(); $('log').textContent = ''; $('notice').textContent = '';
   tab('guide');

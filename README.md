@@ -55,6 +55,22 @@ Shared guard files acquire their OS lock before initializing an empty file.
 [The lock evidence](FILE_LOCK_EVIDENCE.md) covers Windows contention, cleanup
 failures, process crashes and retained claim ownership.
 
+## Workbench navigation
+
+The automatic panel separates **Searches & review**, **New search** and
+**Deferred** into keyboard-accessible tabs. Existing sessions open on the progress
+view; an empty workspace opens on the selection view. Switching tabs preserves
+the selection and does not start or resume work. Use the arrow keys, Home or End
+while a tab is focused to navigate between views.
+
+The progress view shows processed jobs, technical matches and search-score
+counts. These are not correctness percentages or independent approvals. Expand
+**Diagnostics & history** for each result's compiler evidence and search details;
+open details and focus on available result actions survive status refreshes.
+Retry and bulk handoff actions are grouped under **More actions & reservations**. In **New search**,
+filters, selection and the per-function budget are grouped before the explicit
+start button. Both panels follow the editor theme and adapt to narrow splits.
+
 ## Search budgets and resume
 
 Each function's search pass shares its configured time and attempt limits across
@@ -148,5 +164,22 @@ On Linux/macOS use `.venv/bin/python` for the Python commands. Packaging is
 offline and reads its own VSIX metadata; no older RAC extension is required.
 See the [VS Code packaging documentation](https://code.visualstudio.com/api/working-with-extensions/publishing-extension)
 for the alternative `vsce` workflow.
+
+For optional UI regression checks, install `playwright-core` without changing
+the package manifest, and point `PS2DECOMP_BROWSER` at a local Chrome/Chromium
+executable. For example, in PowerShell:
+
+```powershell
+npm install --no-save --package-lock=false playwright-core
+$env:PS2DECOMP_BROWSER = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
+node tests/webview_preview.cjs
+```
+
+This uses the actual panel HTML, scripts, styles, localization and CSP with a
+synthetic VS Code message bridge and theme colors. It checks navigation, selection,
+polling, handoff navigation and responsive layouts in English/German and light/dark
+themes, saving screenshots under `build/webview-preview`. It does not start searches
+or access a game workspace. Browser checks supplement the real extension-host
+check in `tests/run_vscode.py`.
 
 GPL-3.0-only. See [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

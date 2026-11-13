@@ -164,18 +164,8 @@ function ensurePanel() {
   });
   const view = panel.webview;
   const nonce = crypto.randomBytes(18).toString('base64');
-  const css = view.asWebviewUri(vscode.Uri.file(path.join(context.extensionPath, 'media', 'style.css')));
-  const js = view.asWebviewUri(vscode.Uri.file(path.join(context.extensionPath, 'media', 'panel.js')));
-  view.html = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${view.cspSource}; script-src 'nonce-${nonce}';"><link rel="stylesheet" href="${css}"><title>PS2DECOMP Werkbank</title></head><body>
-    <header><div class="eyebrow">PS2DECOMP · MIPS R5900</div><h1>Dein Code. Am Original geprüft.</h1><p id="connection">Prüfkern wird geladen …</p></header>
-    <div class="toolbar"><button id="choose">Funktion wählen</button><button id="decompile">Grob dekompilieren</button><button id="compare" class="primary">C-Code vergleichen <kbd>Ctrl Alt B</kbd></button><button id="block">Baustein einfügen</button></div>
-    <section class="target"><strong id="name">Noch keine Funktion</strong><span id="meta">Wähle eine Funktion und bearbeite den Entwurf im C-Editor.</span></section>
-    <div id="notice" role="status"></div><div id="warnings"></div>
-    <nav aria-label="Werkbank"><button data-tab="guide" class="active">Vorschläge & Belege</button><button data-tab="rough">Grobentwurf</button><button data-tab="asm">Original-Assembler</button><button data-tab="result">Vergleich</button></nav>
-    <main><section id="guide" class="tab active"><div id="suggestions"></div><h2>Belegte Signaturen</h2><p class="muted">Belege können verschiedene Stände oder widersprüchliche Deklarationen enthalten. Prüfe den für deinen Aufruf gültigen Vertrag.</p><div id="contracts"></div><h2>Beobachtete Feldzugriffe</h2><div id="fields"></div><h2>Passende Lernbeispiele</h2><div id="examples"></div><p class="muted">Bausteine und Ähnlichkeitshinweise sind regelbasierte Hilfen. Sie ersetzen keine Rekonstruktion der tatsächlichen Funktion.</p></section>
-    <section id="rough" class="tab"><div id="roughWarnings"></div><button id="applyRough" disabled>Grobentwurf übernehmen · aktuellen Editorinhalt ersetzen</button><p class="muted">Vorheriger Editorinhalt wird separat gesichert. Übernehmen ist rückgängig machbar und speichert die Datei nicht automatisch.</p><pre id="roughSource">Beim Auswählen wird automatisch ein lokaler m2c-Grobentwurf erzeugt.</pre><details><summary>m2c-Protokoll</summary><pre id="roughLog"></pre></details></section>
-    <section id="asm" class="tab"><pre id="assembly">Hier erscheint das lokale Original-Listing.</pre></section>
-    <section id="result" class="tab"><div id="summary" class="card">Noch kein Vergleich. Änderungen im C-Editor werden direkt aus dem offenen Dokument gelesen, auch vor dem Speichern.</div><div id="relocs"></div><div class="diff-wrap"><table id="diff"></table></div><details><summary>Compilerprotokoll</summary><pre id="log"></pre></details></section></main><script nonce="${nonce}" src="${js}"></script></body></html>`;
+  const asset = name => view.asWebviewUri(vscode.Uri.file(path.join(context.extensionPath, 'media', name)));
+  view.html = require('./webview_html').workbench({asset, cspSource: view.cspSource, nonce});
   view.onDidReceiveMessage(async message => {
     try {
       if (message.type === 'ready') {if (status) view.postMessage({type: 'status', data: status}); if (current) view.postMessage({type: 'detail', data: current}); if (roughDraft) view.postMessage({type: 'rough', data: roughDraft});}
