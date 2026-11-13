@@ -124,6 +124,31 @@ evidence and valid data accesses. Conflicting targets, defined symbols,
 unsupported formats and incomplete groups remain unresolved. Other instruction
 bytes, literal pools and all strict placement checks still have to pass.
 
+Direct REL `GPREL16` accesses to named level globals use the same project
+policy with a separate, narrow proof. A level object can occupy different GP
+slots in its copies even when their GP is identical. The checker preserves
+the object's signed REL addend, verifies the primary address in its name and
+checks every actual byte/halfword/word memory target, width, alignment and
+write permission. Both the object and every native copy must retain the GP
+value from entry through the use; branches, calls or possible GP writes in
+that span are conservatively rejected. Opcode, base and destination fields
+must agree at the original relocation offset.
+
+This path requires an ELF32 little-endian MIPS relocatable object, a complete
+aligned function symbol, undefined global data symbols and REL sections using
+the resolver's symbol table. Locally defined or section symbols, mixed or
+hidden relocation groups, allocated object data/literal pools and unsupported
+formats stay outside the proof. Fixed `D_XXXXXXXX_sda` aliases retain their
+slot meaning and are never remapped as moving level objects. This checker
+does not rename source symbols or produce new search candidates.
+
+Per-function target evidence does not establish allocation size, initial or
+runtime values, cross-function data ownership, types/ABI or semantic safety.
+Other word differences remain visible, and the complete project's symbol
+derivation, links and retail comparisons remain necessary before promotion.
+The two actual named objects, their fixed-SDA counterexample and all-placement
+replays are summarized in [`evidence/review0896.json`](evidence/review0896.json).
+
 Synthetic positive and negative tests live in `RAC3_PAL/tests`; the regular
 `python -m unittest discover -s tests` command includes them. The local native
 compiler observations and limitations are summarized in
