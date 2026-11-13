@@ -104,6 +104,8 @@ A generic `ps2decomp.json` looks like this (replace the placeholder hashes):
     "main": {
       "elf": "baserom/main.elf",
       "sha256": "REPLACE_WITH_64_HEX_DIGITS",
+      "eeSections": [".text"],
+      "eeSectionsEvidence": "REPLACE_WITH_EVIDENCE_FOR_ALL_EE_CODE_SECTIONS",
       "symbols": { "D_00300000": "0x00300000" }
     }
   },
@@ -123,6 +125,19 @@ Calculate hashes, for example with PowerShell:
 ```powershell
 (Get-FileHash baserom/main.elf -Algorithm SHA256).Hash.ToLower()
 ```
+
+For each reference program, `eeSections` lists all of its evidenced EE code
+sections; `eeSectionsEvidence` records how their architecture was established.
+Replace the sample `.text` list and evidence placeholder with your game's
+actual section inventory. ELF execute flags alone do not distinguish EE code
+from executable VU microcode. Include only EE sections in this list.
+
+Incoming-boundary checks require these fields and a statically placed `ET_EXEC`
+reference at every function placement. Missing architecture evidence or a
+relocatable reference holds an otherwise exact result for manual review.
+External conditional branches into a candidate and direct entries into its
+interior also require review. See [incoming boundary evidence](BOUNDARY_EVIDENCE.md)
+for supported entry calls, tail transfers and the diagnostic's limits.
 
 `inputs` is a map of repository-relative files to their SHA-256 hashes. Include
 the compiler, assembler, compiler stages, specs, wrapper scripts, linker inputs

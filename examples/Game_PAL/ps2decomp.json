@@ -5,7 +5,8 @@
   "adapter": "generic",
   "mainProgram": "main",
   "programs": {
-    "main": { "elf": "baserom/main.elf", "sha256": "REPLACE_WITH_ORIGINAL_ELF_SHA256", "symbols": {} }
+    "main": { "elf": "baserom/main.elf", "sha256": "REPLACE_WITH_ORIGINAL_ELF_SHA256", "symbols": {},
+      "eeSections": [".text"], "eeSectionsEvidence": "REPLACE_WITH_EVIDENCE_FOR_ALL_EE_CODE_SECTIONS" }
   },
   "functions": "config/functions.json",
   "compileCommand": ["{python}", "tools/compile.py", "{source}", "{object}", "{name}", "{program}"],

@@ -2,7 +2,7 @@
 import struct
 
 
-def elf(words, *, name='func_00100000', address=0x100000, executable=False, relocations=(), external='global_value'):
+def elf(words, *, name='func_00100000', address=0x100000, executable=False, relocations=(), external='global_value', extra_sections=()):
     text = struct.pack('<'+'I'*len(words), *words)
     strings = b'\0'+name.encode()+b'\0'+external.encode()+b'\0'
     symbols = b'\0'*16 + struct.pack('<IIIBBH',1,0,len(text),0x12,0,1)
@@ -13,6 +13,7 @@ def elf(words, *, name='func_00100000', address=0x100000, executable=False, relo
     if relocations:
         body=b''.join(struct.pack('<II',offset,(2<<8)|kind) for offset,kind in relocations)
         sections.append(('.rel.text',9,0,0,body,3,1,8))
+    sections.extend(extra_sections)
     shstr=b'\0'; offsets={}
     for s in sections[1:]+[('.shstrtab',)]:
         offsets[s[0]]=len(shstr);shstr+=s[0].encode()+b'\0'

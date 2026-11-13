@@ -138,6 +138,22 @@ class Engine(ManualEngine):
     def program_target(self, program):
         return self.program if program == 'main' else program
 
+    def reference_path(self, place):
+        """Resolve the same split executable context used by disc_bytes."""
+        program, section = place[:2]
+        if program == 'main' and section == 'core.text':
+            program = 'boot_elf'
+        return self.program_path(program)
+
+    def reference_identity(self, place):
+        program, section = place[:2]
+        if program == 'main' and section == 'core.text':
+            program = 'boot_elf'
+        target = self.targets.get(self.program_target(program))
+        return dict(path=self.reference_path(place), algorithm='sha1', digest=target.sha1,
+                    eeSections=['.text', 'core.text', 'net.text'],
+                    eeSectionsEvidence='PAL EE function inventory and split executable integration; VU sections are separate.')
+
     def elf(self, program):
         if program not in self._elf:
             self._elf[program] = self.ELFFile(io.BytesIO(self.program_path(program).read_bytes()))
@@ -414,8 +430,9 @@ class Engine(ManualEngine):
                 passed = bool(meta.get('ok') and meta.get('technicalExact') and not meta.get('dataSections') and not meta.get('extraDefinitions'))
                 placements.append(dict(program=place[0], address=place[2], size=place[3], passed=passed,
                                        byteMatch=meta.get('technicalExact', False), targets=dict(passed=passed)))
-        return dict(passed=bool(placements and not problems and all(p['passed'] for p in placements)),
-                    problems=problems, placements=placements, review='Technischer Treffer; Typ-/ABI-/Semantikreview und vollständige Builds bleiben erforderlich.')
+        import reference_boundaries
+        return reference_boundaries.apply(self, name, dict(passed=bool(placements and not problems and all(p['passed'] for p in placements)),
+                    problems=problems, placements=placements, review='Technischer Treffer; Typ-/ABI-/Semantikreview und vollständige Builds bleiben erforderlich.'))
 
     def symbol_address(self, symbol, program='main'):
         if program in self._symbols:

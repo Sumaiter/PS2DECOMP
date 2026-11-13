@@ -34,6 +34,13 @@ def load(repository):
         path(root, p['elf'])
         if not re.fullmatch('[0-9a-fA-F]{64}', p.get('sha256', '')):
             raise ValueError(name + ': supply the original ELF SHA-256.')
+        if 'eeSections' in p or 'eeSectionsEvidence' in p:
+            sections = p.get('eeSections')
+            if (not isinstance(sections, list) or not sections
+                    or not all(isinstance(s, str) and s for s in sections)
+                    or len(set(sections)) != len(sections)
+                    or not isinstance(p.get('eeSectionsEvidence'), str) or not p['eeSectionsEvidence'].strip()):
+                raise ValueError(name + ': supply unique EE section names and architecture evidence.')
     data.setdefault('mainProgram', next(iter(data['programs'])))
     if data['mainProgram'] not in data['programs']:
         raise ValueError('mainProgram must identify a configured program.')

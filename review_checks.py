@@ -3,6 +3,7 @@ from pathlib import Path
 import hashlib,io,json,re,struct
 import rough
 import source_fidelity
+import reference_boundaries
 from search_rules import code_only
 from elftools.elf.relocation import RelocationSection
 
@@ -169,6 +170,8 @@ def inspect(engine,name,candidate=None):
         report['strict']=engine.strict(name,primary)
         report['technicalPassed']=bool(report['strict']['passed'] and report['sourceVerified'] and report['objectVerified'])
     else:report['strict']=dict(passed=False,problems=['No complete primary instruction match.'])
+    report['boundaryChecks']=reference_boundaries.inspect(engine,name)
+    report['technicalPassed']=bool(report['technicalPassed'] and report['boundaryChecks']['eligible'])
     report['placementDiagnostics']=placement_diagnostics(report)
     report['manualChecks']=['Original parameter/return types, incoming ABI slots and callers',
         'Pointer validity, alignment, aliasing and signed/unsigned arithmetic',
@@ -212,6 +215,9 @@ def markdown(report):
         for access in p['memoryAccesses']:
             rows.append(f"| 0x{access['address']:08X} | {access['action']} | {access['bytes']} B | r{access['baseRegister']} | {access['displacement']} |")
         rows+=['','```json',json.dumps(dict(relocations=p['relocations'],directCalls=p['directCalls'],indirectCalls=p['indirectCalls']),indent=2,ensure_ascii=False),'```']
+    rows+=['','## Incoming boundary evidence','',
+           'External branches or interior entries require manual boundary review. Entry calls and direct tail jumps alone do not block a candidate.',
+           '', '```json',json.dumps(report.get('boundaryChecks',{}),indent=2,ensure_ascii=False),'```']
     rows+=['','## Manuell offen','']+['- '+s for s in report['manualChecks']]
     from presentation_language import markdown as localize_markdown
     return localize_markdown('\n'.join(rows)+'\n')
