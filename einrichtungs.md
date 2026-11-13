@@ -331,6 +331,14 @@ rules inside that folder. Existing `RAC3_PAL` and `RAC4_PAL` provide concrete
 integrations; their exact repository layouts are prerequisites, not templates
 whose values should be blindly reused.
 
+`RAC3_PAL` additionally supports an explicitly authorized
+[`coordination.workflow: "local-first"`](RAC3_PAL/README.md#explicit-local-matching-workflow)
+workflow. Free functions can be claimed and compiled locally before public
+reservation. Fresh foreign scopes and integrated functions still block work.
+Only independently reviewed results selected for a PR are reserved publicly,
+after checking the ticket again. The default remains `public-first`; other
+adapters do not inherit this option.
+
 Send game-specific additions as PRs for that folder. Contribute shared
 improvements through PRs only when they are usable across all games, supported
 by real compiler/relocation evidence and meaningful counterexamples. Follow

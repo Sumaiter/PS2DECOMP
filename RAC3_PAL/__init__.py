@@ -12,15 +12,18 @@ def create_engine(repository, settings, version=None):
 
 def coordination_state(engine):
     from . import rac3_coordination as service
+    workflow = service.workflow(engine)
     state = service.snapshot(engine)
     blocked = service.blocked(engine, state=state)
-    # Starting work requires the contributor's existing public scope.
-    allowed = {n for n in engine.places if any(service.covers(n, engine.owners.get(n), scope) for scope in state['mine'])}
+    # Local matching still checks foreign scopes and upstream integration.
+    allowed = (None if workflow == 'local-first' else
+               {n for n in engine.places if service.owned(engine, n, state['mine'])})
     return blocked, allowed
 
 
 def candidate_coordination_state(engine):
     """Browse unclaimed scopes without granting permission to start work."""
     from . import rac3_coordination as service
+    service.workflow(engine)
     state = service.snapshot(engine)
     return service.blocked(engine, state=state), None
