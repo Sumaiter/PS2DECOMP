@@ -266,6 +266,9 @@ class Engine(ManualEngine):
         import rabbitizer
         place = self.place(name)
         raw = self.disc_bytes(place)
+        from . import branch_operands, cop1_branches
+        cop1 = cop1_branches.labels(raw, place[2])
+        integer = branch_operands.integer_labels(raw, place[2])
         labels = set()
         records = []
         for off in range(0, len(raw), 4):
@@ -273,7 +276,15 @@ class Engine(ManualEngine):
             value = struct.unpack_from('<I', raw, off)[0]
             ins = rabbitizer.Instruction(value, address, rabbitizer.InstrCategory.R5900)
             text = ins.disassemble()
-            if ins.isBranch():
+            if off in cop1:
+                mnemonic, target = cop1[off]
+                labels.add(target)
+                text = mnemonic + ' .L%08X' % target
+            elif off in integer:
+                mnemonic, registers, target = integer[off]
+                labels.add(target)
+                text = mnemonic + ' ' + ', '.join([*('$' + register for register in registers), '.L%08X' % target])
+            elif ins.isBranch():
                 target = ins.getBranchVramGeneric()
                 labels.add(target)
                 text = re.sub(r'0x[0-9A-Fa-f]+\s*$', '.L%08X' % target, text)
