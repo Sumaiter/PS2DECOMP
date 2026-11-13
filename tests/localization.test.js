@@ -25,6 +25,8 @@ test('workbench navigation and dynamic selection messages retain their Unicode t
     ['Suchläufe & Review', 'Searches & review'],
     ['Zurückgestellt', 'Deferred'],
     ['Funktionen auswählen', 'Select functions'],
+    ['Freie Funktionen und offene Ergebnisse inkl. zurückgestellte / Compilerfehler', 'Unclaimed and open results including deferred cases / compiler errors'],
+    ['12 freie Funktionen und freigegebene offene Ergebnisse geladen.', '12 unclaimed functions and released open results loaded.'],
     ['10 Funktionen ausgewählt.', '10 functions selected.'],
     ['Fortschritt verfolgen, Ergebnisse prüfen und gezielt übergeben.', 'Track progress, inspect results and hand them off for review.'],
     ['Die Suche läuft. Fortschritt und Ergebnisse stehen unter „Suchläufe & Review“.', 'The search is running. Find progress and results under “Searches & review”.'],

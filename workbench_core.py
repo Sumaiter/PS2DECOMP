@@ -123,7 +123,7 @@ class Engine:
             from auto_engine import AutoEngine
             if op == 'autoVersions':
                 return AutoEngine.version_availability(self.root)
-            if op in ('autoPlan', 'autoRetryPlan', 'autoStart', 'autoRetryStart'):
+            if op in ('autoPlan', 'autoRetryPlan', 'autoMixedPlan', 'autoStart', 'autoRetryStart', 'autoMixedStart'):
                 versions = request.get('versions', [self.version])
                 if versions != [self.version]:
                     raise ValueError('Select the version configured in ps2decomp.json; use a separate workspace for each game version.')
@@ -132,8 +132,10 @@ class Engine:
             manager = self._automatic
             if op == 'autoPlan': return plan(manager.engine, request.get('limit', DEFAULT_LOAD_LIMIT), request.get('scope', 'both'), progress=getattr(self, '_progress', None), settings=request.get('settings'))
             if op == 'autoRetryPlan': return manager.retry_plan(request.get('limit', DEFAULT_LOAD_LIMIT), request.get('scope', 'incomplete'), request.get('programScope', 'both'), settings=request.get('settings'))
-            if op == 'autoRetryStart':
-                session = manager.create_retry(request['names'], request.get('settings'), progress=getattr(self, '_progress', None))
+            if op == 'autoMixedPlan': return manager.mixed_plan(request.get('limit', DEFAULT_LOAD_LIMIT), request.get('scope', 'both'), settings=request.get('settings'), progress=getattr(self, '_progress', None))
+            if op in ('autoRetryStart', 'autoMixedStart'):
+                session = manager.create_retry(request['names'], request.get('settings'), progress=getattr(self, '_progress', None),
+                                               include_unclaimed=op == 'autoMixedStart')
                 return manager.start(session['id'])
             if op == 'autoSessions': return manager.sessions()
             if op == 'autoDeferred': return manager.deferred()

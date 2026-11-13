@@ -517,5 +517,12 @@
   "Diagnose & Verlauf": "Diagnostics & history",
   "Die Suche läuft. Fortschritt und Ergebnisse stehen unter „Suchläufe & Review“.": "The search is running. Find progress and results under “Searches & review”.",
   "Noch keine passenden Lernbeispiele im lokalen Index.": "No matching learning examples in the local index yet.",
-  "Mit „Funktionen laden“ verfügbare Kandidaten anzeigen.": "Use “Load functions” to view available candidates."
+  "Mit „Funktionen laden“ verfügbare Kandidaten anzeigen.": "Use “Load functions” to view available candidates.",
+  "Freie Funktionen und offene Ergebnisse inkl. zurückgestellte / Compilerfehler": "Unclaimed and open results including deferred cases / compiler errors",
+  "Freie Funktionen und freigegebene offene Ergebnisse werden geprüft und geladen …": "Checking and loading unclaimed functions and released open results …",
+  "Gemeinsame Auswahl: Zuerst freigegebene offene Ergebnisse, einschließlich zurückgestellter Fälle und Compilerfehler, danach neue freie Funktionen bis zur Ladeanzahl. Ein Start übernimmt die Auswahl in einen gemeinsamen Suchlauf.": "Combined selection: released open results first, including deferred cases and compiler errors, then new unclaimed functions up to the load count. Start puts the selection into one search session.",
+  "freie Funktionen und freigegebene offene Ergebnisse geladen.": "unclaimed functions and released open results loaded.",
+  "Keine passenden freien Funktionen oder freigegebenen offenen Ergebnisse.": "No matching unclaimed functions or released open results.",
+  "Erneute Suche": "Retry search",
+  "Neue freie Funktion": "New unclaimed function"
 }

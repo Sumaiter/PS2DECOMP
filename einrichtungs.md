@@ -311,6 +311,14 @@ function. Sessions and `REVIEW.md` are stored in `build/autodecomp/<session>`.
 Claims persist for queued, paused and completed jobs. Use **Hand off for review**
 explicitly before a person/agent claims an automatic result for further work.
 
+To combine new work and released retries, select **Unclaimed and open results
+including deferred cases / compiler errors** under **Functions**, then load and
+mark the desired rows. The load count covers both groups together: open results
+are listed first, followed by new unclaimed functions. Reserved cases and
+technical matches are excluded; release an unfinished case through its review
+handoff before retrying it here. An explicit Start creates one session and
+copies the retry histories and best sources while keeping their original runs.
+
 Set **Function size from (bytes)** and **to (bytes)** before loading functions.
 Both bounds are inclusive; the default remains **8–640 bytes**. The workspace
 remembers the range. It filters new free functions, released results loaded for

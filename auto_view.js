@@ -130,11 +130,11 @@ function register(context, rpc, getCurrentSeed, reportError) {
         }
         // Restore the current search first. Reopening a session must not also
         // start a potentially long scan of all free candidates.
-        if (['load', 'loadRetry'].includes(message.type) || message.type === 'ready' && !selected) {
+        if (['load', 'loadRetry', 'loadMixed'].includes(message.type) || message.type === 'ready' && !selected) {
           if (busy) return;
           busy = true;
           try {
-            const mode = message.type === 'loadRetry' ? 'retry' : 'free';
+            const mode = message.type === 'loadMixed' ? 'mixed' : message.type === 'loadRetry' ? 'retry' : 'free';
             candidateMode = undefined; loadedCandidates = new Set();
             if (!selectedVersions.length) throw new Error('Mindestens eine verfügbare Spielversion auswählen.');
             if (message.sizeRange) await setSizeRange(message.sizeRange, false);
@@ -143,7 +143,9 @@ function register(context, rpc, getCurrentSeed, reportError) {
             const limit = message.limit === undefined ? loadLimit : Number(message.limit);
             if (!Number.isSafeInteger(limit) || limit < 1) throw new Error('Zum Laden eine positive, exakt darstellbare ganze Zahl eingeben.');
             loadLimit = limit; await context.workspaceState.update('automaticLoadLimit', limit);
-            const data = mode === 'retry'
+            const data = mode === 'mixed'
+              ? await rpc('autoMixedPlan', {limit, scope: message.scope || 'both', versions: selectedVersions, settings: sizeRange}, progress => web.postMessage({type: 'candidateProgress', data: progress}))
+              : mode === 'retry'
               ? await rpc('autoRetryPlan', {limit, scope: message.retryScope || 'incomplete', programScope: message.scope || 'both', versions: selectedVersions, settings: sizeRange})
               : await rpc('autoPlan', {limit, scope: message.scope || 'both', versions: selectedVersions, settings: sizeRange}, progress => web.postMessage({type: 'candidateProgress', data: progress}));
             if (requestedKey !== selectionKey()) throw new Error('Filter während des Ladens geändert. Funktionen neu laden.');
@@ -152,13 +154,13 @@ function register(context, rpc, getCurrentSeed, reportError) {
             web.postMessage({type: 'candidates', data, mode});
           } finally {busy = false;}
         }
-        if (['start', 'startRetry'].includes(message.type)) {
+        if (['start', 'startRetry', 'startMixed'].includes(message.type)) {
           if (busy) throw new Error('Die aktuelle Auswahl wird noch geladen oder reserviert.');
-          const mode = message.type === 'startRetry' ? 'retry' : 'free';
+          const mode = message.type === 'startMixed' ? 'mixed' : message.type === 'startRetry' ? 'retry' : 'free';
           if (loadedVersionKey !== selectionKey() || JSON.stringify(byteRange.parse(message.settings)) !== JSON.stringify(sizeRange) || candidateMode !== mode || !Array.isArray(message.names) || !message.names.length || message.names.some(name => !loadedCandidates.has(name))) throw new Error('Die Auswahl gehört nicht zur geladenen Liste. Bitte zuerst den gewünschten Bereich neu laden.');
           busy = true;
           try {
-            const data = await rpc(mode === 'retry' ? 'autoRetryStart' : 'autoStart', {names: message.names, settings: message.settings, versions: selectedVersions}, progress => web.postMessage({type: 'preparing', data: progress}));
+            const data = await rpc(mode === 'mixed' ? 'autoMixedStart' : mode === 'retry' ? 'autoRetryStart' : 'autoStart', {names: message.names, settings: message.settings, versions: selectedVersions}, progress => web.postMessage({type: 'preparing', data: progress}));
             await choose(data);
             candidateMode = undefined; loadedCandidates = new Set();
             web.postMessage({type: 'started', mode});

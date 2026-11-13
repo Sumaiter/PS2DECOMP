@@ -21,7 +21,7 @@ def read(path):
 
 def origin(folder, data, job, name):
     """Follow only session-local copied history; unknown/editor lineage is closed."""
-    if data.get('purpose') != 'retry-incomplete' or job.get('inputMode') != 'retry':
+    if data.get('purpose') not in ('retry-incomplete', 'unclaimed-and-open') or job.get('inputMode') != 'retry':
         return None
     archives = {}
     for value in data.get('history', []):

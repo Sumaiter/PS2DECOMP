@@ -92,7 +92,7 @@ function automatic(options) {
           <h3><span class="step" aria-hidden="true">1</span>Funktionen auswählen</h3>
           <div class="filter-grid">
             <label>Bereich <select id="scope"><option value="both">Hauptprogramm und Overlays</option><option value="main">Hauptprogramm</option><option value="overlays">Overlays</option></select></label>
-            <label>Funktionen <select id="retryScope"><option value="free">Neue freie Funktionen</option><option value="incomplete">Offene Ergebnisse ohne zurückgestellte</option><option value="all">Offene Ergebnisse inkl. zurückgestellte / Compilerfehler</option></select></label>
+            <label>Funktionen <select id="retryScope"><option value="free">Neue freie Funktionen</option><option value="incomplete">Offene Ergebnisse ohne zurückgestellte</option><option value="all">Offene Ergebnisse inkl. zurückgestellte / Compilerfehler</option><option value="unclaimed-and-open">Freie Funktionen und offene Ergebnisse inkl. zurückgestellte / Compilerfehler</option></select></label>
             <label>Größenempfehlung <select id="sizePreset"><option value="custom">Eigener Bereich</option></select></label>
             <div class="byte-range"><label>Funktionsgröße von (Byte) <input id="minBytes" type="number" min="0" max="32768" step="1" value="${sizeRange.minBytes}"></label><label>bis (Byte) <input id="maxBytes" type="number" min="8" max="32768" step="1" value="${sizeRange.maxBytes}"></label></div>
           </div>
