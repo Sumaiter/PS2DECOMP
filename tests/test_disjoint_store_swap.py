@@ -20,7 +20,13 @@ class StoreSwapTests(unittest.TestCase):
 
     def generate(self, source, rules=None, header=HEADER, bits=32):
         if '#include "common.h"' not in source:
-            source = '#include "common.h"\n' + source
+            # Keep an active first-line profile active when adding the fixture
+            # include; displaced profile comments are intentionally rejected.
+            if source.startswith('/* cflags: ') and '\n' in source:
+                profile, rest = source.split('\n', 1)
+                source = profile + '\n#include "common.h"\n' + rest
+            else:
+                source = '#include "common.h"\n' + source
         return rule.generate(source, rules or self.rules, common_header=header, address_bits=bits)
 
     def canonical(self, source):

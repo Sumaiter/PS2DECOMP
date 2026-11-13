@@ -4,6 +4,18 @@ Existing integration extracted from RAC4 Werkbank 0.7.21. It includes the PAL
 main/core/network mapping, overlay catalogue and aliases, original-byte and
 relocation checks, and the independently gated original compiler profiles.
 
+The private-local rules reviewed in Werkbank 0.7.22 are now integrated. Shared
+source-only rules live in the common engine; this adapter alone supplies the
+native-backed constant-lifetime rule through `additional_search_children`.
+Its lazy gate verifies the complete placement set, PAL reference identity and
+each actual direct-call target before reading the ordering hint. Unknown
+targets, a disagreement in any copy, an incomplete CFG or a constant in the
+call's delay slot rejects the candidate. No original types/values or compiler
+profiles are inferred. See [rule evidence](../SEARCH_RULE_EVIDENCE.md) and
+[PAL metadata](evidence/review20.json); hashes are evidence identities, not
+bundled game data. Native block reordering remains unimplemented because a
+general compiler-call/inline provenance contract is not yet established.
+
 Configure a **prepared RAC4 decompilation repository** with:
 
 ```json

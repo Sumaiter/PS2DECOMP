@@ -53,6 +53,12 @@ Adding an ELF alone does not establish function boundaries, ABI or compiler flag
 
 ## Verification comes first
 
+The bounded [private-local and terminal-load rules](SEARCH_RULE_EVIDENCE.md)
+preserve declared types, effects and compiler flags. Their source-only part is
+shared; native ordering evidence is supplied separately by `RAC4_PAL`. Unknown
+header preprocessing or effects keep the case manual. Real compiler examples
+and meaningful counterexamples accompany the rules.
+
 A search score, including 100, is **not an approved decompilation**. Technical
 checks are followed by independent review of types, ABI, initial values,
 semantics, ownership and function boundaries, plus the game's full build checks.

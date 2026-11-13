@@ -4,6 +4,7 @@ import copy
 import hashlib
 import re
 import sys
+from terminal_deref_type import explicit_primitive_dereference_type
 
 
 def code_only(source):
@@ -32,11 +33,38 @@ class Variants:
         sys.path.insert(0, str(Path(__file__).resolve().parent / 'vendor'))
         from m2c_pycparser import c_ast, c_generator, c_parser
         self.a, self.generator, self.parser = c_ast, c_generator.CGenerator(), c_parser.CParser
-        self.prelude = '\n'.join(line for line in (repository / 'include/common.h').read_text().splitlines()
+        self.header_text = (repository / 'include/common.h').read_text(encoding='utf-8')
+        self.prelude = '\n'.join(line for line in self.header_text.splitlines()
                                  if line.strip().startswith('typedef '))
+
+    def plain_header(self):
+        """Only a complete typedef header, not a guessed preprocessed view.
+
+        An optional ordinary include guard/pragma-once and NULL are harmless.
+        Other macros, conditional definitions, nested includes, declarations or
+        a provider-modified prelude require a proper preprocessor contract.
+        """
+        text=code_only(self.header_text)
+        if '\\\n' in text or '\\\r\n' in text:return False
+        directives=[line.strip() for line in re.findall(r'^\s*#([^\n]*)$',text,re.M)]
+        if directives and directives[0]=='pragma once':directives=directives[1:]
+        if directives and re.fullmatch(r'ifndef\s+[A-Za-z_]\w*',directives[0]):
+            guard=directives[0].split()[1]
+            if len(directives)<3 or directives[1]!='define '+guard or directives[-1]!='endif':return False
+            directives=directives[2:-1]
+        tokens=lambda s:re.findall(r'[A-Za-z_]\w*|\d[\w.]*|\S',s)
+        if any(tokens(line)!=tokens('define NULL ((void *)0)') for line in directives):return False
+        body=re.sub(r'^\s*#.*$','',text,flags=re.M)
+        return tokens(body)==tokens(code_only(self.prelude))
 
     def parse(self, source):
         text = code_only(source)
+        flags = re.findall(r'/\*\s*cflags\b.*?\*/', source, re.S)
+        if flags and (len(flags) != 1 or source.splitlines()[0] != flags[0]
+                      or not re.fullmatch(r'/\* cflags: [^\r\n]* \*/', flags[0])):
+            raise ValueError('Only one canonical first-line compiler-flags comment is supported.')
+        if '\\\n' in source or '\\\r\n' in source:
+            raise ValueError('Preprocessor line splices require manual review.')
         directives = re.findall(r'^\s*#.*$', text, re.M)
         if any(not re.fullmatch(r'\s*#\s*include\s*"common.h"\s*', line) for line in directives):
             raise ValueError('AST-Suche unterstützt hier nur common.h; andere Makros/Includes bleiben Reviewfälle.')
@@ -103,15 +131,32 @@ class Variants:
                 return True
             return (len(names) == 1 and names[0] in typedefs and names[0] not in seen
                     and plain_scalar_type(typedefs[names[0]], seen | {names[0]}))
+        scalar_aliases = {}
+        for definition in [*self.parser().parse(self.prelude).ext, *tree.ext]:
+            if isinstance(definition, a.Typedef):
+                scalar_aliases[definition.name] = definition if definition.name not in scalar_aliases else None
+        builtin_scalars = {'char', 'signed char', 'unsigned char', 'short', 'short int',
+                           'signed short', 'signed short int', 'unsigned short', 'unsigned short int',
+                           'int', 'signed', 'signed int', 'unsigned', 'unsigned int',
+                           'long', 'long int', 'signed long', 'signed long int', 'unsigned long', 'unsigned long int',
+                           'long long', 'long long int', 'signed long long', 'signed long long int',
+                           'unsigned long long', 'unsigned long long int', '_Bool', 'float', 'double', 'long double'}
         def canonical_scalar(node, seen=frozenset()):
-            if (not isinstance(node, a.TypeDecl) or node.quals
-                    or not isinstance(node.type, a.IdentifierType)):
+            # Preserve typedef-level attributes: a name such as "scalar" says
+            # nothing about precision, qualifiers or an extension's ABI mode.
+            if any(getattr(node, field, None) for field in ('quals', 'align', 'gcc_attributes', 'asmlabel', 'funcspec')):
+                return None
+            if isinstance(node, a.Typedef):
+                return canonical_scalar(node.type, seen)
+            if not isinstance(node, a.TypeDecl) or not isinstance(node.type, a.IdentifierType):
                 return None
             names = node.type.names
-            if len(names) == 1 and names[0] in typedefs and names[0] not in seen:
-                return canonical_scalar(typedefs[names[0]], seen | {names[0]})
+            if len(names) == 1 and names[0] in scalar_aliases:
+                name = names[0]
+                definition = scalar_aliases[name]
+                return canonical_scalar(definition, seen | {name}) if definition is not None and name not in seen else None
             spelling = ' '.join(names)
-            return spelling if spelling in integral_types | {'float', 'double', 'long double'} else None
+            return spelling if spelling in builtin_scalars else None
         scalar_types = {}
         for declaration in declarations:
             scalar_types[declaration.name] = canonical_scalar(declaration.type) if declaration.name not in scalar_types else None
@@ -126,6 +171,12 @@ class Variants:
                 return expr.type if expr.type in integral_types | {'float', 'double', 'long double'} else None
             if isinstance(expr, a.Cast):
                 return canonical_scalar(expr.to_type.type)
+            if isinstance(expr, a.UnaryOp) and expr.op == '*':
+                if not self.plain_header():
+                    return None
+                return explicit_primitive_dereference_type(
+                    expr, a, canonical_scalar,
+                    source_typedef_names={n.name for n in tree.ext if isinstance(n, a.Typedef)})
             if isinstance(expr, a.FuncCall) and isinstance(expr.name, a.ID) and expr.name.name not in types:
                 return scalar_calls.get(expr.name.name)
             if isinstance(expr, a.UnaryOp) and expr.op in ('+', '-'):
@@ -140,7 +191,9 @@ class Variants:
             # fall-through code, else body or extra side effects to relocate.
             if (parent is not fn.body or attr != 'block_items' or index != len(parent.block_items) - 2
                     or not isinstance(node, a.If) or node.iffalse is not None
-                    or any(isinstance(child, a.Typedef) for *_, child in nodes)):
+                    or any(isinstance(child, a.Typedef)
+                           or isinstance(child, a.ID) and child.name.startswith('__')
+                           for *_, child in nodes)):
                 return None
             left = node.iftrue
             if isinstance(left, a.Compound):

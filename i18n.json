@@ -1,4 +1,6 @@
 {
+  "Nur ein kanonischer Compilerflags-Kommentar in der ersten Zeile wird unterstützt.": "Only one canonical first-line compiler-flags comment is supported.",
+  "Präprozessor-Zeilenfortsetzungen erfordern eine manuelle Prüfung.": "Preprocessor line splices require manual review.",
   "PS2DECOMP Werkbank": "PS2DECOMP Workbench",
   "PS2DECOMP Automatische Suche": "PS2DECOMP Automatic Search",
   "LOKAL · OHNE KI": "LOCAL · NO AI",
