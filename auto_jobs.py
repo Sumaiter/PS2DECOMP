@@ -1026,7 +1026,8 @@ class Manager:
                 report('final', i)
             data = dict(id=session, owner=owner, created=now(), status='queued', options=settings, names=names,
                         skipped=[], pins=pins, runner=None, review=str(folder / 'REVIEW.md'), history=history,
-                        purpose='retry-incomplete', retrySources={n: e['data']['id'] for n, e in entries.items()})
+                        purpose='retry-incomplete', version=self.engine.version,
+                        retrySources={n: e['data']['id'] for n, e in entries.items()})
             write(folder / 'session.json', data); self.export(session)
             return self.status(session)
         except BaseException:
