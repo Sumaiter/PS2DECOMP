@@ -26,6 +26,27 @@ test('new parser diagnostics preserve English and German coverage', () => {
   assert.equal(translate('Präprozessor-Zeilenfortsetzungen erfordern eine manuelle Prüfung.','en'),
     'Preprocessor line splices require manual review.');
 });
+test('RAC4 coordination diagnostics cover both languages and preserve selection details', () => {
+  const details='func_00100000 C:/synthetic project/reservation-comment-proposal.txt';
+  const messages=[
+    ['RAC4 coordination.workflow must be public-first or local-first.',
+      'RAC4 coordination.workflow muss public-first oder local-first sein.'],
+    ['RAC4: Unknown selected functions:', 'RAC4: Unbekannte Funktionen in der Auswahl:'],
+    ['RAC4: Publicly reserved, integrated or unresolved:',
+      'RAC4: Öffentlich reserviert, bereits integriert oder ungeklärt:'],
+    ['RAC4 PR: Selected results need an own public reservation in issue #112. No comment was posted. Local proposal:',
+      'RAC4 PR: Ausgewählte Ergebnisse benötigen eine eigene öffentliche Reservierung in Issue #112. Es wurde kein Kommentar veröffentlicht. Lokaler Entwurf:'],
+    ['RAC4: At most 500 unfinished functions may be publicly reserved across all scopes. Select fewer results or release finished/dropped reservations first.',
+      'RAC4: Über alle Bereiche hinweg dürfen höchstens 500 nicht abgeschlossene Funktionen öffentlich reserviert sein. Weniger Ergebnisse auswählen oder zuerst Reservierungen für abgeschlossene oder aufgegebene Fälle freigeben.'],
+    ['RAC4 requires its native coordination gate.', 'RAC4 erfordert seine native Koordinationsprüfung.'],
+    ['Cannot establish the current contributor identity.',
+      'Die Identität des aktuellen Mitwirkenden kann nicht festgestellt werden.'],
+  ];
+  for(const [en,de] of messages) {
+    assert.equal(translate(en+' '+details,'de-DE'),de+' '+details);
+    assert.equal(translate(de+' '+details,'en'),en+' '+details);
+  }
+});
 test('quick-pick object identity and callback arguments stay intact', () => {
   const api={env:{language:'en'},window:{createQuickPick:()=>({})}};
   const picker=host.localizedVscode(api).window.createQuickPick();

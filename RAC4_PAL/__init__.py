@@ -40,7 +40,41 @@ def candidate_coordination_state(engine):
     return _coordination_state(engine, discovery=True)
 
 
-def _coordination_state(engine, *, discovery):
+def workflow(engine):
+    value = engine.config.get('coordination', {}).get('workflow', 'public-first')
+    if value not in ('public-first', 'local-first'):
+        raise ValueError('RAC4 coordination.workflow must be public-first or local-first.')
+    return value
+
+
+def assert_publication_ready(engine, names):
+    """Require a fresh public scope for selected results, even in local-first."""
+    names = tuple(names or ())
+    if not names:
+        return
+    unknown = [name for name in names if not isinstance(name, str) or name not in engine.places]
+    if unknown:
+        raise ValueError('RAC4: Unknown selected functions: ' + ', '.join(map(str, unknown)))
+    held, own = _coordination_state(engine, discovery=False, publication=True, selected=names)
+    conflicts = set(names) & held
+    if conflicts:
+        raise ValueError('RAC4: Publicly reserved, integrated or unresolved: ' + ', '.join(sorted(conflicts)))
+    outside = set(names) - own
+    if outside:
+        folder = engine.root / 'build/coordination'
+        folder.mkdir(parents=True, exist_ok=True)
+        proposal = folder / 'reservation-comment-proposal.txt'
+        proposal.write_text('Version: PAL (SCES_532.85)\nStatus: active\n'
+                            'Selected PR results; add only after checking the current contributor comment.\n\n'
+                            + ''.join('- ' + name + '\n' for name in sorted(outside)), encoding='utf-8', newline='\n')
+        raise ValueError('RAC4 PR: Selected results need an own public reservation in issue #112. '
+                         'No comment was posted. Local proposal: ' + str(proposal))
+
+
+def _coordination_state(engine, *, discovery, publication=False, selected=()):
+    if engine.config.get('coordination', {}).get('mode') != 'native':
+        raise ValueError('RAC4 requires its native coordination gate.')
+    selected_workflow = workflow(engine)
     from . import public_reservations as service, upstream_matches
     from auto_jobs import PlacementIndex, public_aliases
     snapshot = service.fetch_reservations(engine.root)
@@ -48,10 +82,19 @@ def _coordination_state(engine, *, discovery):
     login = account.get('login', '').casefold()
     if not login:
         raise ValueError('Cannot establish the current contributor identity.')
+    if publication:
+        reserved = {(e['version'], e['name']) for e in snapshot['entries']
+                    if e['owner'].casefold() == login and e['status'] != 'released'}
+        reserved.update((engine.version, name) for name in selected)
+        if len(reserved) > 500:
+            raise ValueError('RAC4: At most 500 unfinished functions may be publicly reserved across all scopes. '
+                             'Select fewer results or release finished/dropped reservations first.')
     own = {e['name'] for e in snapshot['entries'] if e['owner'].casefold() == login
            and e['version'] == engine.version and e['status'] in ('active', 'verified')}
+    # Exempt explicit own entries individually. A valid reservation for a name
+    # must not hide an ambiguous entry for that same name in another comment.
     foreign = dict(snapshot, entries=[e for e in snapshot['entries'] if e['owner'].casefold() != login
-                                    or e['name'] not in own or e['version'] != engine.version])
+                                    or e['version'] != engine.version or e['status'] not in ('active', 'verified')])
     aliases = public_aliases(engine)
     held = set(service.blocked_for_version(foreign, engine.version, aliases=aliases))
     if discovery:
@@ -64,6 +107,7 @@ def _coordination_state(engine, *, discovery):
     upstream = upstream_matches.fetch_matches(engine.version)
     index = PlacementIndex(engine, ({str(i): {'places': r.places} for i, r in enumerate(upstream.matches)}, set(), {}, {}))
     held |= {n for n in engine.places if n in upstream.names or index.overlaps(engine.all_places(n), n)}
-    # The read-only list can include unreserved functions. Session creation,
-    # resume and manual compilation still require the current public scope.
-    return held, None if discovery else own
+    # Local-first is an explicitly selected workspace policy. Public scope is
+    # still mandatory for the independently reviewed results selected for a PR.
+    local = selected_workflow == 'local-first' and not publication
+    return held, None if discovery or local else own
