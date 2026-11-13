@@ -81,3 +81,73 @@ automatically changed to RAC4 profiles. NTSC-U remains unavailable.
 
 Submit RAC3 PAL-specific improvements as PRs in this folder. General rules belong
 in shared code only after evidence establishes applicability across games.
+
+### Native-evidenced search recovery
+
+The adapter's `additional_search_children` hook offers a bounded set of extra
+search roots. They use the normal queue, negative history, claims, compiler
+profiles, time limit and attempt limit. A root is not a semantic approval.
+
+- `quadword_zero.py` recovers the project's existing `vu0.h` `qzero` helper
+  only for complete 16-byte zero stores corroborated at every placement. It
+  checks the actual helper, typedef/header context, fixed SN source profile,
+  native pointer provenance and every zero site. It does not introduce new
+  assembly. A separate, narrowly recognized whole-function LQ/clear/SQ dataflow
+  captures the input before either output clear, retaining possible aliases.
+  Other store shapes, 64-bit values, nonzero values, changed macros, unsupported
+  profiles and unclear pointer origins stay outside this rule.
+- `symbolic_memory.py` replaces existing typed literal-pointer accesses with
+  named level globals or proven GP slots. The access type, runtime value
+  expression and statement order remain unchanged. Every placement must prove
+  the corresponding native instruction and allocated data/BSS range. Unknown
+  register definitions, escaped pointers, overlapping objects, conflicting
+  aliases and hidden preprocessing contexts reject the candidate. Object
+  extent, allocation ownership and initial runtime values are not inferred.
+- `extern_sizes.py` offers an early, permitted `.extern` size hint for an
+  unchanged scalar `f32` read under the owning file's `@ps2as` profile. Its size
+  must come from a hash-bound immutable object and a compatible pinned search
+  record; every native placement must prove the same GP access. It never
+  changes a type, compiler flag or initial value. Changed headers, compilers,
+  source context or checker identity require fresh compatible evidence. Older
+  sessions are not silently relabeled after a checker update.
+
+The hook can compose independently proven zero-store recovery and scalar size
+metadata from the same original source. This happens before the helper include
+and metadata leave the shared AST parser's deliberately limited input subset.
+The parser and search budgets are not relaxed.
+
+For named `D_LNN_XXXXXXXX` globals in other levels, `check_worker.py` can now
+reuse the project's unchanged `level_symbols.derive` policy on one supported
+HI16/LO16 group. It requires the actual named primary address, unchanged
+instruction/register fields, complete hash-checked catalogue placements, GP
+evidence and valid data accesses. Conflicting targets, defined symbols,
+unsupported formats and incomplete groups remain unresolved. Other instruction
+bytes, literal pools and all strict placement checks still have to pass.
+
+Synthetic positive and negative tests live in `RAC3_PAL/tests`; the regular
+`python -m unittest discover -s tests` command includes them. The local native
+compiler observations and limitations are summarized in
+[`evidence/review604.json`](evidence/review604.json). No game bytes, extracted
+objects or proprietary compiler tools are included in those fixtures.
+
+### Complete native Windows builds
+
+`build_native.py` runs the prepared game's complete Python build pipeline with
+its native Windows toolchain, including derived level symbols and data layout.
+For example:
+
+```text
+python RAC3_PAL/build_native.py --repo C:/projects/rac3-decomp --target level_31 -j 8
+```
+
+When a project's `ld -r` object list exceeds the Windows process argument
+limit, `link_response.py` passes that ordered list in an implicit GNU `INPUT`
+script. The old SN linker does not accept modern argv-style `@response` files.
+The implicit input script preserves the default layout, output options and
+object order. Other linker forms and compiler commands are unchanged. Native
+direct-link versus input-script comparison, including paths with spaces,
+produced identical object bytes before complete level builds were checked.
+
+These helpers neither supply the game/toolchain nor promote a search result.
+Independent type, ABI, ownership, boundary, relocation and full-build review
+is still required before a game contribution.
