@@ -1,0 +1,319 @@
+{
+  "schemaVersion": 1,
+  "scope": "RAC3 PAL read-only native divider padding versus existing canonical table; summary only, no game bytes, objects, private paths or proprietary tools",
+  "baseline": "02ca945",
+  "observation": {
+    "name": "func_L02_003107D8",
+    "status": "missing-entry",
+    "nativeCounts": [
+      2
+    ],
+    "configuredCounts": null,
+    "table": "config/levels/divs_nops.txt",
+    "tableSha256": "16a183f5c1b21662e69305e01cc3116b1bb02fe1d818bbaf2d0bafaccd2eda19",
+    "placements": [
+      {
+        "level": 2,
+        "bodySha256": "4756e50e09631a495b8cdc0e9f36bfd253cb2c04a3cba242daed85aedad1521c",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 4,
+        "bodySha256": "4d3a72f2753a3a39d1f1557e61b7bf9a6ddd5258961bbbaf9f00e7d982556800",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 5,
+        "bodySha256": "f4b2bccdd444048dc725765062d068870018244d431076f033bb32a1730184a5",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 9,
+        "bodySha256": "31b3449c06c2d081f18ffaa66381553c5144d1d0c8fb704a7587f9966a17042e",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 12,
+        "bodySha256": "953144450da00cd66b0e2422cbb5f381916ea43884c5bef3dc511e9193a1306b",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 14,
+        "bodySha256": "2b76076c6286433323ae0511cf9292488fc451a128a608dbdeddf261a1ee9920",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 17,
+        "bodySha256": "5bc8ee4bce3fd2b30293ffda8928671183f4f75c5b901ff9aa2b38b31629a6bc",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 18,
+        "bodySha256": "ed848913c263767770315b4035ff763436ad4e34b660971195f09807ab0597bd",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 19,
+        "bodySha256": "aac5563b8772b857e7ea4809c9aeee7712ff17bffb215e34086fa3f7836f1a85",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 20,
+        "bodySha256": "4a92878e7bd4c56862197149399bbadfa4632dfa9db6cc1bb15ac19e7cd27cc2",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 22,
+        "bodySha256": "d725d849ad0e69f45b6d213231fc546ebbc0a444687228a80906e28803a45fa3",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 29,
+        "bodySha256": "8d06ac1df4bc08e064e9d3b1671cee576a18c63e7b27b8c447786bc47f970e34",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 40,
+        "bodySha256": "2087b5f9a8c4f9771d0fedabaa225339a116176d34bd4cf3bf50f4b78242f868",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 41,
+        "bodySha256": "7b3132586f5b5cb9a13ad66396fa5851d529aaa489f8ac1d90cfa588373f38ea",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 42,
+        "bodySha256": "68d341b8826824b6b8e1fc999888ae850bc4c35517e760e33840af4b6c532829",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 43,
+        "bodySha256": "ef1935c1708cb0827951a5efbd64c542a1695fbb72759d4d25eeee0514aa95fd",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 45,
+        "bodySha256": "5ceb8161527b04997a75aea7d9784dd99f42ad76bd42f347496ecb567828eb2c",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 47,
+        "bodySha256": "d7a35a8de53ac6a43cfc67a8d0b17e16bb6d4b964869e09d8261ed06c2b1540d",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 50,
+        "bodySha256": "38ef323a0d840d2ced74423e7a7affbc4ff5aa59a0b1b2110788d7ee3916a3bf",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 51,
+        "bodySha256": "ff78e7fb7bfcab4820712ad869f73ef722249c06df8eb2409bda3933e75b605a",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 52,
+        "bodySha256": "5ca09ca9425e94c3efc1c2f38d65cc509e87b98bbf7459a1c7f34f4f057992a6",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      },
+      {
+        "level": 53,
+        "bodySha256": "bc504b770d995b7b666988e667cb15cbe95ff00991b0069ee392c093924126dc",
+        "operations": [
+          {
+            "offset": 48,
+            "mnemonic": "div.s",
+            "count": 2,
+            "excludedDelayNopOffset": null
+          }
+        ]
+      }
+    ]
+  },
+  "actualCompilerCounterexample": {
+    "sourceSha256": "89cf544c4dfd939352184e8c848e5a436090e05a01b94bf9149309dca8b471eb",
+    "objectSha256": "28909aefc78e0999066409dd213c1b5ff92e5700d314a565b790132765e44c8e",
+    "compiledBytes": 88,
+    "nativeBytes": 96,
+    "differentWords": 13,
+    "technicalExact": false,
+    "limitation": "The unchanged object remains byte-inexact, with ordinary VU/restore ordering differences. The diagnostic neither patches it nor claims the missing entry explains every difference."
+  },
+  "policy": "Existing tools.asm_filter.divs_table/divs_pass and config/levels/divs_nops.txt; no change to that policy or its inputs.",
+  "syntheticCounterexamples": [
+    "Normal/likely integer and COP1/COP2 branch, call, indirect-call and return delay-slot NOPs are excluded",
+    "Standalone NOPs after a delay slot remain counted; DIV.S/SQRT.S operation order is preserved",
+    "Unsupported SQRT.S unused operand fields and malformed native windows remain unavailable",
+    "Missing table, malformed/duplicate rows, negative/nonnumeric counts, count mismatch and operation-count mismatch",
+    "Missing/changed canonical references, duplicate or incomplete placements and disagreement between native copies",
+    "No-primary-operation applicability prefilter does not assert anything about uninspected copies",
+    "Integration preserves exact m2c input, timeout, source/configuration and Linux/Windows creation flags"
+  ],
+  "validation": {
+    "focusedTestsPassed": 10,
+    "regularPythonTestsRun": 398,
+    "regularPythonTestsPassed": 390,
+    "regularPythonOptionalSkips": 8,
+    "javascriptTestsPassed": 15,
+    "offlineVsixValidated": true,
+    "actualCanonicalPlacements": 22,
+    "newCompilerInvocations": 0,
+    "functionDecompilations": 0,
+    "configurationWrites": 0,
+    "functionApprovals": 0
+  },
+  "limitations": [
+    "This is diagnostic evidence for new rough-decompile results, with an optional read-only CLI; it is not a source transformation or search rejection.",
+    "An absent or mismatched row requires separate game-project review. Original source, types, ABI, runtime values, ownership and all remaining instruction differences stay unapproved.",
+    "No NOPs, assembly, source, configuration, compiler profile, attempts/time budget, saved drafts or session state are changed.",
+    "The existing project filter and complete retail-matching builds remain the authority before any game-source promotion."
+  ]
+}
