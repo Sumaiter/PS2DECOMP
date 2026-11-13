@@ -84,6 +84,30 @@ in shared code only after evidence establishes applicability across games.
 
 ### Native-evidenced search recovery
 
+`cop1_branches.py` and `branch_operands.py` give new rough listings explicit
+local labels for supported raw COP1 and nonlink integer branches. Rabbitizer
+can print their operand as a relative expression that m2c cannot parse; the
+adapter now takes the mnemonic, register operands and signed PC-relative
+target from the original word. COP1 false/true/likely forms and the integer
+conditions supported by the existing CFG screen retain their condition,
+register order, likely behavior and delay instruction. Every native word and
+the subsequent EE register alias normalization remain unchanged.
+
+The entire function must pass the existing CFG screen, and each target must
+be inside its complete catalogue window. Unsupported condition-code/register
+fields, link branches, external targets and incomplete/control delay slots
+receive no recovered labels. Other branches and calls retain their existing
+handling. Saved drafts, types, ABI, compiler profiles and budgets are unchanged.
+
+Three immutable native input/context pairs originally failed on relative
+operands. Changing only the evidenced operands made each same m2c command
+emit the function, including normal, likely and mixed integer/COP1 examples.
+Nineteen native placements were independently checked, and two existing real
+compiler objects corroborate normal and likely COP1 encodings. VU/type
+placeholders and the objects' other byte differences remain. Summary evidence
+and limitations are in
+[`evidence/branch_operand_review20261113.json`](evidence/branch_operand_review20261113.json).
+
 The adapter's `additional_search_children` hook offers a bounded set of extra
 search roots. They use the normal queue, negative history, claims, compiler
 profiles, time limit and attempt limit. A root is not a semantic approval.
