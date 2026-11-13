@@ -296,10 +296,13 @@ class Engine(ManualEngine):
         assembly = self.asm(name)
         (directory / 'original.s').write_text(assembly, encoding='utf-8', newline='\n')
         assembly, decoded = rough.normalize_raw_cop1(assembly)
+        from . import gp_identity
+        assembly, gp_identities = gp_identity.normalize(self, name, assembly)
         gp = self.validated_gp(self.place(name)[0]) if re.search(r'\$gp\b', assembly) else 0
         if re.search(r'\*/\s*\w+\s+\$gp\s*,', assembly):
             raise ValueError('Die Funktion verändert GP; automatische Auflösung bleibt offen.')
-        resolved = []
+        resolved = [symbol for _, symbol in sorted(
+            (offset, identity['symbol']) for identity in gp_identities for offset in identity['offsets'])]
         def memory(m):
             symbol = 'D_%08X' % ((gp + int(m[2], 0)) & 0xffffffff)
             # Shared RAC3 code names GP slots, not one multiplayer address.
@@ -346,7 +349,7 @@ class Engine(ManualEngine):
             forwarded = dict(findings=[], warnings=[str(exc)])
         result = dict(name=name, ok=ok, source=source, warnings=[*skipped, 'RAC3-Grobentwurf; Typen, ABI, Datenbesitz und Funktionsgrenzen prüfen.'],
                       log=run.stderr, directory=str(directory), command=command, adapterVersion=rough.ADAPTER_VERSION,
-                      contextDeclarations=declarations, abiProblems=abi_problems, gpResolutions=resolved, instructionDecodings=decoded,
+                      contextDeclarations=declarations, abiProblems=abi_problems, gpResolutions=resolved, gpIdentities=gp_identities, instructionDecodings=decoded,
                       registerAliases=register_aliases, unresolvedMarkers=markers, forwardedArguments=forwarded)
         (directory / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8', newline='\n')
         return result
