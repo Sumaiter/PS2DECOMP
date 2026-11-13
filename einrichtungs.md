@@ -331,9 +331,11 @@ rules inside that folder. Existing `RAC3_PAL` and `RAC4_PAL` provide concrete
 integrations; their exact repository layouts are prerequisites, not templates
 whose values should be blindly reused.
 
-`RAC3_PAL` additionally supports an explicitly authorized
-[`coordination.workflow: "local-first"`](RAC3_PAL/README.md#explicit-local-matching-workflow)
-workflow. Free functions can be claimed and compiled locally before public
+`RAC3_PAL` and `RAC4_PAL` additionally support an explicitly authorized
+`coordination.workflow: "local-first"` workflow; see the
+[RAC3 guide](RAC3_PAL/README.md#explicit-local-matching-workflow) and
+[RAC4 guide](RAC4_PAL/README.md#explicit-local-matching-workflow).
+Free functions can be claimed and compiled locally before public
 reservation. Fresh foreign scopes and integrated functions still block work.
 Only independently reviewed results selected for a PR are reserved publicly,
 after checking the ticket again. The default remains `public-first`; other

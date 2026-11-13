@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 import auto_jobs
 import project_coordination
-from RAC4_PAL import public_reservations, upstream_matches
+from RAC4_PAL import assert_publication_ready, public_reservations, upstream_matches
 
 
 class RAC4CandidateCoordinationTests(unittest.TestCase):
@@ -105,19 +105,108 @@ class RAC4CandidateCoordinationTests(unittest.TestCase):
         self.assertNotIn(self.own, self.candidates())
 
     def test_missing_reservations_or_upstream_coverage_fail_closed(self):
-        for module, name in ((public_reservations, 'fetch_reservations'),
-                             (upstream_matches, 'fetch_matches')):
-            with self.subTest(service=name), patch.object(module, name,
-                    side_effect=ValueError('Fresh coordination unavailable')):
-                with self.assertRaisesRegex(ValueError, 'Fresh coordination unavailable'):
-                    self.candidates()
-                with self.assertRaisesRegex(ValueError, 'Fresh coordination unavailable'):
-                    project_coordination.assert_free(self.engine, [self.own])
+        for mode in ('public-first', 'local-first'):
+            self.engine.config['coordination']['workflow'] = mode
+            for module, name in ((public_reservations, 'fetch_reservations'),
+                                 (upstream_matches, 'fetch_matches')):
+                with self.subTest(workflow=mode, service=name), patch.object(module, name,
+                        side_effect=ValueError('Fresh coordination unavailable')):
+                    with self.assertRaisesRegex(ValueError, 'Fresh coordination unavailable'):
+                        self.candidates()
+                    with self.assertRaisesRegex(ValueError, 'Fresh coordination unavailable'):
+                        project_coordination.assert_free(self.engine, [self.own])
+                    with self.assertRaisesRegex(ValueError, 'Fresh coordination unavailable'):
+                        assert_publication_ready(self.engine, [self.own])
 
     def test_discovery_does_not_bypass_native_mode(self):
         self.engine.config['coordination']['mode'] = 'local'
         with self.assertRaisesRegex(ValueError, 'native coordination gate'):
             self.candidates()
+
+    def test_explicit_local_first_allows_free_functions_without_a_public_scope(self):
+        self.engine.config['coordination']['workflow'] = 'local-first'
+        self.entries = [entry for entry in self.entries if entry['owner'] != 'CurrentContributor']
+        project_coordination.assert_free(self.engine, [self.free, self.own])
+        self.assertFalse((self.root / 'build').exists())
+        for name in (self.foreign, self.overlap, self.integrated, self.integrated_overlap,
+                     self.clone, self.ambiguous, self.unknown_region):
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                project_coordination.assert_free(self.engine, [name])
+
+    def test_local_first_start_rechecks_new_foreign_claims(self):
+        self.engine.config['coordination']['workflow'] = 'local-first'
+        self.assertIn(self.free, self.candidates())
+        self.entries.append(self.reservation(self.free))
+        with self.assertRaises(ValueError):
+            project_coordination.assert_free(self.engine, [self.free])
+
+    def test_local_first_publication_still_requires_own_scope_and_rechecks_conflicts(self):
+        self.engine.config['coordination']['workflow'] = 'local-first'
+        project_coordination.assert_free(self.engine, [self.free])
+        with self.assertRaisesRegex(ValueError, 'own public reservation'):
+            assert_publication_ready(self.engine, iter([self.free]))
+        proposal = self.root / 'build/coordination/reservation-comment-proposal.txt'
+        self.assertIn(self.free, proposal.read_text(encoding='utf-8'))
+        self.entries.append(self.reservation(self.free, owner='CurrentContributor'))
+        assert_publication_ready(self.engine, iter([self.free]))
+        self.entries.append(self.reservation(self.free))
+        with self.assertRaises(ValueError):
+            assert_publication_ready(self.engine, iter([self.free]))
+
+    def test_unknown_workflow_and_function_fail_closed_before_publication(self):
+        for mode in ('local-first', 'public-first'):
+            self.engine.config['coordination']['workflow'] = mode
+            with self.assertRaisesRegex(ValueError, 'Unknown selected functions'):
+                assert_publication_ready(self.engine, iter(['func_00DEAD00']))
+        self.engine.config['coordination']['workflow'] = 'typo'
+        for check in (lambda: self.candidates(),
+                      lambda: project_coordination.assert_free(self.engine, [self.free]),
+                      lambda: assert_publication_ready(self.engine, [self.own])):
+            with self.assertRaisesRegex(ValueError, 'coordination.workflow'):
+                check()
+
+    def test_publication_capacity_includes_other_versions_and_existing_scopes(self):
+        self.engine.config['coordination']['workflow'] = 'local-first'
+        self.entries.extend(self.reservation('func_%08X' % (0x300000 + i * 8),
+                            owner='CurrentContributor', version='us') for i in range(498))
+        with self.assertRaisesRegex(ValueError, 'At most 500 unfinished functions'):
+            assert_publication_ready(self.engine, [self.free])
+        self.assertFalse((self.root / 'build').exists())
+
+    def test_local_first_manual_and_queue_claims_keep_the_same_lifecycle(self):
+        from project_claims import ClaimAPI
+        from project_engine import Engine
+        from tests.test_project_engine import ProjectTests
+        fixture = ProjectTests(methodName='runTest')
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        engine = Engine(fixture.root)
+        engine.version = 'pal'
+        engine.config.update(adapter='RAC4_PAL', coordination=dict(mode='native', workflow='local-first'))
+        manager = auto_jobs.Manager(fixture.root)
+        manager._engine = engine
+        self.entries = []
+        self.matches.names.clear()
+        self.matches.matches.clear()
+        manual = engine.dispatch(dict(op='compare', name=fixture.name, source=fixture.source()))
+        self.assertTrue(manual['byteMatch'], manual['log'])
+        claims = ClaimAPI(fixture.root)
+        self.assertIsNone(claims.holder(fixture.name))
+        session = manager.create([fixture.name], dict(workers=1, maxAttempts=2, seconds=15),
+                                 seeds={fixture.name: fixture.source()})
+        self.assertEqual(claims.holder(fixture.name), session['owner'])
+        with self.assertRaises(ValueError):
+            engine.dispatch(dict(op='compare', name=fixture.name, source=fixture.source()))
+        with patch('auto_jobs.AutoEngine', return_value=engine):
+            auto_jobs.search_job(manager, session['id'], fixture.name)
+        job = auto_jobs.read(manager.folder(session['id']) / 'jobs' / fixture.name / 'job.json')
+        self.assertEqual(job['status'], 'review_ready', job)
+        self.assertTrue(job['best']['technicalMatch'])
+        self.assertEqual(claims.holder(fixture.name), session['owner'])
+        manager.handoff(session['id'], fixture.name)
+        self.assertIsNone(claims.holder(fixture.name))
+        self.assertNotIn(fixture.name, {row['name'] for row in manager.retry_plan(scope='all')})
+        self.assertFalse((fixture.root / 'build/coordination/reservation-comment-proposal.txt').exists())
 
 
 if __name__ == '__main__':
