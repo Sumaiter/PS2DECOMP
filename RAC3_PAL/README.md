@@ -59,7 +59,9 @@ can configure this alternative in their game workspace's `ps2decomp.json`:
    existing authorized comment; do not reserve the whole search queue.
 5. `rac3_coordination.assert_publication_ready(engine, selected_names)` performs
    that fresh final check and requires public ownership of every selected source
-   unit, even with `local-first`. Missing ownership writes a local scope proposal
+   unit, even with `local-first`. Every selected function must belong to the
+   current catalogue; iterators receive the same complete checks as lists.
+   Missing ownership writes a local scope proposal
    and rejects publication. It never posts a comment. After the authorized
    reservation is published, run this check again, then complete independent
    byte/relocation/type/ABI/semantic review and the game's required full builds.

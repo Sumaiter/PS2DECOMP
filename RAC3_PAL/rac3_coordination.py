@@ -126,8 +126,14 @@ def blocked(engine, names=None, owner=None, progress=None, state=None, planning=
 
 
 def assert_free(engine, names, owner=None, *, publication=False):
+    # Inspect the same complete selection in every validation pass. A one-shot
+    # iterator must not be consumed by the conflict check before ownership.
+    names = tuple(names or ())
     if not names:
         return
+    unknown = [n for n in names if not isinstance(n, str) or n not in engine.places]
+    if unknown:
+        raise ValueError('RAC3: Unbekannte Funktionen in der Auswahl: ' + ', '.join(map(str, unknown)))
     selected_workflow = workflow(engine)
     state = snapshot(engine)
     # Include unselected functions when propagating physical overlaps.

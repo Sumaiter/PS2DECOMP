@@ -135,6 +135,34 @@ class CandidateCoordinationTests(unittest.TestCase):
     def local_first(self):
         self.engine.config['coordination']['workflow'] = 'local-first'
 
+    def test_unknown_selection_fails_closed_before_coordination_access(self):
+        unknown = 'func_00DEAD00'
+        # Even an own comment naming an obsolete/unknown function is not
+        # evidence that it belongs to the current game's catalogue.
+        self.state['mine'] = [({unknown, self.free}, {self.engine.owners[self.free]})]
+        for workflow in ('public-first', 'local-first'):
+            self.engine.config['coordination']['workflow'] = workflow
+            for check in (rac3_coordination.assert_free, rac3_coordination.assert_publication_ready):
+                with self.subTest(workflow=workflow, check=check.__name__), self.assertRaises(ValueError) as rejected:
+                    check(self.engine, [self.free, unknown])
+                from presentation_language import markdown
+                english = markdown(str(rejected.exception), 'en')
+                self.assertIn('Unknown functions in the selection:', english)
+                self.assertIn(unknown, english)
+                self.assertEqual(markdown(english, 'de'), str(rejected.exception))
+        self.snapshot.assert_not_called()
+        self.assertFalse((self.root / 'build/coordination').exists())
+
+    def test_publication_iterator_cannot_skip_missing_ownership(self):
+        self.local_first()
+        with self.assertRaisesRegex(ValueError, 'RAC3 PR:'):
+            rac3_coordination.assert_publication_ready(self.engine, iter([self.free]))
+        self.state['mine'] = [(set(), {self.engine.owners[self.free]})]
+        rac3_coordination.assert_publication_ready(self.engine, iter([self.free]))
+        self.state['other'].append((set(), {self.engine.owners[self.free]}))
+        with self.assertRaises(ValueError):
+            rac3_coordination.assert_publication_ready(self.engine, iter([self.free]))
+
     def test_local_first_allows_free_functions_without_own_public_scope(self):
         self.local_first()
         expected = {self.foreign, self.overlap, self.integrated}
