@@ -82,6 +82,41 @@ automatically changed to RAC4 profiles. NTSC-U remains unavailable.
 Submit RAC3 PAL-specific improvements as PRs in this folder. General rules belong
 in shared code only after evidence establishes applicability across games.
 
+### Incoming registers omitted by rough context
+
+`decompile` adds structured `contextInputs` evidence and English/German warnings
+when native entry prefixes read GPR inputs under a zero-parameter declaration,
+or FP inputs under a primitive declaration with no floating-value parameters.
+This is a deliberately narrow diagnostic. It does not map arbitrary C types to
+ABI slots, alter signatures, append arguments, omit declarations or change the
+existing `abiProblems` gate, candidate sources, compiler profiles or budgets.
+
+Positive findings require every canonical copy, freshly hash-checked ELF bytes,
+a complete local CFG and eligible incoming direct-boundary evidence. Reads and
+unchanged register copies are followed only through a small decoded prefix.
+Branches, returns, indirect calls and unsupported instructions end the scan.
+A direct call's delay slot is executed before checking incoming-register
+forwarding, bounded to two calls. There is no propagation after a call or through
+memory spills/reloads. Unknown callees, clobbers, changed references, missing
+copies and ambiguous boundaries do not supply positive evidence.
+
+The primary-prefix applicability filter avoids checking every reference for an
+unaffected declaration; `primaryOnlySkipped` explicitly lists those cases.
+Absence of findings does not validate any uninspected copy or establish an ABI.
+GPR reads beyond the zero-arity case and declarations with floating formals,
+varargs or custom types remain outside this diagnostic. Incoming direct-edge
+checks do not exclude all indirect entries or fallthrough. Findings require
+manual context review and never approve data extents, initial values or types.
+
+The read-only native replay found two zero-arity helpers with incoming `a1/a2`
+in all 51 copies each, and a pointer-only helper forwarding `f12/f13` in all
+49 copies. Existing immutable m2c input, context, output and compiler objects
+were unchanged. No new decompilation or compiler attempt was made. Metadata
+and limitations are recorded in
+[`evidence/context_inputs_review20261113.json`](evidence/context_inputs_review20261113.json).
+The initial native audit hashes and scans all relevant program sections; this
+can add diagnostic time independently of the unchanged m2c timeout.
+
 ### Native-evidenced search recovery
 
 New rough-decompile results include a read-only `divisionPadding` diagnostic
