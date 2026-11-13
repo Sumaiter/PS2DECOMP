@@ -3,6 +3,11 @@
 If your game project improves the workbench, send the improvement back as a PR.
 Follow [AGENTS.md](AGENTS.md) and include enough evidence for independent review.
 
+**Users must supply their own game ROM / disc image.** Never include a ROM,
+ISO, extracted game executable or game asset in a PR, example, adapter, fixture,
+package or release attachment. Do not add ROM download links or downloaders.
+Contribute integration logic; derive reference data locally from your own image.
+
 ## Choose the correct scope
 
 | Change | Location | Required scope |

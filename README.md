@@ -12,6 +12,11 @@ persistent queues and explicit review handoff. **No AI service is required.**
 The interface follows the VS Code display language: German for `de` locales,
 English otherwise. Open **Ctrl+Shift+P** and search for **PS2DECOMP**.
 
+**Bring your own game ROM / disc image.** No game ROMs, ISOs, extracted game
+executables or game assets are included in this repository, the extension or
+GitHub releases. Users must provide their own game image and extract the required
+references locally. PS2DECOMP does not download game images or provide ROM links.
+
 ## Get started
 
 1. Download the `.vsix` from [Releases](https://github.com/Sumaiter/PS2DECOMP/releases).

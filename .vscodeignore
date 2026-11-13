@@ -11,3 +11,17 @@ dist/**
 *.vsix
 package_local.py
 prepare_*.py
+**/baserom/**
+**/roms/**
+**/isos/**
+**/*.elf
+**/*.iso
+**/*.bin
+**/*.rom
+**/*.img
+**/*.chd
+**/*.cso
+**/*.mdf
+**/*.mds
+**/*.nrg
+**/*.cue

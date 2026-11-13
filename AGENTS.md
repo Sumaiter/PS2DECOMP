@@ -3,6 +3,16 @@
 PS2DECOMP is a game-independent PS2 decompilation workbench. Keep the shared
 engine reusable across games and put game-specific integration in its own folder.
 
+## Users must supply their own ROMs
+
+- Never distribute a game ROM, disc image, extracted game executable or game
+  asset with PS2DECOMP, including in game adapter folders, examples, test
+  fixtures, VSIX packages or GitHub release attachments.
+- Users must supply their own game image and extract references locally. Do not
+  add ROM downloaders, download URLs, mirrors or automatic fetching of game data.
+- Game adapter contributions contain integration logic and configuration only.
+  Local paths and hashes may describe required inputs; they do not supply them.
+
 ## Contribute improvements through pull requests
 
 - When a game project discovers a useful improvement for PS2DECOMP, contribute

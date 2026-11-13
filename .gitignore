@@ -12,6 +12,17 @@ test-results/
 *.elf
 *.iso
 *.bin
+*.rom
+*.img
+*.chd
+*.cso
+*.mdf
+*.mds
+*.nrg
+*.cue
+baserom/
+roms/
+isos/
 *.o
 *.exe
 *.dll

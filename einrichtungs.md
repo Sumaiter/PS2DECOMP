@@ -8,6 +8,19 @@ PS2DECOMP is a workbench around a game's evidence and compiler. It does not
 identify the original compiler or establish function boundaries from an ISO
 automatically. Set up the game's extraction, references and toolchain first.
 
+## Required: your own game ROM / disc image
+
+You must supply your own game ROM or disc image (for example an ISO). PS2DECOMP
+does not include a ROM for any game and does not download game images or provide
+links to ROM downloads. This applies to the repository, example projects,
+`RAC3_PAL` / `RAC4_PAL` adapters, VSIX packages and GitHub release attachments.
+
+Use your game project's extraction tools to create the required local reference
+ELFs and other inputs from your own image. Keep the image, extracted executables
+and game assets outside the PS2DECOMP source repository and release packages.
+Paths such as `baserom/main.elf` below describe files you supply locally; they
+are not included downloads. Test fixtures contain synthetic instructions only.
+
 ## 1. Install the extension and Python dependencies
 
 Download `ps2decomp-<version>.vsix` from the project's GitHub Releases. In VS
