@@ -10,11 +10,11 @@ class ClaimAPI:
     def __init__(self, root):
         self.DIR = Path(root).resolve() / 'build/claims'
         # Every linked worktree must use the main repository's claim directory.
-        import subprocess
         if (Path(root) / '.git').exists():
-            result = subprocess.run(['git', '-C', str(root), 'rev-parse', '--path-format=absolute', '--git-common-dir'],
-                capture_output=True, text=True, check=True,
-                creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
+            from local_process import run
+            result = run(['git', '-C', str(root), 'rev-parse', '--path-format=absolute', '--git-common-dir'],
+                         cwd=root, timeout=30, text=True)
+            result.check_returncode()
             expected = Path(result.stdout.strip()).resolve().parent / 'build/claims'
             if self.DIR.resolve() != expected.resolve():
                 raise ValueError('Link build/claims to the main repository shared claim directory before working in a worktree.')

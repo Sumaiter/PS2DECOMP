@@ -51,6 +51,41 @@ This repository contains the tool, adapter source and synthetic tests. Supply
 your own game repository, original references and appropriate toolchain locally.
 Adding an ELF alone does not establish function boundaries, ABI or compiler flags.
 
+Shared guard files acquire their OS lock before initializing an empty file.
+[The lock evidence](FILE_LOCK_EVIDENCE.md) covers Windows contention, cleanup
+failures, process crashes and retained claim ownership.
+
+## Search budgets and resume
+
+Each function's search pass shares its configured time and attempt limits across
+all seeds, variants and pause/resume segments. Completed segments retain their
+full-precision monotonic running time; paused wall time is excluded. Immutable
+comparisons from the current pass can be traversed again without rebuilding or
+refunding attempts. Tool setup, availability probes and compilation share the
+same process-local deadline, including additional placement workers.
+
+Each pass also retains the identity of its original pinned inputs. A selective
+retry cannot transfer newer session pins to another function's earlier pass.
+Current and archived cached comparisons need that job's own pin provenance,
+unchanged shared checker/compiler code and intact source/object/result hashes.
+Older unbound comparisons remain historical evidence rather than trusted cache
+hits; unsuccessful-source history and retained best snapshots are preserved.
+Pin paths are compared in full, so moving the extension installation also
+invalidates its compiler/review cache conservatively.
+
+Older executed jobs have no reliable cumulative time provenance. Resuming them,
+an interrupted active segment or an inconsistent accounting record fails closed:
+claims, best candidates and historical evidence remain available. A pristine old
+queue with no execution markers or artifacts can start from zero. To run an
+unknown/exhausted pass again, explicitly choose the existing retry action; it
+archives the previous pass and creates a new budget with the same configured
+limits. Opening VS Code never starts or retries a paused job.
+
+An expired deadline prevents another tool launch and terminates an active tool
+through the shared process runner. OS process startup, bounded cleanup and local
+diagnostics can finish after that deadline; all elapsed segment time is retained
+and no later segment receives the overrun as fresh time.
+
 ## Verification comes first
 
 The bounded [private-local and terminal-load rules](SEARCH_RULE_EVIDENCE.md)
