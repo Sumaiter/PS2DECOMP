@@ -115,6 +115,14 @@
           "items": {
             "type": "string"
           }
+        },
+        "workflow": {
+          "enum": [
+            "public-first",
+            "local-first"
+          ],
+          "default": "public-first",
+          "description": "Native adapter workflow, when supported: local-first allows explicitly authorized local matching before claiming selected PR source scopes publicly. Fresh foreign reservations still block work. Adapters retain their own coordination policy."
         }
       }
     }

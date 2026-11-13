@@ -457,5 +457,7 @@
   "Small (65–256 Byte)": "Small (65–256 bytes)",
   "Medium (257–640 Byte)": "Medium (257–640 bytes)",
   "Big (641–2048 Byte)": "Big (641–2048 bytes)",
-  "Giant (2049–32768 Byte)": "Giant (2049–32768 bytes)"
+  "Giant (2049–32768 Byte)": "Giant (2049–32768 bytes)",
+  "RAC3 PR: Ausgewählte Funktionen benötigen einen eigenen öffentlichen Quellbereich. Ticket erneut prüfen und nur tatsächlich übernommene Ergebnisse reservieren. Es wurde nichts veröffentlicht. Konkreter Entwurf:": "RAC3 PR: Selected functions need your own public source scope. Recheck the ticket and reserve only results actually selected for integration. Nothing was published. Concrete proposal:",
+  "RAC3: Unbekannte Funktionen in der Auswahl:": "RAC3: Unknown functions in the selection:"
 }

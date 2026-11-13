@@ -8,6 +8,14 @@ import subprocess
 URL = 'https://github.com/OpenRAC/rac3-decomp/issues/3'
 
 
+def workflow(engine):
+    """Keep the public-scope policy unless local matching is explicitly chosen."""
+    value = getattr(engine, 'config', {}).get('coordination', {}).get('workflow', 'public-first')
+    if value not in ('public-first', 'local-first'):
+        raise ValueError('RAC3 coordination.workflow must be public-first or local-first.')
+    return value
+
+
 def run(args, cwd):
     result = subprocess.run(args, cwd=cwd, capture_output=True, text=True, encoding='utf-8', errors='replace',
                             timeout=60, creationflags=subprocess.CREATE_NO_WINDOW)
@@ -109,9 +117,7 @@ def blocked(engine, names=None, owner=None, progress=None, state=None, planning=
         from auto_jobs import PlacementIndex
         index = PlacementIndex(engine, ({}, set(), {}, {n: 'public' for n in held}))
         held |= {n for n in targets if index.overlaps(engine.all_places(n), n)}
-    # Once our contributor comment exists, the list is a list of startable
-    # candidates in its current scopes, not an invitation to claim new scopes.
-    if planning and state['mine']:
+    if planning and workflow(engine) == 'public-first' and state['mine']:
         held.update(n for n in targets if not owned(engine, n, state['mine']))
     if progress:
         progress(dict(stage='publicReservations', blocked=len(held), unresolved=0,
@@ -119,22 +125,37 @@ def blocked(engine, names=None, owner=None, progress=None, state=None, planning=
     return held
 
 
-def assert_free(engine, names, owner=None):
+def assert_free(engine, names, owner=None, *, publication=False):
+    # Inspect the same complete selection in every validation pass. A one-shot
+    # iterator must not be consumed by the conflict check before ownership.
+    names = tuple(names or ())
     if not names:
         return
+    unknown = [n for n in names if not isinstance(n, str) or n not in engine.places]
+    if unknown:
+        raise ValueError('RAC3: Unbekannte Funktionen in der Auswahl: ' + ', '.join(map(str, unknown)))
+    selected_workflow = workflow(engine)
     state = snapshot(engine)
-    conflicts = blocked(engine, names, owner, state=state)
+    # Include unselected functions when propagating physical overlaps.
+    conflicts = set(names) & blocked(engine, state=state)
     if conflicts:
         raise ValueError('RAC3: öffentlich reserviert, bereits integriert oder ungeklärt: ' + ', '.join(sorted(conflicts)))
+    if selected_workflow == 'local-first' and not publication:
+        return
     outside = [n for n in names if not owned(engine, n, state['mine'])]
     if outside:
         folder = engine.root / 'build/coordination'
+        folder.mkdir(parents=True, exist_ok=True)
         paths = sorted({p for n in outside for p in engine.owner_paths.get(n, {engine.owners[n]})})
         comment = ('owner: ' + state['account'] + '\nupdated: ' + datetime.datetime.now(datetime.timezone.utc).isoformat()
                    + '\nversion: PAL (SCES_524.56), NTSC-U carried\n\nscope:\n'
                    + ''.join('  - ' + p + '\n' for p in paths))
         proposal = folder / 'reservation-comment-proposal.txt'
         proposal.write_text(comment, encoding='utf-8', newline='\n')
+        if publication:
+            raise ValueError('RAC3 PR: Ausgewählte Funktionen benötigen einen eigenen öffentlichen Quellbereich. '
+                             'Ticket erneut prüfen und nur tatsächlich übernommene Ergebnisse reservieren. '
+                             'Es wurde nichts veröffentlicht. Konkreter Entwurf: ' + str(proposal))
         if state['mine']:
             raise ValueError('Dein Kommentar in RAC3-Issue #3 ist vorhanden. Die Auswahl enthält jedoch '
                              + str(len(outside)) + ' Funktionen außerhalb seines Bereichs. '
@@ -142,3 +163,13 @@ def assert_free(engine, names, owner=None):
                              'Entwurf für eine mögliche Bereichserweiterung: ' + str(proposal))
         raise ValueError('Vor neuer RAC3-Funktionsarbeit verlangt AGENTS.md einen eigenen Bereichskommentar in Issue 3. '
                          'Es wurde nichts veröffentlicht. Konkreter Entwurf: ' + str(proposal))
+
+
+def assert_publication_ready(engine, names):
+    """Recheck only the selected PR functions and require their public scopes.
+
+    This never publishes a comment. Missing scopes produce a local proposal;
+    the contributor must authorize and publish it, then run this check again.
+    A local search claim does not grant priority over a later public reservation.
+    """
+    assert_free(engine, names, publication=True)
