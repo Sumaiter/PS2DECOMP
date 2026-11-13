@@ -1,5 +1,6 @@
 """Game data must never enter a tool distribution, even through adapter assets."""
 from pathlib import Path
+import os
 import tempfile
 import unittest
 
@@ -37,3 +38,32 @@ class DistributionTests(unittest.TestCase):
                  self.file('examples/Game_PAL/include/common.h'),
                  self.file('media/logo.png', b'\x89PNG\r\n\x1a\n'), self.file('vendor/LICENSE')]
         validate_distribution(files, self.root)
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows short-path aliases')
+    def test_short_path_root_and_files_use_the_same_lexical_base(self):
+        import ctypes
+        from ctypes import wintypes
+        directory = self.root / 'Long distribution directory name'
+        directory.mkdir()
+        (directory / 'engine.py').write_text('pass\n', encoding='utf-8')
+        short_path = ctypes.WinDLL('kernel32', use_last_error=True).GetShortPathNameW
+        short_path.argtypes = [wintypes.LPCWSTR, wintypes.LPWSTR, wintypes.DWORD]
+        short_path.restype = wintypes.DWORD
+        size = short_path(str(directory), None, 0)
+        if not size:
+            raise ctypes.WinError(ctypes.get_last_error())
+        buffer = ctypes.create_unicode_buffer(size)
+        if not short_path(str(directory), buffer, size):
+            raise ctypes.WinError(ctypes.get_last_error())
+        alias = Path(buffer.value)
+        if alias == directory.resolve():
+            self.skipTest('This volume does not provide a distinct short-path alias.')
+        self.assertEqual(alias.resolve(), directory.resolve())
+        validate_distribution([alias / 'engine.py'], alias)
+
+    def test_source_outside_the_distribution_root_is_rejected(self):
+        with tempfile.TemporaryDirectory() as other:
+            source = Path(other) / 'engine.py'
+            source.write_text('pass\n', encoding='utf-8')
+            with self.assertRaises(ValueError):
+                validate_distribution([source], self.root)
