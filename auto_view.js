@@ -4,6 +4,7 @@ const {translate} = require('./localization');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const byteRange = require('./media/size_range');
 
 function register(context, rpc, getCurrentSeed, reportError) {
   let panel, timer, selected, busy = false, selectionEpoch = 0, panelGeneration = 0;
@@ -14,9 +15,20 @@ function register(context, rpc, getCurrentSeed, reportError) {
   let selectedVersions = [];
 
   let versionInfo = [], loadedVersionKey;
+  let sizeRange;
+  try {sizeRange = byteRange.parse(context.workspaceState.get('automaticSizeRange'));}
+  catch (_) {sizeRange = {...byteRange.defaults};}
   const savedLimit = Number(context.workspaceState.get('automaticLoadLimit'));
   let loadLimit = Number.isSafeInteger(savedLimit) && savedLimit >= 1 ? savedLimit : 1000;
   const rendered = {};
+  const selectionKey = () => JSON.stringify({versions: selectedVersions, sizeRange});
+  async function setSizeRange(value, notify = true) {
+    sizeRange = byteRange.parse(value);
+    candidateMode = undefined; loadedCandidates = new Set(); loadedVersionKey = undefined;
+    await context.workspaceState.update('automaticSizeRange', sizeRange);
+    if (notify && panel) panel.webview.postMessage({type: 'sizeRange', data: sizeRange});
+    return {...sizeRange};
+  }
   async function update(session) {
     if (!panel || panel.visible === false || !session) return;
     const target = panel, epoch = selectionEpoch, generation = panelGeneration;
@@ -61,6 +73,7 @@ function register(context, rpc, getCurrentSeed, reportError) {
     if (panel) {panel.reveal(); await update(selected); return;}
     for (const key of Object.keys(rendered)) delete rendered[key];
     // status RPC also enforces trusted workspace and a configured local repository.
+    await context.workspaceState.update('automaticSizeRange', sizeRange);
     await rpc('status');
     versionInfo = await rpc('autoVersions');
     selectedVersions = versionInfo.filter(v => v.available).map(v => v.id);
@@ -77,7 +90,7 @@ function register(context, rpc, getCurrentSeed, reportError) {
       <p class="warning">Wartende, laufende und fertige Funktionen bleiben gemeinsam reserviert. Agenten bearbeiten währenddessen andere Funktionen. Erst „An Review freigeben“ hebt eine Reservierung auf.</p>
       <div id="error" role="alert"></div>
       <section class="card version-selection"><h2>Spielversionen</h2><div id="versions" class="toolbar" role="group" aria-label="Spielversionen"></div><p id="versionStatus" class="muted" role="status"></p><p id="publicReservationStatus" role="status">Die Projekt-Reservierungen werden beim Laden und vor jedem Suchstart frisch geprüft.</p></section>
-      <section class="card"><h2>Neue Warteschlange</h2><div class="toolbar"><label>Bereich <select id="scope"><option value="both">Hauptprogramm und Overlays</option><option value="main">Hauptprogramm</option><option value="overlays">Overlays</option></select></label><label>Anzahl laden <input id="loadCount" type="number" min="1" step="1" value="${loadLimit}"></label><label>Funktionen <select id="retryScope"><option value="free">Neue freie Funktionen</option><option value="incomplete">Offene Ergebnisse ohne zur&#252;ckgestellte</option><option value="all">Offene Ergebnisse inkl. zur&#252;ckgestellte / Compilerfehler</option></select></label><button id="load">Funktionen laden</button></div><div class="toolbar"><span>Markieren:</span><button id="select10">10</button><button id="select50">50</button><button id="select100">100</button><button id="select1000">1.000</button><label>Anzahl auswählen <input id="selectionAmount" type="number" min="0" step="1" value="10"></label><button id="selectCustom">Anzahl markieren</button><button id="selectAll">Alle</button><button id="selectNone">Auswahl leeren</button><span id="selectionCount" role="status" aria-live="polite"></span></div><p id="candidateStatus" class="muted" role="status">Keine feste Mengenbegrenzung. Bei großen Listen dauert die Eignungsprüfung entsprechend länger.</p><p id="candidateMode" class="muted">Freie Funktionen: Eine neue Auswahl startet erst über den Startknopf.</p><div id="candidates"><p>Die Auswahl wird geladen. Noch kein Suchlauf gestartet.</p></div>
+      <section class="card"><h2>Neue Warteschlange</h2><div class="toolbar"><label>Bereich <select id="scope"><option value="both">Hauptprogramm und Overlays</option><option value="main">Hauptprogramm</option><option value="overlays">Overlays</option></select></label><label>Größenempfehlung <select id="sizePreset"><option value="custom">Eigener Bereich</option></select></label><label>Funktionsgröße von (Byte) <input id="minBytes" type="number" min="0" max="32768" step="1" value="${sizeRange.minBytes}"></label><label>bis (Byte) <input id="maxBytes" type="number" min="8" max="32768" step="1" value="${sizeRange.maxBytes}"></label><label>Anzahl laden <input id="loadCount" type="number" min="1" step="1" value="${loadLimit}"></label><label>Funktionen <select id="retryScope"><option value="free">Neue freie Funktionen</option><option value="incomplete">Offene Ergebnisse ohne zur&#252;ckgestellte</option><option value="all">Offene Ergebnisse inkl. zur&#252;ckgestellte / Compilerfehler</option></select></label><button id="load">Funktionen laden</button></div><div class="toolbar"><span>Markieren:</span><button id="select10">10</button><button id="select50">50</button><button id="select100">100</button><button id="select1000">1.000</button><label>Anzahl auswählen <input id="selectionAmount" type="number" min="0" step="1" value="10"></label><button id="selectCustom">Anzahl markieren</button><button id="selectAll">Alle</button><button id="selectNone">Auswahl leeren</button><span id="selectionCount" role="status" aria-live="polite"></span></div><p id="candidateStatus" class="muted" role="status">Keine feste Mengenbegrenzung. Bei großen Listen dauert die Eignungsprüfung entsprechend länger.</p><p class="muted">Byte-Bereich einschließlich der Grenzen; Standard 8–640 Byte. Die Kontrollfluss-Vorprüfung unterstützt bis zu 32768 Byte.</p><p id="candidateMode" class="muted">Freie Funktionen: Eine neue Auswahl startet erst über den Startknopf.</p><div id="candidates"><p>Die Auswahl wird geladen. Noch kein Suchlauf gestartet.</p></div>
       <details><summary>Suchbudget pro Funktion</summary><div class="settings">
         <label>Parallele Jobs <input id="workers" type="number" min="1" max="32" value="16"></label>
         <label>Maximale Compilerläufe <input id="maxAttempts" type="number" min="1" max="2000" value="30"></label>
@@ -85,7 +98,7 @@ function register(context, rpc, getCurrentSeed, reportError) {
       </div></details><div class="toolbar"><button class="primary" id="start">Auswahl dekompilieren</button></div><p class="muted">100 % Suchwert ist kein freigegebener Match. 80-99 % und ausbleibende Verbesserung beenden die Suche nicht. Sie läuft bis zum technischen Treffer, Zeit-/Versuchslimit oder Ende der unterstützten Varianten. Deine vorhandenen Entwürfe werden nicht überschrieben.</p></section>
       <section class="card"><h2>Suchläufe und Review</h2><div class="toolbar"><select id="sessions" aria-label="Gespeicherte Sitzung"></select><button id="refresh">Aktualisieren</button><button id="stop">Suche pausieren</button><button id="resume">Wartende Jobs fortsetzen</button><button id="retry">Andere offene Ergebnisse erneut versuchen</button><button id="review">Review-Datei öffnen</button><button id="prompt">Review-Prompt kopieren</button><button id="handoffAll">Alle Reservierungen freigeben</button></div><label><input type="checkbox" id="showDeferred">Zurückgestellte Fälle dieses Laufs anzeigen</label><button id="retryDeferred">Zurückgestellte dieses Laufs gezielt erneut versuchen</button><div id="sessionUpdate" class="session-update" role="status" aria-live="polite">Noch kein Status erfolgreich geladen.</div><div id="status" role="status">Noch keine Sitzung.</div><section id="activeJobs" class="active-jobs" aria-label="Aktuell in Arbeit"><h3>Aktuell in Arbeit</h3><p>Noch kein Status geladen.</p></section><div class="toolbar"><button id="jobPrev">Vorherige Seite</button><span id="jobPageInfo" role="status" aria-live="polite"></span><button id="jobNext">Weitere Funktionen</button></div><div id="jobs"></div></section>
       <section class="card"><h2>Für später zurückgestellt</h2><p>„Analyse nötig“ wird zunächst ausgelassen. Gründe und Quellen bleiben gespeichert. Eine externe Signatur kann zum Kompilieren reichen; der aufgerufene Funktionskörper muss dafür noch nicht decompiliert sein.</p><button id="loadDeferred">Zurückgestellte aus allen Suchläufen anzeigen</button><div id="deferredJobs"></div></section>
-      <script nonce="${nonce}" src="${asset('automatic.js')}"></script></body></html>`;
+      <script nonce="${nonce}" src="${asset('size_range.js')}"></script><script nonce="${nonce}" src="${asset('automatic.js')}"></script></body></html>`;
     panel.onDidDispose(() => {panel = undefined; panelGeneration++; clearInterval(timer); timer = undefined;});
     panel.onDidChangeViewState(() => {
       update(selected);
@@ -97,6 +110,8 @@ function register(context, rpc, getCurrentSeed, reportError) {
         if (message.type === 'ready') {
           rendered.locale = message.language;
           rendered.heading = message.heading;
+          rendered.sizeRange = message.sizeRange;
+          rendered.sizePresets = message.sizePresets;
           web.postMessage({type: 'versions', data: versionInfo, selected: selectedVersions});
         }
         if (message.type === 'versionsChanged') {
@@ -105,6 +120,8 @@ function register(context, rpc, getCurrentSeed, reportError) {
           await context.workspaceState.update('automaticVersions', selectedVersions);
           candidateMode = undefined; loadedCandidates = new Set(); loadedVersionKey = undefined;
         }
+        if (message.type === 'sizeRangeChanged') await setSizeRange(message.sizeRange, false);
+        if (message.type === 'rendered' && message.kind === 'sizeRange') rendered.sizeRange = message.sizeRange;
         if (message.type === 'rendered' && ['candidates', 'sessions', 'session'].includes(message.kind)) rendered[message.kind] = message.count;
         if (message.type === 'rendered' && message.kind === 'candidates') rendered.budgetOnly = message.budgetOnly === true;
         if (message.type === 'rendered' && message.kind === 'candidates') {rendered.defaultWorkers = message.defaultWorkers; rendered.defaultSeconds = message.defaultSeconds;}
@@ -133,24 +150,25 @@ function register(context, rpc, getCurrentSeed, reportError) {
             const mode = message.type === 'loadRetry' ? 'retry' : 'free';
             candidateMode = undefined; loadedCandidates = new Set();
             if (!selectedVersions.length) throw new Error('Mindestens eine verfügbare Spielversion auswählen.');
-            const selectionKey = JSON.stringify(selectedVersions);
+            if (message.sizeRange) await setSizeRange(message.sizeRange, false);
+            const requestedKey = selectionKey();
             web.postMessage({type: 'loadingCandidates', mode});
             const limit = message.limit === undefined ? loadLimit : Number(message.limit);
             if (!Number.isSafeInteger(limit) || limit < 1) throw new Error('Zum Laden eine positive, exakt darstellbare ganze Zahl eingeben.');
             loadLimit = limit; await context.workspaceState.update('automaticLoadLimit', limit);
             const data = mode === 'retry'
-              ? await rpc('autoRetryPlan', {limit, scope: message.retryScope || 'incomplete', programScope: message.scope || 'both', versions: selectedVersions})
-              : await rpc('autoPlan', {limit, scope: message.scope || 'both', versions: selectedVersions}, progress => web.postMessage({type: 'candidateProgress', data: progress}));
-            if (selectionKey !== JSON.stringify(selectedVersions)) throw new Error('Versionsauswahl während des Ladens geändert. Bitte neu laden.');
+              ? await rpc('autoRetryPlan', {limit, scope: message.retryScope || 'incomplete', programScope: message.scope || 'both', versions: selectedVersions, settings: sizeRange})
+              : await rpc('autoPlan', {limit, scope: message.scope || 'both', versions: selectedVersions, settings: sizeRange}, progress => web.postMessage({type: 'candidateProgress', data: progress}));
+            if (requestedKey !== selectionKey()) throw new Error('Filter während des Ladens geändert. Funktionen neu laden.');
             candidateMode = mode; loadedCandidates = new Set(data.map(row => row.name));
-            loadedVersionKey = selectionKey;
+            loadedVersionKey = requestedKey;
             web.postMessage({type: 'candidates', data, mode});
           } finally {busy = false;}
         }
         if (['start', 'startRetry'].includes(message.type)) {
           if (busy) throw new Error('Die aktuelle Auswahl wird noch geladen oder reserviert.');
           const mode = message.type === 'startRetry' ? 'retry' : 'free';
-          if (loadedVersionKey !== JSON.stringify(selectedVersions) || candidateMode !== mode || !Array.isArray(message.names) || !message.names.length || message.names.some(name => !loadedCandidates.has(name))) throw new Error('Die Auswahl gehört nicht zur geladenen Liste. Bitte zuerst den gewünschten Bereich neu laden.');
+          if (loadedVersionKey !== selectionKey() || JSON.stringify(byteRange.parse(message.settings)) !== JSON.stringify(sizeRange) || candidateMode !== mode || !Array.isArray(message.names) || !message.names.length || message.names.some(name => !loadedCandidates.has(name))) throw new Error('Die Auswahl gehört nicht zur geladenen Liste. Bitte zuerst den gewünschten Bereich neu laden.');
           busy = true;
           try {
             const data = await rpc(mode === 'retry' ? 'autoRetryStart' : 'autoStart', {names: message.names, settings: message.settings, versions: selectedVersions}, progress => web.postMessage({type: 'preparing', data: progress}));
@@ -206,13 +224,13 @@ function register(context, rpc, getCurrentSeed, reportError) {
     const seed = await getCurrentSeed();
     if (!seed) throw new Error('Zuerst eine Funktion in der Werkbank öffnen.');
     await open();
-    const data = await rpc('autoStart', {names: [seed.name], seeds: {[seed.name]: seed.source}});
+    const data = await rpc('autoStart', {names: [seed.name], seeds: {[seed.name]: seed.source}, settings: sizeRange});
     await choose(data);
     return data;
   }
   context.subscriptions.push(vscode.commands.registerCommand('ps2decomp.auto', () => open().catch(reportError)),
     vscode.commands.registerCommand('ps2decomp.autoCurrent', () => current().catch(reportError)),
     {dispose() {clearInterval(timer); if (panel) panel.dispose();}});
-  return {open, current, plan: (scope, limit = loadLimit) => rpc('autoPlan', {limit, scope: scope || 'both', versions: selectedVersions}), sessions: () => rpc('autoSessions'), renderState: () => ({...rendered})};
+  return {open, current, setSizeRange, plan: (scope, limit = loadLimit) => rpc('autoPlan', {limit, scope: scope || 'both', versions: selectedVersions, settings: sizeRange}), sessions: () => rpc('autoSessions'), renderState: () => ({...rendered})};
 }
 module.exports = {register};

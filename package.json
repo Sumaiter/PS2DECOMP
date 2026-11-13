@@ -2,7 +2,7 @@
   "name": "ps2decomp",
   "displayName": "PS2DECOMP",
   "description": "%extension.description%",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "sumaiter",
   "license": "GPL-3.0-only",
   "engines": {

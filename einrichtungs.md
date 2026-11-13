@@ -270,6 +270,30 @@ function. Sessions and `REVIEW.md` are stored in `build/autodecomp/<session>`.
 Claims persist for queued, paused and completed jobs. Use **Hand off for review**
 explicitly before a person/agent claims an automatic result for further work.
 
+Set **Function size from (bytes)** and **to (bytes)** before loading functions.
+Both bounds are inclusive; the default remains **8–640 bytes**. The workspace
+remembers the range. It filters new free functions, released results loaded for
+a new retry session, and the manual buildable-candidate picker. Changing a bound
+invalidates the current list: reload it before starting a selection. Existing
+sessions retain their saved range and budgets when resumed or retried in place.
+
+**Size preset** offers these editable starting points:
+
+| Category | From (bytes) | To (bytes) |
+| --- | ---: | ---: |
+| Tiny | 8 | 64 |
+| Small | 65 | 256 |
+| Medium | 257 | 640 |
+| Big | 641 | 2048 |
+| Giant | 2049 | 32768 |
+
+These are size recommendations, not difficulty or success ratings. Actual MIPS
+instruction windows still require alignment and at least 8 bytes. Larger ranges
+can take longer to screen and search; control-flow preflight supports windows up
+to **32768 bytes** and keeps its existing safety checks. Selecting Giant does not
+make unsupported code eligible. Choose **Custom range** or edit either bound to
+use your own interval.
+
 Paused jobs never restart simply because VS Code opens. Deferred/blocked cases
 are skipped in ordinary follow-up runs. Existing drafts and recorded unsuccessful
 variants are preserved. Logs for your independent reviews belong under

@@ -4,6 +4,7 @@ import json
 import re
 from pathlib import Path
 import rough
+import function_size
 
 
 def digest(data):
@@ -32,7 +33,7 @@ def available(engine, name, inventory=None, finals=None):
 
 def boundary(engine, name):
     place = engine.place(name)
-    if place[3] < 8 or place[3] > 640 or place[3] % 4 or place[4] == 'remnant':
+    if not function_size.contains(place[3], getattr(engine, 'function_size_range', None)) or place[3] % 4 or place[4] == 'remnant':
         return False
     exclusions = engine.root / 'build/parallel01/excluded-boundaries.json'
     if exclusions.exists() and name in json.loads(exclusions.read_text()):
@@ -89,6 +90,8 @@ def search(engine, query=''):
         name = path.stem
         if name not in engine.places or query.upper().replace('0X', '') not in name.upper():
             continue
+        if not function_size.contains(engine.place(name)[3], getattr(engine, 'function_size_range', None)):
+            continue
         if not available(engine, name, inventory, finals):
             continue
         cached = record(engine, name, env_hash)
@@ -104,7 +107,7 @@ def plan(engine, limit=40):
     env_hash = environment(engine)
     pool = []
     for name, place in sorted(engine.places.items(), key=lambda pair: (pair[1][3], pair[0])):
-        if not 8 <= place[3] <= 640 or not available(engine, name, inventory, finals):
+        if not function_size.contains(place[3], getattr(engine, 'function_size_range', None)) or not available(engine, name, inventory, finals):
             continue
         if record(engine, name, env_hash) is not None or not boundary(engine, name):
             continue
