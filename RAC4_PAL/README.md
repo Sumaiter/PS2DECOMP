@@ -41,6 +41,15 @@ game-specific compiler and debug-line logic. `inputs.py` pins its dependencies.
 upstream `main` coverage. **Public comment writing and the original user's
 account/comment identity are not inherited.** Conflicts fail closed.
 
+Loading new candidates lists free functions outside the current contributor's
+public reservation. It still excludes foreign reservations, verified results
+awaiting integration (including the contributor's own), fresh upstream matches
+and every physically overlapping placement. Local claims, drafts and previous
+attempts retain their normal filters. Listing functions does not claim them or
+start compilation. Before starting or resuming matching, reserve the selected
+functions in issue 112: the native start gate requires the contributor's current
+public scope and rechecks fresh conflicts and upstream coverage.
+
 NTSC-U remains unavailable: the PAL adapter never relabels PAL bytes as US data.
 Submit RAC4 PAL-specific improvements as PRs in this folder. Shared improvements
 need evidence of applicability across games.
