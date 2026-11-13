@@ -86,13 +86,32 @@ const selectedTab = page => page.locator('[role="tab"][aria-selected="true"]').g
    }
    await page.setViewportSize({width:520,height:1000}); await page.locator('[data-tab="queueView"]').click();
    await page.screenshot({path:path.join(out,`narrow-${lang}-${theme}.png`),fullPage:true});
-   assert.equal(await page.evaluate(()=>window.hostMessages.filter(m=>['start','startRetry','resume','retry','retryDeferred','handoff','handoffAll'].includes(m.type)).length),0);
+   assert.equal(await page.evaluate(()=>window.hostMessages.filter(m=>['start','startRetry','startMixed','resume','retry','retryDeferred','handoff','handoffAll'].includes(m.type)).length),0);
    await page.locator('#start').click();
    const start=await page.evaluate(()=>window.hostMessages.find(m=>m.type==='start'));
    assert.equal(start.names.length,10);assert.deepEqual(start.settings,{workers:16,maxAttempts:30,seconds:90,minBytes:8,maxBytes:640});
    assert.equal(await page.locator('#start').isDisabled(),true);
    await send(page,{type:'started'});assert.equal(await selectedTab(page),'sessionsView');
    await page.goto(base+`/automatic?lang=${lang}&theme=${theme}`); await send(page,{type:'sessions',data:[]}); assert.equal(await selectedTab(page),'queueView');
+   await page.locator('#retryScope').selectOption('unclaimed-and-open');
+   assert.equal(await page.locator('#retryScope option:checked').textContent(),lang==='de'
+    ?'Freie Funktionen und offene Ergebnisse inkl. zurückgestellte / Compilerfehler'
+    :'Unclaimed and open results including deferred cases / compiler errors');
+   await page.locator('#load').click();
+   assert.equal(await page.evaluate(()=>window.hostMessages.at(-1).type),'loadMixed');
+   await send(page,{type:'loadingCandidates',mode:'mixed'});
+   await send(page,{type:'candidates',mode:'mixed',data:[
+    {...candidates[0],previousSession:session.id,previousStatus:'handed_off',deferred:true,reason:'synthetic compiler error',candidateKind:'retry'},
+    {...candidates[1],candidateKind:'free'}]});
+   assert.equal(await page.locator('#retryScope').inputValue(),'unclaimed-and-open');
+   assert.equal(await page.locator('#candidates input:checked').count(),2);
+   assert.equal(await page.locator('#candidates .candidate-details').first().innerText().then(t=>t.includes(lang==='de'?'Erneute Suche':'Retry search')),true);
+   await page.screenshot({path:path.join(out,`mixed-${lang}-${theme}.png`),fullPage:true});
+   await page.locator('#start').click();
+   const mixed=await page.evaluate(()=>window.hostMessages.find(m=>m.type==='startMixed'));
+   assert.deepEqual(mixed.names,[candidates[0].name,candidates[1].name]);
+   assert.deepEqual(mixed.settings,{workers:16,maxAttempts:30,seconds:90,minBytes:8,maxBytes:640});
+   await send(page,{type:'started'});assert.equal(await selectedTab(page),'sessionsView');
    await page.locator('[data-tab="deferredView"]').click();
    await send(page,{type:'deferred',data:[{name:'func_00100400',reason:'synthetic',session:session.id}]});
    await page.locator('#deferredJobs button').click(); assert.equal(await selectedTab(page),'sessionsView');

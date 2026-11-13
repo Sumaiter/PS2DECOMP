@@ -71,6 +71,16 @@ Retry and bulk handoff actions are grouped under **More actions & reservations**
 filters, selection and the per-function budget are grouped before the explicit
 start button. Both panels follow the editor theme and adapt to narrow splits.
 
+The **Functions** filter also offers **Unclaimed and open results including
+deferred cases / compiler errors**. It lists released unfinished cases first,
+then fills the remaining load count with new unclaimed functions. Each row
+identifies whether it is a retry or a new function. Only explicitly handed-off,
+currently unclaimed results qualify for a retry; technical matches go to review.
+Pressing Start creates one session for the selection, retaining previous best
+sources and attempt histories in its copied archives. Listing alone starts no
+work. Every selected case is checked again while acquiring the new session's
+claims, and each job receives the configured budget for its new search pass.
+
 ## Search budgets and resume
 
 Each function's search pass shares its configured time and attempt limits across

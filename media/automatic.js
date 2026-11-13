@@ -50,7 +50,8 @@ function loadingCandidates(active) {
   for (const id of selectionButtons) $(id).disabled = active || starting;
   for (const input of document.querySelectorAll('#candidates input')) input.disabled = active || starting;
   updateSelection();
-  if (active && candidateMode === 'retry') $('candidateStatus').textContent = `Bis zu ${$('loadCount').value || 1000} freigegebene offene Ergebnisse werden geprüft und geladen …`;
+  if (active && candidateMode === 'mixed') $('candidateStatus').textContent = 'Freie Funktionen und freigegebene offene Ergebnisse werden geprüft und geladen …';
+  else if (active && candidateMode === 'retry') $('candidateStatus').textContent = `Bis zu ${$('loadCount').value || 1000} freigegebene offene Ergebnisse werden geprüft und geladen …`;
   else if (active) $('candidateStatus').textContent = `Bis zu ${$('loadCount').value || 1000} freie Funktionen werden geprüft und geladen …`;
 }
 function send(type, data = {}) { $('error').textContent = ''; vscode.postMessage({type, ...data}); }
@@ -68,13 +69,16 @@ function renderCandidates(rows, mode = 'free') {
   if (mode === 'free') $('retryScope').value = 'free';
   candidates = rows;
   $('start').textContent = 'Auswahl dekompilieren';
-  $('candidateMode').textContent = mode === 'retry'
+  $('candidateMode').textContent = mode === 'mixed'
+    ? 'Gemeinsame Auswahl: Zuerst freigegebene offene Ergebnisse, einschließlich zurückgestellter Fälle und Compilerfehler, danach neue freie Funktionen bis zur Ladeanzahl. Ein Start übernimmt die Auswahl in einen gemeinsamen Suchlauf.'
+    : mode === 'retry'
     ? 'Erneute Suche: Nur an Review freigegebene, aktuell unreservierte offene Fälle. Fertige Funktionen bleiben weg. Bisherige Quellen und Ergebnisse bleiben in der Originalsitzung; erst der Startknopf reserviert die Auswahl.'
     : 'Freie Funktionen: Eine neue Auswahl startet erst über den Startknopf.';
   loadingCandidates(false);
-  $('candidateStatus').textContent = mode === 'retry' ? `${rows.length} freigegebene offene Ergebnisse für eine neue Suche geladen.` : `${rows.length} geeignete freie Funktionen geladen.`;
+  $('candidateStatus').textContent = mode === 'mixed' ? `${rows.length} freie Funktionen und freigegebene offene Ergebnisse geladen.` : mode === 'retry' ? `${rows.length} freigegebene offene Ergebnisse für eine neue Suche geladen.` : `${rows.length} geeignete freie Funktionen geladen.`;
   const box = $('candidates'); box.replaceChildren();
   vscode.postMessage({type: 'rendered', kind: 'candidates', count: rows.length, budgetOnly: !$('target') && !$('nearAfter') && !$('stall'), defaultWorkers: Number($('workers').value), defaultSeconds: Number($('seconds').value)});
+  if (!rows.length && mode === 'mixed') {box.append(el('p', 'Keine passenden freien Funktionen oder freigegebenen offenen Ergebnisse.')); updateSelection(); return;}
   if (!rows.length && mode === 'retry') {box.append(el('p', 'Keine passenden freigegebenen offenen Ergebnisse. Reservierte Fälle und fertige Funktionen werden ausgelassen.')); updateSelection(); return;}
   if (!rows.length) {box.append(el('p', 'Keine freien Kandidaten für diesen Bereich. Reservierte und bereits bearbeitete Funktionen werden ausgelassen.')); updateSelection(); return;}
   for (const [index, row] of rows.entries()) {
@@ -84,7 +88,8 @@ function renderCandidates(rows, mode = 'free') {
     const details = el('span', undefined, 'candidate-details');
     details.append(el('span', row.name, 'candidate-name'), el('span', `${row.size} B · ${row.program}${row.cached ? ' · baubarer Entwurf vorhanden' : ''}`, 'candidate-info'));
     label.append(check, details, el('span', '○ Noch nicht begonnen', 'job-status status-queued'));
-    if (mode === 'retry') {
+    if (mode === 'mixed') details.append(el('span', row.previousSession ? 'Erneute Suche' : 'Neue freie Funktion', 'muted'));
+    if (row.previousSession) {
       const previous = labels[row.previousStatus] || row.previousStatus || 'offen';
       details.append(el('span', `Vorher: ${previous}${row.deferred ? ' · zurückgestellt' : ''} · Sitzung ${row.previousSession || 'unbekannt'}`, 'muted'));
       if (row.reason) details.append(el('span', row.reason, 'muted'));
@@ -299,9 +304,9 @@ function loadCandidates(mode) {
   if (!Number.isSafeInteger(limit) || limit < 1) {$('error').textContent = 'Zum Laden eine positive, exakt darstellbare ganze Zahl eingeben.'; return;}
   candidateMode = mode; candidateReady = false; candidates = [];
   $('candidates').replaceChildren(); updateSelection();
-  loadingCandidates(true); send(mode === 'retry' ? 'loadRetry' : 'load', {scope: $('scope').value, retryScope: $('retryScope').value || 'incomplete', limit, sizeRange});
+  loadingCandidates(true); send(mode === 'mixed' ? 'loadMixed' : mode === 'retry' ? 'loadRetry' : 'load', {scope: $('scope').value, retryScope: $('retryScope').value || 'incomplete', limit, sizeRange});
 }
-$('load').onclick = () => loadCandidates($('retryScope').value === 'free' || !$('retryScope').value ? 'free' : 'retry');
+$('load').onclick = () => loadCandidates($('retryScope').value === 'unclaimed-and-open' ? 'mixed' : $('retryScope').value === 'free' || !$('retryScope').value ? 'free' : 'retry');
 function invalidateCandidates() {
   candidateReady = false; candidates = [];
   $('candidates').replaceChildren(); updateSelection(); loadingCandidates(false);
@@ -340,7 +345,7 @@ $('start').onclick = () => {
   if (!names.length) {$('error').textContent = 'Mindestens eine freie Funktion auswählen.'; return;}
   starting = true; loadingCandidates(false);
   $('candidateStatus').textContent = `${names.length} Funktionen werden reserviert und in die Warteschlange aufgenommen …`;
-  send(candidateMode === 'retry' ? 'startRetry' : 'start', {names, settings: Object.fromEntries(settingKeys.map(k => [k, Number($(k).value)]))});
+  send(candidateMode === 'mixed' ? 'startMixed' : candidateMode === 'retry' ? 'startRetry' : 'start', {names, settings: Object.fromEntries(settingKeys.map(k => [k, Number($(k).value)]))});
 };
 for (const action of ['refresh', 'stop', 'resume', 'retry', 'retryDeferred', 'review', 'prompt', 'handoffAll']) $(action).onclick = () => send(action);
 $('sessions').onchange = () => selectSession($('sessions').value);

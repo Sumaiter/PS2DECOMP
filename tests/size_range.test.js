@@ -49,8 +49,8 @@ async function viewHarness(plan) {
     async (op, params) => {
       calls.push({op, params});
       if (op === 'autoVersions') return [{id: 'synthetic-pal', available: true}];
-      if (op === 'autoPlan' || op === 'autoRetryPlan') return plan ? plan() : [{name: 'func_00100000'}];
-      if (op === 'autoStart' || op === 'autoRetryStart') return {id: 'a'.repeat(32)};
+      if (['autoPlan', 'autoRetryPlan', 'autoMixedPlan'].includes(op)) return plan ? plan() : [{name: 'func_00100000'}];
+      if (['autoStart', 'autoRetryStart', 'autoMixedStart'].includes(op)) return {id: 'a'.repeat(32)};
       return [];
     }, async () => undefined, error => errors.push(error));
   await api.open();
@@ -85,4 +85,21 @@ test('changing the range during a scan discards its old result', async () => {
   await loading;
   assert.equal(view.messages.filter(message => message.type === 'candidates').length, 0);
   assert.match(view.errors[0].message, /Filter/);
+});
+
+test('combined selection uses its own plan and start route and rejects stale or foreign selections', async () => {
+  const view = await viewHarness();
+  const limits = {minBytes: 8, maxBytes: 640};
+  await view.receive({type: 'loadMixed', scope: 'main', limit: 50, sizeRange: limits});
+  const plan = view.calls.at(-1);
+  assert.equal(plan.op, 'autoMixedPlan');
+  assert.equal(plan.params.scope, 'main'); assert.equal(plan.params.limit, 50);
+  assert.deepEqual(plan.params.settings, limits);
+  await view.receive({type: 'startRetry', names: ['func_00100000'], settings: limits});
+  await view.receive({type: 'startMixed', names: ['func_00100008'], settings: limits});
+  assert.equal(view.calls.filter(call => /Start$/.test(call.op)).length, 0);
+  await view.receive({type: 'startMixed', names: ['func_00100000'], settings: {...limits, workers: 3}});
+  assert.equal(view.calls.at(-1).op, 'autoMixedStart');
+  assert.deepEqual(view.calls.at(-1).params.settings, {...limits, workers: 3});
+  assert.equal(view.errors.length, 2);
 });

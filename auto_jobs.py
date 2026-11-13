@@ -376,8 +376,9 @@ def launch_names(manager, data):
             if read(folder / 'jobs' / name / 'job.json').get('status') == 'queued']
 
 
-def plan(engine, limit=DEFAULT_LOAD_LIMIT, scope='both', progress=None, *, settings=None):
+def plan(engine, limit=DEFAULT_LOAD_LIMIT, scope='both', progress=None, *, settings=None, exclude=()):
     size_range = function_size.settings(settings)
+    excluded = set(exclude)
     if scope not in ('both', 'main', 'overlays'):
         raise ValueError('Unbekannter Bereich.')
     if type(limit) is not int or limit < 1:
@@ -394,7 +395,7 @@ def plan(engine, limit=DEFAULT_LOAD_LIMIT, scope='both', progress=None, *, setti
     for checked, (name, p) in enumerate(engine.places.items(), 1):
         in_scope = (scope == 'both' or scope == 'main' and p[0] == engine.program
                     or scope == 'overlays' and p[0] != engine.program)
-        if (name not in publicly_blocked and in_scope and function_size.contains(p[3], size_range) and eligible(engine, name, inventory=inventory, finals=finals,
+        if (name not in excluded and name not in publicly_blocked and in_scope and function_size.contains(p[3], size_range) and eligible(engine, name, inventory=inventory, finals=finals,
                                                      history=set(), placement_index=placement_index)):
             possible.add(name)
         if progress and (checked % 500 == 0 or checked == total):
@@ -862,11 +863,25 @@ class Manager:
                 latest.setdefault(name, (data, path))
         return latest
 
-    def _retry_entry(self, name, latest, inventory, finals, owner=None, placement_index=None, size_range=None):
+    def _retry_entry(self, name, latest, inventory, finals, owner=None, placement_index=None, size_range=None,
+                     *, include_unclaimed=False, history=None):
         if not isinstance(name, str) or not FUNCTION.fullmatch(name):
             raise ValueError('Ungültiger Funktionsname.')
         if name not in latest:
-            raise ValueError('Kein früherer Suchlauf: ' + name)
+            if not include_unclaimed:
+                raise ValueError('Kein früherer Suchlauf: ' + name)
+            if (claim_api(self.engine).holder(name) != owner or
+                    not eligible(self.engine, name, owner, inventory=inventory, finals=finals,
+                                 history=history, placement_index=placement_index)):
+                raise ValueError('Funktion ist zugeordnet, reserviert oder besitzt einen Editorentwurf: ' + name)
+            place = self.engine.place(name)
+            if not function_size.contains(place[3], size_range):
+                raise ValueError('Funktionsgröße wird nicht unterstützt: ' + name)
+            for p in self.engine.all_places(name):
+                raw = self.engine.check.disc_bytes(p)
+                if not complete_cfg(raw, p[2]) or not candidate_preflight.inspect(raw, p[2])['eligible']:
+                    raise ValueError('Funktionsgrenze oder Vorprüfung ungeeignet: ' + name)
+            return dict(data=None, job=None, source=None, sessionHash=None, jobHash=None)
         data, session_path = latest[name]
         folder = self.folder(data['id']); jobpath = folder / 'jobs' / name / 'job.json'
         job = read(jobpath)
@@ -938,7 +953,19 @@ class Manager:
                 continue
         return rows
 
-    def create_retry(self, names, settings=None, progress=None):
+    def mixed_plan(self, limit=DEFAULT_LOAD_LIMIT, program_scope='both', *, settings=None, progress=None):
+        """Released unfinished results first, then genuinely new unclaimed functions."""
+        rows = self.retry_plan(limit, 'all', program_scope, settings=settings)
+        rows = [dict(row, candidateKind='retry') for row in rows]
+        if len(rows) < limit:
+            # A recorded case must pass the handoff/evidence gates above, even
+            # if it has zero attempts and ordinary discovery could list it.
+            fresh = plan(self.engine, limit - len(rows), program_scope, progress,
+                         settings=settings, exclude=self._latest_jobs())
+            rows.extend(dict(row, candidateKind='free') for row in fresh)
+        return rows
+
+    def create_retry(self, names, settings=None, progress=None, *, include_unclaimed=False):
         """New owner and pins; preserve every byte of the released earlier run."""
         import shutil
         if (not isinstance(names, list) or not names or any(not isinstance(n, str) for n in names) or
@@ -954,10 +981,12 @@ class Manager:
                 progress(dict(stage=stage, done=done, total=len(names)))
         inventory = self.engine.inventory_state(); finals = candidates.local_finals(self.engine)
         placement_index = PlacementIndex(self.engine, inventory)
+        processed = previous_jobs(self.engine, set(names)) if include_unclaimed else None
         entries = {}
         report('validate', 0)
         for i, name in enumerate(names, 1):
-            entries[name] = self._retry_entry(name, latest, inventory, finals, placement_index=placement_index, size_range=settings)
+            entries[name] = self._retry_entry(name, latest, inventory, finals, placement_index=placement_index,
+                                             size_range=settings, include_unclaimed=include_unclaimed, history=processed)
             report('validate', i)
         session = uuid.uuid4().hex; folder = self.folder(session); owner = 'ps2decomp-auto-' + session
         claims = claim_api(self.engine); acquired = []
@@ -972,9 +1001,11 @@ class Manager:
             latest = self._latest_jobs(); inventory = self.engine.inventory_state()
             finals = candidates.local_finals(self.engine)
             placement_index = PlacementIndex(self.engine, inventory)
+            processed = previous_jobs(self.engine, set(names)) if include_unclaimed else None
             report('revalidate', 0)
             for i, name in enumerate(names, 1):
-                checked = self._retry_entry(name, latest, inventory, finals, owner, placement_index, size_range=settings)
+                checked = self._retry_entry(name, latest, inventory, finals, owner, placement_index, size_range=settings,
+                                            include_unclaimed=include_unclaimed, history=processed)
                 if any(checked[k] != entries[name][k] for k in ('sessionHash', 'jobHash')):
                     raise ValueError('Früheres Ergebnis während der Reservierung verändert: ' + name)
                 report('revalidate', i)
@@ -989,9 +1020,9 @@ class Manager:
             history, archives = [], {}
             report('archive', 0)
             for i, (name, entry) in enumerate(entries.items(), 1):
-                data = entry['data']; oldfolder = self.folder(data['id'])
-                origins = [oldfolder]
-                for old in data.get('history', []):
+                data = entry['data']; oldfolder = self.folder(data['id']) if data else None
+                origins = [oldfolder] if oldfolder else []
+                for old in data.get('history', []) if data else ():
                     old = Path(old)
                     if old.parent.resolve() == (oldfolder / 'history').resolve():
                         origins.append(old)
@@ -1009,10 +1040,11 @@ class Manager:
                 if entry['source'] is not None:
                     (directory / 'seed.c').write_bytes(entry['source'])
                 prepared_job = dict(name=name, status='queued', attempts=0, best=None, created=now(),
-                      inputMode='retry' if entry['source'] is not None else 'automatic',
-                      previousSession=data['id'], previousAttempts=entry['job'].get('attempts', 0),
-                      retryBest=entry['job'].get('best'), retryDeferred=bool(is_deferred(entry['job'])))
-                if review_registry is not None:
+                      inputMode='retry' if entry['source'] is not None else 'automatic')
+                if data:
+                    prepared_job.update(previousSession=data['id'], previousAttempts=entry['job'].get('attempts', 0),
+                        retryBest=entry['job'].get('best'), retryDeferred=bool(is_deferred(entry['job'])))
+                if review_registry is not None and data:
                     try:
                         reviewed = reviewed_seeds.capture(self.root, name, directory, review_registry)
                         if reviewed:
@@ -1037,16 +1069,18 @@ class Manager:
             latest = self._latest_jobs(); inventory = self.engine.inventory_state()
             finals = candidates.local_finals(self.engine)
             placement_index = PlacementIndex(self.engine, inventory)
+            processed = previous_jobs(self.engine, set(names)) if include_unclaimed else None
             report('final', 0)
             for i, name in enumerate(names, 1):
-                checked = self._retry_entry(name, latest, inventory, finals, owner, placement_index, size_range=settings)
+                checked = self._retry_entry(name, latest, inventory, finals, owner, placement_index, size_range=settings,
+                                            include_unclaimed=include_unclaimed, history=processed)
                 if any(checked[k] != entries[name][k] for k in ('sessionHash', 'jobHash')):
                     raise ValueError('Früheres Ergebnis während der Archivierung verändert: ' + name)
                 report('final', i)
             data = dict(id=session, owner=owner, created=now(), status='queued', options=settings, names=names,
                         skipped=[], pins=pins, runner=None, review=str(folder / 'REVIEW.md'), history=history,
-                        purpose='retry-incomplete', version=self.engine.version,
-                        retrySources={n: e['data']['id'] for n, e in entries.items()})
+                        purpose='unclaimed-and-open' if include_unclaimed else 'retry-incomplete', version=self.engine.version,
+                        retrySources={n: e['data']['id'] for n, e in entries.items() if e['data']})
             write(folder / 'session.json', data); self.export(session)
             return self.status(session)
         except BaseException:
@@ -1396,7 +1430,7 @@ def _search_job(manager, folder, data, name, engine, claims, job, budget):
         frontier = deque([('Ausgangsentwurf', source, 0)])
         # Explicit released-result retries retain negative variants across app
         # versions, while recompiling their best seed against the new pins.
-        historical_sources = prior_failed_sources(folder, data, name) if data.get('purpose') == 'retry-incomplete' else set()
+        historical_sources = prior_failed_sources(folder, data, name) if data.get('purpose') in ('retry-incomplete', 'unclaimed-and-open') else set()
         # A known negative BODY is not proof that today's transformations of
         # its source were exhausted. Compatible immutable comparisons can be
         # traversed once without another compiler run; unknown/incompatible

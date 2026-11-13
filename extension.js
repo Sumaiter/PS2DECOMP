@@ -81,7 +81,7 @@ function rpc(op, params = {}, progress) {
   const child = start(['autoStatus', 'autoSessions'].includes(op) ? 'progress' : 'commands');
   const id = ++serial;
   return new Promise((resolve, reject) => {
-    const timeout = ['autoPlan', 'autoStart', 'autoRetryPlan', 'autoRetryStart', 'autoHandoffMany'].includes(op) ? 600000 : 120000;
+    const timeout = ['autoPlan', 'autoStart', 'autoRetryPlan', 'autoRetryStart', 'autoMixedPlan', 'autoMixedStart', 'autoHandoffMany'].includes(op) ? 600000 : 120000;
     const timer = setTimeout(() => {pending.delete(id); reject(new Error('Zeitlimit beim lokalen Prüfkern.'));}, timeout);
     pending.set(id, {resolve, reject, timer, child, progress});
     child.stdin.write(JSON.stringify({id, op, sizeRange: context.workspaceState.get('automaticSizeRange', {minBytes: 8, maxBytes: 640}), ...params}) + '\n', err => {
