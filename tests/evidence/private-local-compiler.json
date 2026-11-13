@@ -1,0 +1,316 @@
+{
+  "syntheticSourcesOnly": true,
+  "retailComparison": false,
+  "semanticApproval": false,
+  "compilerRuns": 16,
+  "cases": [
+    {
+      "context": "float-alias",
+      "rule": "scalar-retarget",
+      "headerHash": "95be6bfb6c7108ec6aaa2c585eedcd7f5f7c78c2e2636682e42ad06a9eccbefe",
+      "pair": [
+        {
+          "phase": "before",
+          "sourceHash": "576f84e27186aa1f1d36ceb80285a1bbc6370a2c780b4da60d64df35cac069c7",
+          "objectHash": "8c36778cefcf1ed9a69d9aca8f8bec4c0e606cdeca18634e3d2e126dd299bddb",
+          "textHash": "e11abf39dbe54915c6ea1602e420a704ed4dc8968902f885cc83f06d1f825ba3",
+          "bytes": 8,
+          "relocations": [],
+          "sourceLFHash": "35f5b075f60873cf7b13306cc5ae739175caca51b21e8d5c3cb0fd2a8dc2fb01"
+        },
+        {
+          "phase": "after",
+          "sourceHash": "f9f4783a616457c0589f1e446731ccfbaddcfc9396098b9df86c104238acc325",
+          "objectHash": "5c98a7e4b7ffca349f968342d3f214ab309b7fc8bdffe52981b89d2866af65cf",
+          "textHash": "e11abf39dbe54915c6ea1602e420a704ed4dc8968902f885cc83f06d1f825ba3",
+          "bytes": 8,
+          "relocations": [],
+          "sourceLFHash": "fb4b754e2375a1fa0ca83bf6a1359795196d939ff1e498dc4b6763c89a9cd009"
+        }
+      ],
+      "sameCode": true,
+      "sameExternalRelocationInventory": true
+    },
+    {
+      "context": "float-alias",
+      "rule": "integer-default",
+      "headerHash": "95be6bfb6c7108ec6aaa2c585eedcd7f5f7c78c2e2636682e42ad06a9eccbefe",
+      "pair": [
+        {
+          "phase": "before",
+          "sourceHash": "4f1b20ed3335d1dc803f28300007962b9f6242f069deeacb964e7884bb5ec998",
+          "objectHash": "18c6577bb9fa1120d8e92f1aaf545b64951d4629657ba90945cf7f07ca63275f",
+          "textHash": "dec09e463cde7efdf94f56d47ebb9999eba6d1c6956bebed627e6e21288cfac0",
+          "bytes": 60,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 16,
+              "type": 4,
+              "symbol": "callback",
+              "symbolValue": 0
+            }
+          ],
+          "sourceLFHash": "6633e301133870d5654a997870583de5744da0278e34d91bdb066720be8b91e4"
+        },
+        {
+          "phase": "after",
+          "sourceHash": "f257ca21a9a35fb513964025b6654956362e591788305779c3c56116bd647d52",
+          "objectHash": "8c2dd6bc25c9a2264324857baba605462f4ed21806fc475b8428e6c75e831b81",
+          "textHash": "60a589bc8aa4b37925ea5174faa67fa7914c7586ac6b720e748860beff8d99d6",
+          "bytes": 48,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 12,
+              "type": 4,
+              "symbol": "callback",
+              "symbolValue": 0
+            }
+          ],
+          "sourceLFHash": "4a97ab46bdd8cfcd2dee1630ab1f74d7e47c578e47fb43ea6458f3c5e53cc732"
+        }
+      ],
+      "sameCode": false,
+      "sameExternalRelocationInventory": true
+    },
+    {
+      "context": "float-alias",
+      "rule": "terminal-load",
+      "headerHash": "95be6bfb6c7108ec6aaa2c585eedcd7f5f7c78c2e2636682e42ad06a9eccbefe",
+      "pair": [
+        {
+          "phase": "before",
+          "sourceHash": "0a6d02e172c3d8e61e0af50aed30a5cbeba3a99578968e0f9a407b75fde46381",
+          "objectHash": "003208a4010cadfa26056820e467ab3a85dc627a5796859eea4fd8ce5238bb84",
+          "textHash": "f79cb9e37e8e19b03e8e18d78a97a168d5a67310d369b2845a53da4346526cd6",
+          "bytes": 20,
+          "relocations": [],
+          "sourceLFHash": "7750de188d351c5f8bdcf3a0972be37f28fc50392ccda77ed3a4253bb66dd7c0"
+        },
+        {
+          "phase": "after",
+          "sourceHash": "122eee47d0fb3bc51cd14edb3031135a8c6c71816734058cff45ad523eb60a01",
+          "objectHash": "6055389cbc3c52db66be0fb2ceb4a350d6c7cb38ed577219fff766a600edfa67",
+          "textHash": "f79cb9e37e8e19b03e8e18d78a97a168d5a67310d369b2845a53da4346526cd6",
+          "bytes": 20,
+          "relocations": [],
+          "sourceLFHash": "01c084c3944ef6a27dacc0603f23eb8b0f1419e2a4dc4140bb57ac0013446ce2"
+        }
+      ],
+      "sameCode": true,
+      "sameExternalRelocationInventory": true
+    },
+    {
+      "context": "float-alias",
+      "rule": "pal-native-lifetime",
+      "headerHash": "95be6bfb6c7108ec6aaa2c585eedcd7f5f7c78c2e2636682e42ad06a9eccbefe",
+      "pair": [
+        {
+          "phase": "before",
+          "sourceHash": "c77eec1ab22e0864ae1710aec25e582bae299ed291812a616176eb4847e539e4",
+          "objectHash": "5293be5ce580aa7b4dc1b8fa32995f5c02124947aad870817f878a40a0df7f2a",
+          "textHash": "a629e18b7bd560288a6cb7fe3f3eca53d3cf9f82d324e0ed10f3a2ed37160dfe",
+          "bytes": 32,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 8,
+              "type": 4,
+              "symbol": "callback",
+              "symbolValue": 0
+            }
+          ],
+          "sourceLFHash": "9daeb772aa1ba7d91a999d4cb2f2b4df9da03b3a853756e2470bf4158d899780"
+        },
+        {
+          "phase": "after",
+          "sourceHash": "f79fde24a246968eb0a0fd598b9c65fe720121b1eac6d336c62c6b0b7621a91a",
+          "objectHash": "ce2613ccc92f115648afbc995e91ca416e4f8e13ffd6a2f7a64921d5ea54ae08",
+          "textHash": "a629e18b7bd560288a6cb7fe3f3eca53d3cf9f82d324e0ed10f3a2ed37160dfe",
+          "bytes": 32,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 8,
+              "type": 4,
+              "symbol": "callback",
+              "symbolValue": 0
+            }
+          ],
+          "sourceLFHash": "4c4dfb4d5be70504749ef8410f3bb389790b9209cfd51cf8b8cad0031f997e16"
+        }
+      ],
+      "sameCode": true,
+      "sameExternalRelocationInventory": true
+    },
+    {
+      "context": "double-alias",
+      "rule": "scalar-retarget",
+      "headerHash": "643e01058126c54546f7e089f913ed0168fda4c802686203e5d002430c8be43b",
+      "pair": [
+        {
+          "phase": "before",
+          "sourceHash": "576f84e27186aa1f1d36ceb80285a1bbc6370a2c780b4da60d64df35cac069c7",
+          "objectHash": "24ecfdea35a65232c778977499ddcf11da43c118a47c4da4289174605908e514",
+          "textHash": "df5120af39d9b5cc703c03ccbd712e8e9aefb20f48642554b60f54b0caefdb94",
+          "bytes": 28,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 8,
+              "type": 4,
+              "symbol": "dpmul",
+              "symbolValue": 0
+            }
+          ],
+          "sourceLFHash": "35f5b075f60873cf7b13306cc5ae739175caca51b21e8d5c3cb0fd2a8dc2fb01"
+        },
+        {
+          "phase": "after",
+          "sourceHash": "f9f4783a616457c0589f1e446731ccfbaddcfc9396098b9df86c104238acc325",
+          "objectHash": "ed417e1369c5ea66da43aa8c4616602581d1df6bb85197ba991526f94101b93c",
+          "textHash": "df5120af39d9b5cc703c03ccbd712e8e9aefb20f48642554b60f54b0caefdb94",
+          "bytes": 28,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 8,
+              "type": 4,
+              "symbol": "dpmul",
+              "symbolValue": 0
+            }
+          ],
+          "sourceLFHash": "fb4b754e2375a1fa0ca83bf6a1359795196d939ff1e498dc4b6763c89a9cd009"
+        }
+      ],
+      "sameCode": true,
+      "sameExternalRelocationInventory": true
+    },
+    {
+      "context": "double-alias",
+      "rule": "integer-default",
+      "headerHash": "643e01058126c54546f7e089f913ed0168fda4c802686203e5d002430c8be43b",
+      "pair": [
+        {
+          "phase": "before",
+          "sourceHash": "4f1b20ed3335d1dc803f28300007962b9f6242f069deeacb964e7884bb5ec998",
+          "objectHash": "5d20338e791cf6484e3bf0cb01d1e6a12bc2cc7eaf67c8607afe2939985721f6",
+          "textHash": "dec09e463cde7efdf94f56d47ebb9999eba6d1c6956bebed627e6e21288cfac0",
+          "bytes": 60,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 16,
+              "type": 4,
+              "symbol": "callback",
+              "symbolValue": 0
+            }
+          ],
+          "sourceLFHash": "6633e301133870d5654a997870583de5744da0278e34d91bdb066720be8b91e4"
+        },
+        {
+          "phase": "after",
+          "sourceHash": "f257ca21a9a35fb513964025b6654956362e591788305779c3c56116bd647d52",
+          "objectHash": "216248d770c9716d35b55002623f95f25c206965aaf9933736d57c449314bc9b",
+          "textHash": "60a589bc8aa4b37925ea5174faa67fa7914c7586ac6b720e748860beff8d99d6",
+          "bytes": 48,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 12,
+              "type": 4,
+              "symbol": "callback",
+              "symbolValue": 0
+            }
+          ],
+          "sourceLFHash": "4a97ab46bdd8cfcd2dee1630ab1f74d7e47c578e47fb43ea6458f3c5e53cc732"
+        }
+      ],
+      "sameCode": false,
+      "sameExternalRelocationInventory": true
+    },
+    {
+      "context": "double-alias",
+      "rule": "terminal-load",
+      "headerHash": "643e01058126c54546f7e089f913ed0168fda4c802686203e5d002430c8be43b",
+      "pair": [
+        {
+          "phase": "before",
+          "sourceHash": "0a6d02e172c3d8e61e0af50aed30a5cbeba3a99578968e0f9a407b75fde46381",
+          "objectHash": "6286438f90c3c51b14e485782f48b5002446a73266da8a252180eda1af4d84db",
+          "textHash": "f79cb9e37e8e19b03e8e18d78a97a168d5a67310d369b2845a53da4346526cd6",
+          "bytes": 20,
+          "relocations": [],
+          "sourceLFHash": "7750de188d351c5f8bdcf3a0972be37f28fc50392ccda77ed3a4253bb66dd7c0"
+        },
+        {
+          "phase": "after",
+          "sourceHash": "122eee47d0fb3bc51cd14edb3031135a8c6c71816734058cff45ad523eb60a01",
+          "objectHash": "ee3b6d9306e02eb80709f9ece0e095e9772bb0b5b21345b14ad660f1895a04fe",
+          "textHash": "f79cb9e37e8e19b03e8e18d78a97a168d5a67310d369b2845a53da4346526cd6",
+          "bytes": 20,
+          "relocations": [],
+          "sourceLFHash": "01c084c3944ef6a27dacc0603f23eb8b0f1419e2a4dc4140bb57ac0013446ce2"
+        }
+      ],
+      "sameCode": true,
+      "sameExternalRelocationInventory": true
+    },
+    {
+      "context": "double-alias",
+      "rule": "pal-native-lifetime",
+      "headerHash": "643e01058126c54546f7e089f913ed0168fda4c802686203e5d002430c8be43b",
+      "pair": [
+        {
+          "phase": "before",
+          "sourceHash": "c77eec1ab22e0864ae1710aec25e582bae299ed291812a616176eb4847e539e4",
+          "objectHash": "be1e7a8e8b344e586a147774a2ffa6fe516d21a3f57a1ac50c61688eaa555058",
+          "textHash": "a629e18b7bd560288a6cb7fe3f3eca53d3cf9f82d324e0ed10f3a2ed37160dfe",
+          "bytes": 32,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 8,
+              "type": 4,
+              "symbol": "callback",
+              "symbolValue": 0
+            }
+          ],
+          "sourceLFHash": "9daeb772aa1ba7d91a999d4cb2f2b4df9da03b3a853756e2470bf4158d899780"
+        },
+        {
+          "phase": "after",
+          "sourceHash": "f79fde24a246968eb0a0fd598b9c65fe720121b1eac6d336c62c6b0b7621a91a",
+          "objectHash": "e0c70643a1edd82100c27f37511263cf9efd34fda33eb1ae4e9a894c81b1606c",
+          "textHash": "a629e18b7bd560288a6cb7fe3f3eca53d3cf9f82d324e0ed10f3a2ed37160dfe",
+          "bytes": 32,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 8,
+              "type": 4,
+              "symbol": "callback",
+              "symbolValue": 0
+            }
+          ],
+          "sourceLFHash": "4c4dfb4d5be70504749ef8410f3bb389790b9209cfd51cf8b8cad0031f997e16"
+        }
+      ],
+      "sameCode": true,
+      "sameExternalRelocationInventory": true
+    }
+  ],
+  "compiler": {
+    "name": "SN EE GCC 2.95.3 v1.36",
+    "sha256": "522d28f9d74ddfce89568437156c8ee323c806de525d99907f698050dee8d81e",
+    "flags": [
+      "-O2",
+      "-G8",
+      "-fopt-stack",
+      "-mno-check-zero-division"
+    ],
+    "pipeline": "Unchanged tools/cc.sh and its documented assembler normalizers"
+  },
+  "sourceGeneratorRevalidatedAfterFinalGuards": true
+}

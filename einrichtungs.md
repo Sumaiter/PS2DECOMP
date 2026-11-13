@@ -319,6 +319,11 @@ insufficient. Its `__init__.py` exports:
   candidate discovery when a project's policy permits browsing unclaimed scopes.
   Without this hook, discovery uses `coordination_state` unchanged. Session
   creation, manual compilation and resume always use `coordination_state`.
+- An engine may implement `additional_search_children(name, source, variants)`
+  to supply bounded adapter-owned candidates. These enter the ordinary source
+  deduplication, history and budget queue; the hook cannot approve a function.
+  Check the source shape before reading additional references, and bind every
+  native placement/target used as evidence. Other adapters do not inherit it.
 
 Set `adapter` to the folder name and `coordination.mode` to `native`. Keep
 compiler profiles, addresses, symbol mapping, GP, catalogue/overlay and region

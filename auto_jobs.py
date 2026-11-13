@@ -43,6 +43,8 @@ import terminated_switch_variants
 import native_sd16_profile
 import compiler_variants
 import scalar_copy_temp
+import scalar_definition_retarget
+import postcall_integer_default
 import terminal_scalar_parameter
 import disjoint_store_swap
 import scheduler_variants
@@ -472,6 +474,15 @@ def review19_children(source, variants, engine, name, place, raw):
     if raw != engine.check.disc_bytes(tuple(place[:4])):
         return []
     return children
+
+
+def reviewed_local_children(source, variants, engine, name, place, raw):
+    """Guarded shared C rules and an optional adapter-owned evidence hook."""
+    yield from scalar_definition_retarget.children(source, variants)
+    yield from postcall_integer_default.generate(source, engine.root)
+    adapter_children = getattr(engine, 'additional_search_children', None)
+    if callable(adapter_children):
+        yield from adapter_children(name, source, variants)
 
 
 def native_guard_children(source, engine, name, place, raw):
@@ -1438,6 +1449,11 @@ def search_job(manager, session, name):
                             offer(label, text)
                     except Exception as exc:
                         job['variantNote'] = 'review19: ' + str(exc)[:800]
+                    try:
+                        for label, text in reviewed_local_children(source, variants, engine, name, place, raw):
+                            offer(label, text)
+                    except Exception as exc:
+                        job['variantNote'] = 'private-local-rules: ' + str(exc)[:800]
                     for label, text in (() if engine.config.get('adapter') != 'RAC4_PAL' else scheduler_variants.generate(source, raw)):
                         offer(label, text)
                     if profile:
@@ -1680,7 +1696,9 @@ def main():
             result = manager.handoff(args.session, name)
     else:
         result = manager.start(args.session)
-    print(json.dumps(result, ensure_ascii=False, indent=2))
+    # Detached Windows runners may inherit a strict legacy output code page.
+    # ASCII JSON escapes preserve the complete Unicode values on decoding.
+    print(json.dumps(result, ensure_ascii=True, indent=2))
 
 
 if __name__ == '__main__':

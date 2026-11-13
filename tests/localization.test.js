@@ -19,6 +19,13 @@ test('English fallback and German regional display languages', () => {
   assert.equal(translate('4 von 12 markiert','en'),'4 of 12 selected');
   assert.equal(translate('PS2DECOMP Werkbank','en'),'PS2DECOMP Workbench');
 });
+
+test('new parser diagnostics preserve English and German coverage', () => {
+  assert.equal(translate('Only one canonical first-line compiler-flags comment is supported.','de'),
+    'Nur ein kanonischer Compilerflags-Kommentar in der ersten Zeile wird unterstützt.');
+  assert.equal(translate('Präprozessor-Zeilenfortsetzungen erfordern eine manuelle Prüfung.','en'),
+    'Preprocessor line splices require manual review.');
+});
 test('quick-pick object identity and callback arguments stay intact', () => {
   const api={env:{language:'en'},window:{createQuickPick:()=>({})}};
   const picker=host.localizedVscode(api).window.createQuickPick();

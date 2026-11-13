@@ -72,6 +72,11 @@ def complete_cfg(raw, start):
 
 
 class AutoEngine(Engine):
+    def additional_search_children(self, name, source, variants):
+        """PAL-only native ordering evidence, after a positive C shape."""
+        from .native_local_after_call_wrapper import generate_for_engine
+        return generate_for_engine(self, name, source, rules=variants)
+
     program = "main"
 
     @staticmethod

@@ -1,0 +1,162 @@
+{
+  "region": "PAL SCES_532.85",
+  "gameSnapshotsIncluded": false,
+  "sourceOfEvidence": "Local handed-off review20; immutable sources, objects and reports retained outside this repository.",
+  "scoresAreCorrectnessPercentages": false,
+  "compilerPipelineChanged": false,
+  "records": [
+    {
+      "rule": "A",
+      "pair": [
+        {
+          "sourceHash": "772fc5fd7d964746979c0c13415ab1fa1eb2044df0219f101ff17647ccac314d",
+          "objectHash": "b00881375230c1086a8d5b3839be393bd3a24d0f34332704db26c0f0e1d50979",
+          "resultFileHash": "45886daa0a192ab7859971b069d37556269e79b158b6b6654a7c3641d738ebbe",
+          "compiledBytes": 152,
+          "flags": [],
+          "heuristicScore": 98.158
+        },
+        {
+          "sourceHash": "23a1f1cb9b31108d2c0a89320c36e6c30e30724cea00ea8a18336ebeb2035df5",
+          "objectHash": "dba70368fdcd4993880b3ea27a8dbe9c3f3a9b521e4b87074383dd3ff333f607",
+          "resultFileHash": "52332859cfac35bfc850d942731226b96d98c1aef105ad422c388e51399a029d",
+          "compiledBytes": 152,
+          "flags": [],
+          "heuristicScore": 100.0
+        }
+      ],
+      "currentGeneratorAstEqualsCompiledAfter": true,
+      "semanticApproval": false,
+      "unchangedRelocationSymbolAndTypeInventory": [
+        [
+          ".text",
+          5,
+          "D_001A01F8",
+          0
+        ],
+        [
+          ".text",
+          6,
+          "D_001A01F8",
+          0
+        ],
+        [
+          ".text",
+          6,
+          "D_001A01F8",
+          0
+        ],
+        [
+          ".text",
+          6,
+          "D_001A01F8",
+          0
+        ]
+      ],
+      "nativeEvidence": "Retained actual placement/relocation review; local only.",
+      "function": "func_001486F8"
+    },
+    {
+      "rule": "B",
+      "pair": [
+        {
+          "sourceHash": "eefecf60ec356ea4317c5172bb735539543b3a73235ef255fc925daf0acf20db",
+          "objectHash": "1dd62d044e343aa8892e8b7cd2583095721e39b3fccbad1bfca2cf59f2172686",
+          "resultFileHash": "d0aef7eaa7fc55f58af64d10138d48c99de98675c0198f11912ece40303af971",
+          "compiledBytes": 152,
+          "flags": [],
+          "heuristicScore": 67.763
+        },
+        {
+          "sourceHash": "1f9e58e90f6381921905a76e019877103e697b57e61cebc52172707b16a80ca5",
+          "objectHash": "e4174f2f127b48ac34562353f8791c4eea851c85d6ef3c2f5523c99214b3fd11",
+          "resultFileHash": "7042bdbfd60722f7191db3c2ccc0fd2d552fb2b22069c63dd93793a0ac267e7e",
+          "compiledBytes": 140,
+          "flags": [],
+          "heuristicScore": 73.857
+        }
+      ],
+      "currentGeneratorAstEqualsCompiledAfter": true,
+      "semanticApproval": false,
+      "unchangedRelocationSymbolAndTypeInventory": [
+        [
+          ".text",
+          4,
+          "func_01E9B788",
+          0
+        ]
+      ],
+      "nativeEvidence": "Retained actual placement/relocation review; local only.",
+      "function": "func_01E9C1B8"
+    },
+    {
+      "rule": "D",
+      "pair": [
+        {
+          "sourceHash": "4e62e12095279f8e9c2788a539b09429514afe7da23a886ea6fac08223ceb156",
+          "objectHash": "cb778951b16996913c7628d4f9d157ba0fe077b66c544d3bf2e7ba582b7d6843",
+          "resultFileHash": "c5dad857f31df45723a45a05bc5f04ebfaf6db4181f01348baaadd164f4cc14b",
+          "compiledBytes": 68,
+          "flags": [],
+          "heuristicScore": 64.412
+        },
+        {
+          "sourceHash": "60c2a7e14b801e60fd02ea25765a26aa74f8861358b19953b671e747b254f11d",
+          "objectHash": "44db26045cedbefa9183f84b0ac7b7bc5df7a58df03b39bc77e482b9dcc37bab",
+          "resultFileHash": "6807a376394a3fad98b6317df2579d94a461e29a141fa7ca1231ecd83f7861b8",
+          "compiledBytes": 68,
+          "flags": [],
+          "heuristicScore": 95.882
+        }
+      ],
+      "currentGeneratorAstEqualsCompiledAfter": true,
+      "semanticApproval": false,
+      "unchangedRelocationSymbolAndTypeInventory": [
+        [
+          ".text",
+          4,
+          "func_0047DE20",
+          0
+        ]
+      ],
+      "nativeEvidence": "Retained actual placement/relocation review; local only.",
+      "function": "func_L01_005A9868"
+    },
+    {
+      "rule": "C1",
+      "pair": [
+        {
+          "sourceHash": "ab851580ca2bddbf38ff0a9eda278d3a0f6b270a8eb48d52cf8d34821465b29a",
+          "objectHash": "554bdca1e56f7c50fef5d12160a5b5b21148e73cc6143e529afeaab24799a5d0",
+          "resultFileHash": "829d296a7d90c9b6a7c076cde775887408af0393f63cde071fa7f059aad6c328",
+          "compiledBytes": 180,
+          "flags": [],
+          "heuristicScore": 60.111
+        },
+        {
+          "sourceHash": "4d26a4d52acf9840bffc02f00c6dd25e76732285b14818c938be921b2f32958a",
+          "objectHash": "cc65bf12394b886ba3a61d707dca6a064a37bafa2aa99474a295a2b2bec2f748",
+          "resultFileHash": "28900b4b18ee00ebff43d704ee9db6cdf7f9b28eeff2a4fd5c6814d89e51c48e",
+          "compiledBytes": 176,
+          "flags": [],
+          "heuristicScore": 75.341
+        }
+      ],
+      "currentGeneratorAstEqualsCompiledAfter": true,
+      "semanticApproval": false,
+      "unchangedRelocationSymbolAndTypeInventory": [
+        [
+          ".text",
+          4,
+          "func_00506BB8",
+          0
+        ]
+      ],
+      "nativeEvidence": "Retained actual placement/relocation review; local only.",
+      "function": "func_004BD990"
+    }
+  ],
+  "nativeLifetimeActualPlacements": 15,
+  "nativeLifetimeActualTargetsChecked": true,
+  "terminalLoadRuleAloneIsNotTheLaterFullMatch": true
+}
