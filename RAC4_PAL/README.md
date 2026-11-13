@@ -23,6 +23,9 @@ code must be pinned before the automatic session starts; hashes, a function-free
 ABI probe, every placement and a witnessed first execution gate availability.
 Explicit manual EE296 files use an existing own manual claim and fresh profile
 validation. See [setup, compiler evidence and limits](EE296_EVIDENCE.md).
+Extended integer aliases also require an explicit source/header contract;
+the shared normalizer no longer supplies one. See the
+[synthetic compiler evidence and limits](EXTENDED_INTEGER_EVIDENCE.md).
 The shared queue retains cumulative time across pause/resume. This profile
 additionally requires a first-run witness and stays disabled on resumed jobs.
 

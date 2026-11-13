@@ -96,6 +96,14 @@ sizes established for the original compiler/ABI. Do not copy another game's
 Guarded rules may deliberately refuse a different header; do not weaken those
 guards just to obtain more variants.
 
+Rough-source normalization preserves existing type definitions and includes.
+It does not define `s128` or `u128`: a type name alone establishes neither its
+width nor its kind or signedness, and `long long` can differ between compiler
+profiles. Supply an evidence-backed definition in the project's own source or
+headers. Missing definitions remain compiler errors; normalization does not
+guess header contents to make a draft compile. Successful compilation still
+requires the normal type/ABI review for each selected profile.
+
 ## 4. Describe original references, compiler inputs and functions
 
 A generic `ps2decomp.json` looks like this (replace the placeholder hashes):
