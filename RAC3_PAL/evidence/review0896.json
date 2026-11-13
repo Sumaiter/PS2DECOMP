@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "scope": "RAC3 PAL named GPREL16 target verification; summary only, no game bytes, objects, private paths or proprietary tools",
+  "policy": "Unchanged tools.level_symbols.derive, injected into the RAC3 adapter checker",
+  "observations": [
+    {
+      "name": "func_L19_00335408",
+      "symbol": "D_L19_001DCD10",
+      "sourceSha256": "4ab586405f51385ead964aa5de7d7f20f50dd5a93b2b807d1cd03695c8f4d700",
+      "objectSha256": "509d0de9302374203ecfeded3a73747189ba31b18959101a3ea9940b5b7f7104",
+      "compiledBytes": 76,
+      "relocationType": 7,
+      "instructionOffset": 4,
+      "access": "LWC1, four-byte runtime read",
+      "relAddend": 0,
+      "placements": [
+        {"level": 19, "gpOffset": 1120, "actualTarget": "001DCD10", "beforeDifferentWords": 4, "afterDifferentWords": 4},
+        {"level": 23, "gpOffset": 608, "actualTarget": "001DCB10", "beforeDifferentWords": 5, "afterDifferentWords": 4},
+        {"level": 27, "gpOffset": 736, "actualTarget": "001DCB90", "beforeDifferentWords": 5, "afterDifferentWords": 4}
+      ],
+      "actualRelocationTargetsPassedAfter": 6,
+      "technicalExact": false,
+      "limitations": [
+        "Four ordinary epilogue scheduling words still differ in every placement.",
+        "The corrected named C was actually compiled; no existing object was relabeled or patched.",
+        "The underlying runtime read and the existing source-file profile were retained."
+      ]
+    },
+    {
+      "name": "func_L19_0030D928",
+      "symbol": "D_L19_001DC610",
+      "sourceSha256": "d9aa62862076abbc5ddc4ba979724b59d4e9b5222c56dff084144e39da369157",
+      "objectSha256": "15f4c079876f25140d3d7ec77ee431fb3d54d4d7749eb12705ea587bf69fc0e4",
+      "compiledBytes": 124,
+      "relocationType": 7,
+      "instructionOffset": 4,
+      "access": "LWC1, four-byte runtime read",
+      "relAddend": 0,
+      "placements": [
+        {"level": 19, "gpOffset": -672, "actualTarget": "001DC610", "beforeDifferentWords": 12, "afterDifferentWords": 12},
+        {"level": 23, "gpOffset": -616, "actualTarget": "001DC648", "beforeDifferentWords": 13, "afterDifferentWords": 12},
+        {"level": 27, "gpOffset": -688, "actualTarget": "001DC600", "beforeDifferentWords": 13, "afterDifferentWords": 12}
+      ],
+      "actualRelocationTargetsPassedAfter": 9,
+      "technicalExact": false,
+      "limitations": [
+        "Twelve ordinary instruction words still differ in every placement.",
+        "This is a separate already compiled named-global source with negative native GP offsets."
+      ]
+    }
+  ],
+  "nativeCounterexample": {
+    "name": "func_L19_00335408",
+    "incorrectSymbol": "D_001DCD10_sda",
+    "sourceSha256": "fa7f16c0ba81aedfd89e71eba4f72f0f48200404128f67b461346970e9154ca1",
+    "objectSha256": "5d26c28e8acab2ea52aa997c779af53be7fab2b2d5de8e5e15e9d5829321f54d",
+    "result": "The fixed SDA slot remains wrong in levels 23 and 27 under both old and new checkers; no slot remapping or target masking is introduced."
+  },
+  "validation": {
+    "nativeExistingObjectReplays": 18,
+    "replayDesign": "Two real named objects and one fixed-SDA counterexample, each at three placements under the baseline and proposed checker",
+    "newCompilerInvocationsDuringReplays": 0,
+    "namedPlacementRelocationChecksPassedAfter": 6,
+    "allNamedActualRelocationTargetsPassedAfter": 15,
+    "immutableSourcesAndObjectsPreserved": true,
+    "focusedPythonTestsPassed": 44,
+    "regularPythonTestsRun": 374,
+    "regularPythonTestsPassed": 366,
+    "regularPythonOptionalSkips": 8,
+    "additionalIndependentProjectDeriveProtocolChecks": 28
+  },
+  "syntheticCounterexamples": [
+    "Positive, negative and signed-boundary REL addends; repeated uses with contradictory targets",
+    "Changed opcode, base, destination, relocation offset or primary name anchor",
+    "Unknown GP and GP writes, including R5900 multiply destinations, loads and FP transfers",
+    "Branches, calls and indirect-call register writes before the access",
+    "Narrow access bounds, alignment, write rights and 32-bit address wrap",
+    "Defined, section, nonglobal and duplicate symbol entries; hidden out-of-function uses",
+    "RELA, mixed relocation groups, mismatched symbol tables and allocated data/literal pools",
+    "Invalid ELF format/function extent and missing or invalid secondary canonical references",
+    "Other differing instruction words remain unchanged and keep the function rejected"
+  ],
+  "limitations": [
+    "No function is a technical or independently approved match, and no game-source promotion or complete game build is claimed.",
+    "This is target-checker support only; no automatic source generation or seed classification was implemented.",
+    "Runtime values, allocation extents, cross-function data identity and ownership, types/ABI and semantics remain independently reviewable requirements.",
+    "The complete project's symbol derivation and applicable full retail-matching builds remain necessary before promotion.",
+    "Source-file profiles, compiler output, budgets, fixed-slot alias semantics and reservation policy are unchanged."
+  ]
+}

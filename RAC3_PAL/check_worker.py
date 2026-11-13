@@ -145,6 +145,131 @@ def _named_level_targets(body, relocations, references, primary, derive, blocked
     return mapped, evidence
 
 
+def _named_gp_level_targets(body, relocations, references, primary, derive, blocked_symbols=()):
+    """Prove named, moving level globals used by direct REL GPREL16 accesses.
+
+    A named level object is not an SDA-slot alias: its GP displacement may
+    differ between copies even when those programs have the same GP. Only
+    unchanged GP-base memory accesses, with a primary named-address anchor and
+    a consistent existing REL addend, are eligible. The production caller
+    supplies every hash/ELF/GP/CFG-validated canonical placement. No source,
+    instruction, relocation kind or fixed-slot identity is rewritten here.
+    """
+    if (not references or type(primary) is not int or primary not in references
+            or not body or len(body) % 4
+            or len({row[0] for row in relocations}) != len(relocations)
+            or any(type(off) is not int or off < 0 or off % 4 or off + 4 > len(body)
+                   for off, _, _ in relocations)):
+        return {}, []
+    mapped, evidence = {}, []
+    symbols = sorted({symbol for _, _, symbol in relocations if _LEVEL_DATA_NAME.fullmatch(symbol)})
+    for symbol in symbols:
+        match = _LEVEL_DATA_NAME.fullmatch(symbol)
+        if (int(match[1]) != primary or symbol in blocked_symbols
+                or 'sda' in symbol.split('_')[3:]):
+            continue
+        records = [(off, kind, name) for off, kind, name in relocations if name == symbol]
+        if not records or any(kind != 7 for _, kind, _ in records):
+            continue
+        uses = []
+        for offset, _, _ in records:
+            word = struct.unpack_from('<I', body, offset)[0]
+            op, base, dest = word >> 26, word >> 21 & 31, word >> 16 & 31
+            if (op not in _MEMORY or base != 28
+                    or op in (32, 33, 35, 36, 37, 39) and dest == 28
+                    or not _base_unchanged(body, -4, offset, 28)):
+                break
+            uses.append((offset, word, *_MEMORY[op]))
+        if len(uses) != len(records):
+            continue
+        packed = b''.join(body[off:off + 4] for off, _, _, _ in uses)
+        group = [(4 * i, 7, symbol) for i in range(len(uses))]
+        proven = []
+        for number, reference in references.items():
+            native, gp = reference.get('raw'), reference.get('gp')
+            if (type(number) is not int or not isinstance(native, bytes)
+                    or type(gp) is not int or not 0 < gp <= 0xffffffff
+                    or len(native) < len(body) or type(reference.get('address')) is not int
+                    or not reference.get('data')):
+                break
+            native_words = [struct.unpack_from('<I', native, off)[0] for off, _, _, _ in uses]
+            if (any((ours ^ theirs) & 0xffff0000 for (_, ours, _, _), theirs in zip(uses, native_words))
+                    or any(not _base_unchanged(native, -4, off, 28) for off, _, _, _ in uses)):
+                break
+            try:
+                values = derive(packed, b''.join(native[off:off + 4] for off, _, _, _ in uses),
+                                group, reference['address'] + uses[0][0], gp)
+                target = values[symbol]
+            except Exception:
+                break
+            if (set(values) != {symbol} or type(target) is not int or not 0 <= target <= 0xffffffff
+                    or number == primary and target != int(match[2], 16)
+                    or not _in_data(reference, target)):
+                break
+            accesses = []
+            for (offset, ours, width, write), theirs in zip(uses, native_words):
+                addend = (ours & 0x7fff) - (ours & 0x8000)
+                displacement = (theirs & 0x7fff) - (theirs & 0x8000)
+                actual = gp + displacement
+                if (target + addend != actual or not _in_data(reference, actual, width, write)):
+                    break
+                accesses.append(dict(offset=offset, address=actual, width=width,
+                                     write=write, addend=addend, gpOffset=displacement))
+            if len(accesses) != len(uses):
+                break
+            proven.append(dict(level=number, target=target, address=reference['address'], gp=gp,
+                               offsets=[off for off, _, _, _ in uses], uses=accesses))
+        if len(proven) == len(references):
+            mapped[symbol] = {row['level']: row['target'] for row in proven}
+            evidence.append(dict(symbol=symbol, primaryLevel=primary, relocationType=7,
+                                 policy='tools.level_symbols.derive', placements=proven))
+    return mapped, evidence
+
+
+def _named_gp_object_scope(elf, function):
+    """Return blocked names, or None for an unsupported object/REL format.
+
+    Inspect the whole symbol/relocation inventory: an out-of-function use or a
+    second, locally defined entry cannot be hidden by the selected body slice.
+    Objects with any allocated data or literal pool stay outside this proof.
+    """
+    from elftools.elf.relocation import RelocationSection
+    start, length = function['st_value'], function['st_size']
+    text = elf.get_section_by_name('.text')
+    if (elf.elfclass != 32 or not elf.little_endian or elf['e_machine'] != 'EM_MIPS'
+            or elf['e_type'] != 'ET_REL'
+            or function['st_info']['type'] != 'STT_FUNC'
+            or function['st_shndx'] != elf.get_section_index('.text')
+            or type(start) is not int or type(length) is not int
+            or start < 0 or start % 4 or length <= 0 or length % 4
+            or text is None or text['sh_type'] != 'SHT_PROGBITS' or text['sh_flags'] & 6 != 6
+            or start + length > len(text.data())
+            or any(sec['sh_flags'] & 2 and sec.name != '.text' and sec['sh_size']
+                   for sec in elf.iter_sections())):
+        return None
+    symbols = elf.get_section_by_name('.symtab')
+    if symbols is None:
+        return None
+    blocked = {symbol.name for symbol in symbols.iter_symbols()
+               if (symbol['st_shndx'] != 'SHN_UNDEF'
+                   or symbol['st_info']['type'] not in ('STT_NOTYPE', 'STT_OBJECT')
+                   or symbol['st_info']['bind'] != 'STB_GLOBAL')}
+    for sec in elf.iter_sections():
+        if not isinstance(sec, RelocationSection):
+            continue
+        if sec.is_RELA():
+            return None
+        if (sec['sh_info'] == elf.get_section_index('.text')
+                and sec['sh_link'] != elf.get_section_index('.symtab')):
+            return None
+        for relocation in sec.iter_relocations():
+            offset = relocation['r_offset']
+            symbol = elf.get_section(sec['sh_link']).get_symbol(relocation['r_info_sym'])
+            if sec['sh_info'] != elf.get_section_index('.text') or not start <= offset < start + length:
+                blocked.add(symbol.name)
+    return blocked
+
+
 def _level_references(name):
     """Hash-, ELF-, GP- and catalogue-checked complete placement references."""
     import gp
@@ -277,15 +402,16 @@ def main():
                     import level_symbols
                     references = _level_references(a.name)
                     records, blocked_names = [], set()
+                    gp_blocked_names = _named_gp_object_scope(elf, sym)
                     for sec in elf.iter_sections():
-                        if not isinstance(sec, RelocationSection) or sec['sh_info'] != elf.get_section_index('.text'):
+                        if not isinstance(sec, RelocationSection):
                             continue
                         if sec.is_RELA():
                             raise ValueError('Named level target proof supports REL only')
                         for rel in sec.iter_relocations():
                             off = rel['r_offset']
                             symbol = elf.get_section(sec['sh_link']).get_symbol(rel['r_info_sym'])
-                            if start <= off < start + length:
+                            if sec['sh_info'] == elf.get_section_index('.text') and start <= off < start + length:
                                 records.append((off - start, rel['r_info_type'], symbol.name))
                                 if symbol['st_shndx'] != 'SHN_UNDEF':
                                     blocked_names.add(symbol.name)
@@ -297,6 +423,12 @@ def main():
                         derived_targets, target_evidence = _named_level_targets(
                             bytes(raw[start:start + length]), records, reference_map, primary,
                             level_symbols.derive, blocked_names)
+                        if gp_blocked_names is not None:
+                            gp_targets, gp_evidence = _named_gp_level_targets(
+                                bytes(raw[start:start + length]), records, reference_map, primary,
+                                level_symbols.derive, gp_blocked_names)
+                            derived_targets.update(gp_targets)
+                            target_evidence.extend(gp_evidence)
                     original_address = check.symbol_address
                     addresses = {symbol: values[t.level] for symbol, values in derived_targets.items()}
                     if any(original_address(symbol) not in (None, address) for symbol, address in addresses.items()):
