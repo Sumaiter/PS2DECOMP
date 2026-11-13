@@ -314,6 +314,19 @@ are skipped in ordinary follow-up runs. Existing drafts and recorded unsuccessfu
 variants are preserved. Logs for your independent reviews belong under
 `build/verifylog/<batch>/<function>.log` and stay local.
 
+A pause preserves the current pass's consumed time and attempt count. All seeds,
+variants and compiler/availability subprocesses share its remaining budget;
+resuming does not grant another full time limit. The queue uses completed
+monotonic segments, so time spent paused is excluded. Old executed jobs with an
+unknown time history, interrupted active segments and inconsistent records cannot
+resume automatically. Their claims and evidence remain intact. Use an explicit
+retry to archive that pass and begin a new one with the same configured limits.
+Only an old queue with no execution markers/artifacts can start from zero.
+Each function's pass stays bound to its original pinned inputs. Retrying other
+selected jobs does not authorize that pass to resume with newer compiler/checker
+inputs. An unknown or changed provenance requires its own explicit retry; old
+snapshots and negative history remain available.
+
 Review released candidates scoring at least 70 first. Scores are search hints,
 not percentages of correctness. A technical match still needs independent byte,
 relocation, type/ABI, ownership, boundary and semantic review and full game builds.

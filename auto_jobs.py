@@ -16,6 +16,7 @@ import sys
 import threading
 import time
 import uuid
+import search_time
 from bisect import bisect_left
 
 import candidates
@@ -610,7 +611,6 @@ def reusable_attempts(folder, data, name):
         frozen_layout = (session_folder.parent == automatic
                          and bool(ID.fullmatch(session_folder.name)))
         frozen_files = {'candidate.c', 'candidate.o', 'result.json', 'checks.json', 'entry.json'}
-        appdirs = {Path(p).parent for p in pins if Path(p).name == 'auto_jobs.py'}
         result = {}
         for filename, pin in pins.items():
             p = Path(filename)
@@ -623,20 +623,28 @@ def reusable_attempts(folder, data, name):
                         and relative[1] == 'jobs' and FUNCTION.fullmatch(relative[2])
                         and relative[3] == 'review-root' and relative[4] in frozen_files):
                     continue
-            if p.parent in appdirs:
-                # Search/normalization can change; compilation and verification cannot.
-                if p.name not in ('backend.py', 'auto_engine.py', 'local_process.py', 'sn_lines.py', 'compiler_variants.py'):
-                    continue
-                filename = 'app/' + p.name
+            # Keep complete paths as well as every shared hash. Inferring an
+            # app root from a basename can collide with a project's own tools.
             result[filename] = pin['sha256']
         return result
     expected = compile_inputs(data['pins']); found = {}
-    for archive in reversed(data.get('history', [])):
+    for archive in [folder, *reversed(data.get('history', []))]:
         archive = Path(archive)
-        # Only archives created beneath this session can supply cached build evidence.
-        if archive.parent.resolve() != (folder / 'history').resolve():
+        # Resume can traverse its own immutable comparisons without repeating
+        # compiler work. Other evidence must be a manager-owned pass archive.
+        current = archive.resolve() == folder.resolve()
+        if not current and archive.parent.resolve() != (folder / 'history').resolve():
             continue
-        if compile_inputs(read(archive / 'session.json')['pins']) != expected:
+        try:
+            origin = data if current else read(archive / 'session.json')
+            if compile_inputs(origin['pins']) != expected:
+                continue
+            accounting = read(archive / 'jobs' / name / 'job.json').get('timeAccounting')
+            if (not isinstance(accounting, dict) or type(accounting.get('version')) is not int
+                    or accounting['version'] != search_time.VERSION
+                    or accounting.get('inputs') != search_time.input_identity(origin['pins'])):
+                continue  # A selective retry can also archive another job's old pass under newer session pins.
+        except (OSError, ValueError, KeyError, TypeError):
             continue
         log = archive / 'jobs' / name / 'attempts.jsonl'
         if not log.is_file():
@@ -809,7 +817,8 @@ class Manager:
                 jobdir.mkdir(parents=True)
                 if name in seeds:
                     (jobdir / 'seed.c').write_text(seeds[name], encoding='utf-8')
-                write(jobdir / 'job.json', dict(name=name, status='queued', attempts=0, best=None, created=now(), inputMode='editor' if name in seeds else 'automatic'))
+                write(jobdir / 'job.json', dict(name=name, status='queued', attempts=0, best=None, created=now(),
+                      inputMode='editor' if name in seeds else 'automatic', timeAccounting=search_time.initial(settings, pins)))
             write(folder / 'session.json', data)
             self.export(session)
             return self.status(session)
@@ -1018,6 +1027,12 @@ class Manager:
                         prepared_job['reviewedSeed'] = dict(state='rejected', reason=str(exc)[:800])
                 write(directory / 'job.json', prepared_job)
                 report('archive', i)
+            # Frozen reviewed roots can extend the session pins while preparing
+            # later jobs. Bind every new pass only after that complete capture.
+            for name in names:
+                jobpath = folder / 'jobs' / name / 'job.json'
+                job = read(jobpath); job['timeAccounting'] = search_time.initial(settings, pins)
+                write(jobpath, job)
             # Hash recheck prevents a changed best from passing via a retained byte copy.
             latest = self._latest_jobs(); inventory = self.engine.inventory_state()
             finals = candidates.local_finals(self.engine)
@@ -1165,6 +1180,7 @@ class Manager:
                 if not source.exists() and job.get('roughCandidate'):
                     source.write_text(Path(job['roughCandidate']['snapshot']).read_text(encoding='utf-8'), encoding='utf-8')
                 write(directory / 'job.json', dict(name=name, status='queued', attempts=0, best=None, created=now(),
+                                                   timeAccounting=search_time.initial(data['options'], pins),
                                                    previousPass=str(archive / 'jobs' / name / 'job.json'),
                                                    previousAttempts=job.get('previousAttempts', 0) + job.get('attempts', 0),
                                                    inputMode=job.get('inputMode', 'automatic'), refreshDraft=refresh,
@@ -1262,16 +1278,41 @@ class Manager:
 def search_job(manager, session, name):
     folder = manager.folder(session); data = read(folder / 'session.json'); settings = options(data['options'])
     engine = AutoEngine(manager.root, version=data.get('version'))  # Never relabel PAL bytes as another version.
-    claims = claim_api(engine); owner = data['owner']; directory = folder / 'jobs' / name; jobpath = directory / 'job.json'
-    job = read(jobpath); start = time.monotonic(); job.update(status='running', started=now(), workerPid=os.getpid())
-    write(jobpath, job)
+    directory = folder / 'jobs' / name; jobpath = directory / 'job.json'; job = read(jobpath)
+    if job.get('status') != 'queued' or is_deferred(job):
+        return  # Review/handoff never implicitly restarts a completed or deferred job.
+    claims = claim_api(engine)
+    try:
+        budget = search_time.Budget(job, directory, settings, data['pins'])
+    except ValueError as exc:
+        # Do not replace legacy elapsed/started, reconstruct a duration, release
+        # its claim or touch snapshots/history. Retry explicitly archives it.
+        job.update(status='error', reason=str(exc), timeAccountingError=True)
+        write(jobpath, job)
+        return
+    budget.start()
+    with budget.tools():
+        _search_job(manager, folder, data, name, engine, claims, job, budget)
+
+
+def _search_job(manager, folder, data, name, engine, claims, job, budget):
+    settings = options(data['options'])
+    owner = data['owner']; directory = folder / 'jobs' / name; jobpath = directory / 'job.json'
+    job.setdefault('started', now())
+    job.update(status='running', segmentStarted=now(), workerPid=os.getpid())
+    def save():
+        budget.checkpoint()
+        write(jobpath, job)
+    save()
     def stop_reason():
-        if (folder / 'stop.request').exists():
-            return 'Vom Benutzer gestoppt'
-        if time.monotonic() - start >= settings['seconds']:
-            return 'Zeitlimit erreicht'
         if claims.holder(name) != owner:
             return 'Reservierung verloren; keine weiteren Builds'
+        if budget.remaining() <= 0:
+            return 'Zeitlimit erreicht'
+        if job['attempts'] >= settings['maxAttempts']:
+            return 'Versuchslimit erreicht'
+        if (folder / 'stop.request').exists():
+            return 'Vom Benutzer gestoppt'
         if not inputs_ok(data['pins']):
             return 'Compiler-/Werkzeug-/Referenzstand geändert; Suche angehalten'
         if not eligible(engine, name, owner, seed=True):
@@ -1280,7 +1321,8 @@ def search_job(manager, session, name):
     try:
         reason = stop_reason()
         if reason:
-            job.update(status='queued' if (folder / 'stop.request').exists() else 'blocked', reason=reason); write(jobpath, job); return
+            job.update(status='queued' if reason == 'Vom Benutzer gestoppt' else ('review_ready' if job.get('best') else 'blocked'), reason=reason)
+            save(); return
         place = engine.place(name)
         raw = engine.check.disc_bytes(place[:4])
         screen = candidate_preflight.inspect(raw, place[2]); job['preflight'] = screen
@@ -1302,7 +1344,7 @@ def search_job(manager, session, name):
                                  facts=derived[0]['facts'], adapterVersion=rough.ADAPTER_VERSION,
                                  contextDeclarations=[], abiProblems=[])
             else:
-                generated = cached['rough'] if cached and cached.get('buildable') else rough.decompile(engine, name, owner=owner, timeout=min(45, max(1, settings['seconds'] - (time.monotonic() - start))))
+                generated = cached['rough'] if cached and cached.get('buildable') else rough.decompile(engine, name, owner=owner, timeout=budget.timeout(45))
             write(directory / 'rough.json', generated)
             source = generated.get('source', '')
             raw_path = Path(generated['directory']) / 'm2c-output.c' if generated.get('directory') else None
@@ -1312,7 +1354,7 @@ def search_job(manager, session, name):
                 job['roughCandidate'] = {'snapshot': str(rough_path), 'sourceHash': sha(rough_path)}
             if not generated.get('ok'):
                 job.update(status='blocked', reason='m2c konnte keinen vollständigen Grobentwurf erzeugen; Protokoll prüfen.')
-                write(jobpath, job); return
+                save(); return
             seed.write_text(source, encoding='utf-8')
         provenance = read(directory / 'rough.json') if (directory / 'rough.json').is_file() else {}
         if provenance.get('forwardedArguments'):
@@ -1332,7 +1374,7 @@ def search_job(manager, session, name):
         job['normalizations'] = notes
         if unresolved:
             job.update(status='blocked', reason='Offene Operationen/Typen/Register: ' + ', '.join(unresolved) + '. Keine Werte geraten.')
-            write(jobpath, job); return
+            save(); return
         if generated_seed:
             source, pointer_notes, pointer_problems = pointer_seeds.repair(source, assembly, engine.root, generated=True)
             job['normalizations'] += pointer_notes
@@ -1342,8 +1384,8 @@ def search_job(manager, session, name):
         (directory / 'normalized-seed.c').write_text(source, encoding='utf-8')
         if re.search(r'\b(?:__asm__|asm|__attribute__|volatile)\b', code_only(source)):
             job.update(status='blocked', reason='Asm/Attribute/volatile benötigen eine manuelle Ausgangsprüfung.')
-            write(jobpath, job); return
-        profile = (compiler_variants.inspect(engine.root, timeout=min(20, max(1, settings['seconds'] - (time.monotonic() - start))))
+            save(); return
+        profile = (compiler_variants.inspect(engine.root, timeout=budget.timeout(20))
                    if engine.config.get('adapter') == 'RAC4_PAL' and compiler_variants.has_divide(raw) else None)
         if profile:
             if profile['available'] and any(str(p.resolve()) not in data['pins'] for p in compiler_variants.inputs(engine.root)):
@@ -1387,9 +1429,8 @@ def search_job(manager, session, name):
                 job['reusedBuilds'] = job.get('reusedBuilds', 0) + 1
             else:
                 job['attempts'] += 1
-                write(jobpath, job)  # A crash must not silently refund compiler attempts.
-                remaining = max(1, settings['seconds'] - (time.monotonic() - start))
-                result = engine.compare(name, source, with_lines=False, owner=owner, timeout=min(90, remaining))
+                save()  # A crash must not silently refund compiler attempts or time.
+                result = engine.compare(name, source, with_lines=False, owner=owner, timeout=budget.timeout(90))
             score = similarity(result)
             strict = engine.strict(name, result) if result.get('byteMatch') else {'passed': False, 'problems': [], 'placements': []}
             result['automaticStrict'] = strict
@@ -1419,8 +1460,8 @@ def search_job(manager, session, name):
                 stalled = 0
             else:
                 stalled += 1
-            job.update(elapsed=round(time.monotonic() - start, 2), staleAttempts=stalled, distinctObjects=len(seen_objects), updated=now())
-            write(jobpath, job)
+            job.update(staleAttempts=stalled, distinctObjects=len(seen_objects), updated=now())
+            save()
             if not job.get('best') and 'compiledSize' not in result:
                 reason = 'Grobentwurf noch nicht kompilierbar; Compilerprotokoll und letzten Entwurf prüfen'; break
             if strict['passed']:
@@ -1431,7 +1472,7 @@ def search_job(manager, session, name):
             # while supported variants and the configured budgets remain.
             # Equal machine output does not imply equal future source rewrites.
             # Explore source-distinct descendants under the same hard build/time budget.
-            if depth < 6:
+            if depth < 6 and not stop_reason():
                 try:
                     children = []
                     def offer(label, text):
@@ -1524,7 +1565,7 @@ def search_job(manager, session, name):
                             job['reviewedSeed'].update(planned, state='rejected')
                     except (OSError, ValueError, KeyError, TypeError) as exc:
                         job['reviewedSeed'].update(state='rejected', reason=str(exc)[:800])
-                    write(jobpath, job)
+                    save()
             # The retained best is always built first. A prepared reviewed root
             # is tried before a potentially slow fresh m2c pass. A fresh sketch
             # remains an additional root only with newly evidenced declarations;
@@ -1536,7 +1577,7 @@ def search_job(manager, session, name):
                         refresh = retry_context.plan(engine, folder, data, job, name)
                         job['contextRefresh'] = dict(refresh, state='not-needed')
                         if refresh['eligible']:
-                            remaining = settings['seconds'] - (time.monotonic() - start)
+                            remaining = budget.remaining()
                             if remaining > 1:
                                 generated = rough.decompile(engine, name, owner=owner, timeout=min(45, remaining))
                                 write(directory / 'refresh-rough.json', generated)
@@ -1559,7 +1600,7 @@ def search_job(manager, session, name):
                         job['contextRefresh'] = dict(job.get('contextRefresh', {}), state='failed', error=str(exc)[:1000])
                         # A failed additional sketch never blocks or discards a
                         # previously usable best, nor changes its source/ABI.
-                    write(jobpath, job)
+                    save()
             reason = ('C-Analyse für weitere Varianten fehlgeschlagen; Suchdiagnose prüfen' if job.get('variantNote')
                       else 'Suchraum ausgeschöpft: keine weiteren unterstützten C-Varianten')
             if not frontier and not job.get('variantNote'):
@@ -1571,7 +1612,20 @@ def search_job(manager, session, name):
             reason = 'Werkzeug-/Referenzstand geändert; Ergebnisse erneut prüfen'
             if job.get('best'):
                 job['best']['technicalMatch'] = False
-        job.update(status='review_ready' if job.get('best') else 'blocked', reason=reason or 'Suche beendet', finished=now())
+        stopped = stop_reason()
+        if stopped and not (job.get('best') or {}).get('technicalMatch'):
+            reason = stopped
+        job.update(status='queued' if reason == 'Vom Benutzer gestoppt' else ('review_ready' if job.get('best') else 'blocked'),
+                   reason=reason or 'Suche beendet')
+        if job['status'] != 'queued':
+            job['finished'] = now()
+    except search_time.Exhausted:
+        job.update(status='review_ready' if job.get('best') else 'blocked', reason='Zeitlimit erreicht', finished=now())
+    except subprocess.TimeoutExpired as exc:
+        if budget.remaining() <= 0:
+            job.update(status='review_ready' if job.get('best') else 'blocked', reason='Zeitlimit erreicht', finished=now())
+        else:
+            job.update(status='error', reason=str(exc)[:2000], finished=now())
     except Exception as exc:
         job.update(status='error', reason=str(exc)[:2000], finished=now())
     finally:
@@ -1584,20 +1638,18 @@ def search_job(manager, session, name):
             except Exception as exc:
                 # A diagnostic failure must never discard a saved candidate.
                 job['checks'] = dict(error=str(exc),technicalPassed=False,manualReviewRequired=True)
-        if job.get('status') != 'running':
+        if job.get('status') not in ('running', 'queued'):
             job.setdefault('finished', now())
-        job['elapsed'] = round(time.monotonic() - start, 2)
-        write(jobpath, job)
         if (job.get('status') in ('review_ready','blocked','error')
                 and (directory/'attempts.jsonl').is_file() and claims.holder(name)==owner):
             try:
                 compacted=retention.finish(manager.root,name,directory,job)
                 if compacted:
                     job['retention']=compacted
-                    write(jobpath,job)
             except Exception as exc:
                 job['retention']=dict(error=str(exc)[:800],cleanupIncomplete=True)
-                write(jobpath,job)
+        budget.checkpoint(finished=True)
+        write(jobpath, job)
 
 
 def process_pool(*, max_workers):

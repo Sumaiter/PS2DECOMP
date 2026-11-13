@@ -324,8 +324,8 @@ class Engine(ManualEngine):
         (directory / 'context.c').write_text(rough.TYPES + '\n'.join(declarations) + '\n', encoding='utf-8', newline='\n')
         command = [sys.executable, str(rough.tool(self.root)), '-t', 'mipsee-gcc-c', '--valid-syntax', '--no-cache',
                    '--context', str(directory / 'context.c'), '-f', name, str(directory / 'input.s')]
-        run = subprocess.run(command, cwd=directory, capture_output=True, text=True, encoding='utf-8', errors='replace',
-                             timeout=timeout, creationflags=subprocess.CREATE_NO_WINDOW)
+        from local_process import run as execute
+        run = execute(command, cwd=directory, text=True, encoding='utf-8', errors='replace', timeout=timeout)
         (directory / 'm2c-output.c').write_text(run.stdout, encoding='utf-8', newline='\n')
         (directory / 'm2c.log').write_text(run.stderr, encoding='utf-8', newline='\n')
         ok = run.returncode == 0 and bool(re.search(r'\b' + name + r'\s*\([^;]*\)\s*\{', run.stdout))
@@ -362,8 +362,8 @@ class Engine(ManualEngine):
             command += ['--object', str(obj), '--address', str(place[2]), '--size', str(place[3])]
             if place[0] == 'boot_elf' and name in self.boot_twins:
                 command += ['--frontbin-copy']
-        run = subprocess.run(command, cwd=self.root, capture_output=True, text=True, encoding='utf-8', errors='replace',
-                             timeout=timeout, creationflags=subprocess.CREATE_NO_WINDOW)
+        from local_process import run as execute
+        run = execute(command, cwd=self.root, text=True, encoding='utf-8', errors='replace', timeout=timeout)
         try:
             result = json.loads(run.stdout)
         except ValueError:
