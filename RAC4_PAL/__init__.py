@@ -105,8 +105,9 @@ def _coordination_state(engine, *, discovery, publication=False, selected=()):
         held.update(service.blocked_for_version(pending, engine.version, aliases=aliases))
     # No original user's identity, comment ID or posting permission is inherited.
     upstream = upstream_matches.fetch_matches(engine.version)
+    snapshot_names = upstream.names
     index = PlacementIndex(engine, ({str(i): {'places': r.places} for i, r in enumerate(upstream.matches)}, set(), {}, {}))
-    held |= {n for n in engine.places if n in upstream.names or index.overlaps(engine.all_places(n), n)}
+    held |= {n for n in engine.places if n in snapshot_names or index.overlaps(engine.all_places(n), n)}
     # Local-first is an explicitly selected workspace policy. Public scope is
     # still mandatory for the independently reviewed results selected for a PR.
     local = selected_workflow == 'local-first' and not publication

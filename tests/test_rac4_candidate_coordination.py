@@ -12,6 +12,21 @@ import project_coordination
 from RAC4_PAL import assert_publication_ready, public_reservations, upstream_matches
 
 
+class CountedMatchSnapshot:
+    def __init__(self, snapshot):
+        self.snapshot = snapshot
+        self.name_reads = 0
+
+    @property
+    def names(self):
+        self.name_reads += 1
+        return self.snapshot.names
+
+    @property
+    def matches(self):
+        return self.snapshot.matches
+
+
 class RAC4CandidateCoordinationTests(unittest.TestCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
@@ -76,6 +91,46 @@ class RAC4CandidateCoordinationTests(unittest.TestCase):
 
     def candidates(self):
         return {row['name'] for row in auto_jobs.plan(self.engine, settings={'minBytes': 8, 'maxBytes': 1024})}
+
+    def upstream_snapshot(self, names):
+        rows = tuple(upstream_matches.MapRow(
+            name=name, file='src/synthetic.c', status='match', names=(name,),
+            places=(self.engine.place(name)[:4],), closeness=100.0,
+        ) for name in names)
+        return CountedMatchSnapshot(upstream_matches.MatchSnapshot(
+            version='pal', revision='a' * 40, map_hash='b' * 64,
+            blob_sha='c' * 40, fetched_at='synthetic', rows=rows,
+        ))
+
+    def test_upstream_names_are_read_once_per_coordination_call(self):
+        snapshot = self.upstream_snapshot([self.integrated])
+        self.upstream.return_value = snapshot
+        for expected_reads in (1, 2):
+            self.assertNotIn(self.integrated, self.candidates())
+            self.assertEqual(snapshot.name_reads, expected_reads)
+            self.assertEqual(self.upstream.call_count, expected_reads)
+        self.assertFalse((self.root / 'build').exists())
+
+    def test_start_rechecks_names_from_a_fresh_upstream_snapshot(self):
+        first = self.upstream_snapshot([self.integrated])
+        second = self.upstream_snapshot([self.integrated, self.own])
+        self.upstream.side_effect = [first, second]
+        self.assertIn(self.own, self.candidates())
+        with self.assertRaisesRegex(ValueError, 'integrated'):
+            project_coordination.assert_free(self.engine, [self.own])
+        self.assertEqual((first.name_reads, second.name_reads), (1, 1))
+        self.assertEqual(self.upstream.call_count, 2)
+        self.assertFalse((self.root / 'build').exists())
+
+    def test_failed_second_upstream_fetch_does_not_reuse_previous_names(self):
+        first = self.upstream_snapshot([self.integrated])
+        self.upstream.side_effect = [first, upstream_matches.MatchMapError('Fresh upstream unavailable')]
+        self.assertIn(self.own, self.candidates())
+        with self.assertRaisesRegex(upstream_matches.MatchMapError, 'Fresh upstream unavailable'):
+            project_coordination.assert_free(self.engine, [self.own])
+        self.assertEqual(first.name_reads, 1)
+        self.assertEqual(self.upstream.call_count, 2)
+        self.assertFalse((self.root / 'build').exists())
 
     def test_discovery_lists_free_functions_beyond_own_scope_and_excludes_pending_matches(self):
         self.assertEqual(self.candidates(), {self.free, self.own, self.released, self.other_region})
