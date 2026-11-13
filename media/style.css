@@ -1,40 +1,91 @@
-:root {color-scheme: light dark;}
-body {padding: 24px; max-width: 1400px; margin: auto; color: var(--vscode-foreground); background: var(--vscode-editor-background); font: 13px/1.6 var(--vscode-font-family);}
-header {border-bottom: 1px solid var(--vscode-panel-border); padding-bottom: 16px;}
-.eyebrow {font-size: 10px; letter-spacing: 2px; color: var(--vscode-textLink-foreground); font-weight: 700;}
-h1 {font-size: 24px; letter-spacing: -.5px; margin: 6px 0; line-height: 1.2;}
-h2 {font-size: 16px; margin-top: 24px;}
-h3 {font-size: 14px; margin-top: 0;}
+:root {
+  color-scheme: light dark;
+  --surface: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  --border: var(--vscode-panel-border, var(--vscode-widget-border, #80808055));
+  --muted: var(--vscode-descriptionForeground);
+  --accent: var(--vscode-textLink-foreground);
+}
+* {box-sizing: border-box;}
+[hidden] {display: none !important;}
+body {max-width: 1360px; margin: auto; padding: 28px 32px 48px; color: var(--vscode-foreground); background: var(--vscode-editor-background); font: 13px/1.6 var(--vscode-font-family);}
+body.vscode-dark, body.vscode-high-contrast {color-scheme: dark;}
+body.vscode-light, body.vscode-high-contrast-light {color-scheme: light;}
+.page-header {padding: 0 0 20px;}
+.eyebrow {font-size: 11px; letter-spacing: 1.6px; color: var(--accent); font-weight: 700;}
+.eyebrow span {color: var(--muted); font-weight: 400; letter-spacing: .8px;}
+h1 {font-size: clamp(22px, 3vw, 30px); letter-spacing: -.6px; margin: 8px 0; line-height: 1.25; font-weight: 650;}
+h2 {font-size: 17px; margin: 24px 0 8px; font-weight: 650; line-height: 1.4;}
+h3 {font-size: 14px; margin: 0 0 8px; font-weight: 650;}
 p {margin: 8px 0;}
-button {font-family: inherit; color: var(--vscode-button-secondaryForeground); background: var(--vscode-button-secondaryBackground); border: 1px solid var(--vscode-panel-border); border-radius: 5px; padding: 7px 11px; cursor: pointer;}
+.page-header p {color: var(--muted); margin-bottom: 0; max-width: 760px;}
+button {font: inherit; line-height: 1.4; color: var(--vscode-button-secondaryForeground); background: var(--vscode-button-secondaryBackground); border: 1px solid var(--vscode-button-border, transparent); border-radius: 5px; padding: 7px 12px; cursor: pointer; max-width: 100%;}
 button:hover {background: var(--vscode-button-secondaryHoverBackground);}
-button:focus-visible, summary:focus-visible {outline: 2px solid var(--vscode-focusBorder); outline-offset: 2px;}
+:is(button, input, select, summary, [tabindex]):focus-visible {outline: 2px solid var(--vscode-focusBorder); outline-offset: 3px;}
 button.primary {background: var(--vscode-button-background); color: var(--vscode-button-foreground);}
 button.primary:hover {background: var(--vscode-button-hoverBackground);}
-button:disabled {opacity: .6; cursor: wait;}
-.toolbar {display: flex; flex-wrap: wrap; gap: 8px; padding: 18px 0;}
-kbd {font-size: 10px; margin-left: 6px; opacity: .7;}
-.target {display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px;}
-.target strong {font-size: 20px; font-family: var(--vscode-editor-font-family);}
-.target span, .muted, #connection {color: var(--vscode-descriptionForeground);}
-.warning {background: var(--vscode-inputValidation-warningBackground); border-left: 3px solid var(--vscode-editorWarning-foreground); padding: 10px 12px; border-radius: 3px;}
+button:disabled {opacity: .45; cursor: default;}
+.toolbar {display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 10px 0;}
+kbd {font: 10px var(--vscode-font-family); padding: 2px 4px; margin-left: 6px; border: 1px solid currentColor; border-radius: 3px; opacity: .8; white-space: nowrap;}
+.target-card {display: flex; align-items: center; flex-wrap: wrap; gap: 8px 20px;}
+.target {display: flex; flex-direction: column; gap: 5px; flex: 1 1 280px; min-width: 0;}
+.target strong {font-size: 20px; font-family: var(--vscode-editor-font-family); overflow-wrap: anywhere;}
+.target span, .muted, #connection {color: var(--muted);}
+.section-label {font-size: 11px; font-weight: 600; color: var(--muted);}
+.secondary-actions {flex-basis: 100%; border-top: 1px solid var(--border); margin-top: 8px; padding: 12px 0 0;}
+.warning {background: var(--vscode-inputValidation-warningBackground); border-left: 3px solid var(--vscode-editorWarning-foreground); padding: 10px 12px; border-radius: 4px; overflow-wrap: anywhere;}
 .success {border-left: 3px solid var(--vscode-testing-iconPassed);}
-nav {display: flex; gap: 4px; border-bottom: 1px solid var(--vscode-panel-border); margin: 20px 0; overflow-x: auto;}
-nav button {border: none; border-radius: 0; white-space: nowrap; background: transparent; padding: 10px 8px; color: var(--vscode-descriptionForeground);}
-nav button.active {color: var(--vscode-textLink-foreground); border-bottom: 2px solid var(--vscode-textLink-foreground);}
+.tabs {display: flex; gap: 20px; border-bottom: 1px solid var(--border); margin: 0 0 24px; overflow-x: auto; scrollbar-width: thin;}
+.tabs button {border: none; border-bottom: 2px solid transparent; border-radius: 0; white-space: nowrap; background: transparent; padding: 12px 2px; color: var(--muted);}
+.tabs button:hover {color: var(--vscode-foreground);}
+.tabs button.active {color: var(--accent); border-bottom-color: var(--accent); font-weight: 600;}
+.tabs button:focus-visible {outline-offset: -3px;}
+.target-card + #notice:empty + #warnings:empty + .tabs {margin-top: 20px;}
 .tab {display: none;}
 .tab.active {display: block;}
-.card {border: 1px solid var(--vscode-panel-border); border-radius: 7px; padding: 14px; margin: 12px 0; overflow: hidden;}
+.tab:focus-visible {outline-offset: 6px;}
+.card {border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 20px; margin: 0 0 16px; min-width: 0;}
 .card pre {white-space: pre-wrap; overflow-wrap: anywhere;}
+.card h2:first-child {margin-top: 0;}
+.suggestion-grid {display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 14px;}
+.suggestion-grid .card {margin-bottom: 0;}
+.suggestion-grid:not(:empty) {margin-bottom: 24px;}
 pre {font: 12px/1.7 var(--vscode-editor-font-family), monospace; tab-size: 4; overflow: auto;}
-.source {font-size: 11px; color: var(--vscode-descriptionForeground); overflow-wrap: anywhere;}
-.tag {font-size: 11px; color: var(--vscode-textLink-foreground);}
+.code-surface {padding: 18px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); min-height: 120px;}
+.source {font-size: 11px; color: var(--muted); overflow-wrap: anywhere;}
+.tag {font-size: 11px; color: var(--accent);}
 details {margin: 10px 0;}
-summary {cursor: pointer; font-weight: 600;}
-table {width: 100%; border-collapse: collapse; font: 11px/1.6 var(--vscode-editor-font-family), monospace;}
-th, td {text-align: left; vertical-align: top; padding: 7px 9px; border-bottom: 1px solid var(--vscode-panel-border);}
-th {font-family: var(--vscode-font-family); color: var(--vscode-descriptionForeground);}
-.diff-wrap {overflow-x: auto; margin: 18px 0;}
+summary {cursor: pointer; font-weight: 600; width: fit-content; max-width: 100%;}
+.disclosure {border-top: 1px solid var(--border); padding-top: 14px; margin: 18px 0 0;}
+.disclosure > summary {color: var(--muted);}
+.disclosure[open] > summary {color: var(--vscode-foreground); margin-bottom: 10px;}
+table {width: 100%; border-collapse: collapse; font: 12px/1.6 var(--vscode-editor-font-family), monospace;}
+th, td {text-align: left; vertical-align: top; padding: 12px; border-bottom: 1px solid var(--border);}
+th {font: 600 11px/1.5 var(--vscode-font-family); color: var(--muted); background: var(--surface);}
+.table-scroll, .diff-wrap {overflow-x: auto; scrollbar-width: thin;}
+.diff-wrap {margin: 18px 0;}
 #diff td {white-space: pre;}
 .different {background: var(--vscode-diffEditor-removedTextBackground);}
-#notice:not(:empty) {padding: 10px; border: 1px solid var(--vscode-textLink-foreground); border-radius: 5px;}
+#notice:not(:empty) {padding: 12px; margin-bottom: 16px; border: 1px solid var(--accent); border-radius: 5px; overflow-wrap: anywhere;}
+label {display: flex; align-items: center; gap: 8px; min-width: 0;}
+select, input {font: inherit; color: var(--vscode-input-foreground); background: var(--vscode-input-background); border: 1px solid var(--vscode-input-border, var(--border)); padding: 7px 9px; border-radius: 4px; min-width: 0; max-width: 100%;}
+input[type="checkbox"] {accent-color: var(--vscode-checkbox-selectBackground, var(--vscode-button-background)); flex-shrink: 0; width: 15px; height: 15px; margin: 0; cursor: pointer;}
+.settings {display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 18px; padding: 12px 0 18px;}
+.settings label {flex-direction: column; align-items: flex-start; color: var(--muted); font-size: 12px;}
+.settings input {width: 100%; font-size: 13px;}
+#error:not(:empty) {padding: 12px; margin-bottom: 18px; background: var(--vscode-inputValidation-errorBackground); border: 1px solid var(--vscode-inputValidation-errorBorder); border-radius: 5px; overflow-wrap: anywhere;}
+.empty-state {padding: 28px 20px; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: 6px;}
+.empty-state h3 {color: var(--vscode-foreground);}
+.compact {font-size: 12px;}
+@media (max-width: 640px) {
+  body {padding: 20px 16px 32px;}
+  .page-header {padding-bottom: 16px;}
+  .card {padding: 16px;}
+  .tabs {gap: 16px; margin-bottom: 20px;}
+  .target-card > .toolbar {flex-basis: 100%;}
+  th, td {padding: 10px;}
+}
+@media (forced-colors: active) {
+  button, .card, .code-surface, input, select {border: 1px solid ButtonText;}
+  .tabs button.active {border-bottom-color: Highlight;}
+  button:disabled {color: GrayText; opacity: 1;}
+}

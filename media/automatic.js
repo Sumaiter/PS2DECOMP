@@ -4,6 +4,9 @@ const $ = id => document.getElementById(id);
 const el = (tag, text, cls) => {const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n;};
 let candidates = [], current, starting = false, candidateMode = 'free', candidateReady = false;
 let jobPage = 0, jobSession;
+let viewChosen = false, candidatesLoading = false;
+const tab = window.PS2DECOMP_TABS(document.querySelector('.tabs'), () => {viewChosen = true;});
+const expandedJobs = new Set();
 let requestedSession, updateSession, lastSuccessfulUpdate, updateState = 'idle', updateFailure = '', updateStale = false;
 const jobPageSize = 100;
 const settingKeys = ['workers', 'maxAttempts', 'seconds', 'minBytes', 'maxBytes'];
@@ -26,13 +29,17 @@ function readSizeRange() {
 const selectionButtons = ['select10', 'select50', 'select100', 'select1000', 'selectCustom', 'selectionAmount', 'selectAll', 'selectNone'];
 function updateSelection() {
   const inputs = [...document.querySelectorAll('#candidates input')];
-  $('selectionCount').textContent = `${inputs.filter(n => n.checked).length} von ${inputs.length} markiert`;
+  const count = inputs.filter(n => n.checked).length;
+  $('selectionCount').textContent = `${count} von ${inputs.length} markiert`;
+  $('startSummary').textContent = count ? `${count} Funktionen ausgewählt.` : 'Noch keine Funktionen ausgewählt.';
+  $('start').disabled = candidatesLoading || starting || !candidateReady || !count;
 }
 function selectFirst(count) {
   [...document.querySelectorAll('#candidates input')].forEach((n, index) => n.checked = index < count);
   updateSelection();
 }
 function loadingCandidates(active) {
+  candidatesLoading = active;
   $('load').disabled = active || starting;
   $('scope').disabled = active || starting;
   $('retryScope').disabled = active || starting;
@@ -40,8 +47,9 @@ function loadingCandidates(active) {
   $('minBytes').disabled = active || starting;
   $('maxBytes').disabled = active || starting;
   $('sizePreset').disabled = active || starting;
-  $('start').disabled = active || starting || !candidateReady || !candidates.length;
   for (const id of selectionButtons) $(id).disabled = active || starting;
+  for (const input of document.querySelectorAll('#candidates input')) input.disabled = active || starting;
+  updateSelection();
   if (active && candidateMode === 'retry') $('candidateStatus').textContent = `Bis zu ${$('loadCount').value || 1000} freigegebene offene Ergebnisse werden geprüft und geladen …`;
   else if (active) $('candidateStatus').textContent = `Bis zu ${$('loadCount').value || 1000} freie Funktionen werden geprüft und geladen …`;
 }
@@ -74,7 +82,7 @@ function renderCandidates(rows, mode = 'free') {
     const check = document.createElement('input'); check.type = 'checkbox'; check.value = row.name; check.checked = index < 10;
     check.addEventListener('change', updateSelection);
     const details = el('span', undefined, 'candidate-details');
-    details.append(el('span', `${row.name} · ${row.size} B · ${row.program}${row.cached ? ' · baubarer Entwurf vorhanden' : ''}`));
+    details.append(el('span', row.name, 'candidate-name'), el('span', `${row.size} B · ${row.program}${row.cached ? ' · baubarer Entwurf vorhanden' : ''}`, 'candidate-info'));
     label.append(check, details, el('span', '○ Noch nicht begonnen', 'job-status status-queued'));
     if (mode === 'retry') {
       const previous = labels[row.previousStatus] || row.previousStatus || 'offen';
@@ -150,6 +158,7 @@ function progressState(message) {
 }
 function renderActiveJobs(data) {
   const box = $('activeJobs'), running = data.jobs.filter(job => job.status === 'running');
+  box.hidden = !running.length;
   box.replaceChildren(el('h3', `Aktuell in Arbeit · ${running.length}`));
   if (!running.length) {
     box.append(el('p', 'Im zuletzt geladenen Stand sind keine Jobs in Arbeit.'));
@@ -164,12 +173,19 @@ function renderActiveJobs(data) {
   box.append(list, el('p', 'Alle laufenden Jobs dieses Suchlaufs, unabhängig von Tabellenseite und Filter.', 'muted'));
 }
 function selectSession(session) {
+  viewChosen = true; tab('sessionsView', true);
   requestedSession = session;
   progressState({session, state: 'refreshing'});
   send('select', {session});
 }
 function renderSession(data) {
-  if (jobSession !== data.id) {jobPage = 0; jobSession = data.id;}
+  const sameSession = jobSession === data.id;
+  const focused = document.activeElement;
+  const focusedJob = sameSession && focused?.closest('.job-row')?.dataset.name;
+  const focusedAction = focused?.dataset.action;
+  const metaOpen = sameSession && $('status').querySelector('.session-meta')?.open;
+  const metaFocused = sameSession && focused?.id === 'sessionMetaSummary';
+  if (!sameSession) {jobPage = 0; jobSession = data.id; expandedJobs.clear();}
   if (data.publicReservation) {
     const p = data.publicReservation;
     $('publicReservationStatus').textContent = p.status === 'error'
@@ -186,8 +202,12 @@ function renderSession(data) {
   const done = data.jobs.filter(j => ['review_ready', 'blocked', 'error', 'handed_off'].includes(j.status)).length;
   const queued = data.jobs.filter(j => j.status === 'queued').length;
   const running = data.jobs.filter(j => j.status === 'running').length;
-  $('status').replaceChildren(el('div', `${labels[data.status] || data.status} · ${done}/${data.names.length} bearbeitet · ${data.reserved.length} reserviert`, 'session-progress'),
-    el('p', `Owner: ${data.owner}`, 'source'), el('p', data.error || (data.alive ? 'Die Suche läuft als lokaler Hintergrundprozess weiter, auch wenn VS Code geschlossen wird.' : 'Kein aktiver Suchprozess. Beste Ergebnisse und Reservierungen sind gespeichert.'), 'muted'));
+  const progress = el('div', undefined, 'session-progress');
+  progress.append(el('strong', labels[data.status] || data.status), el('span', `${done}/${data.names.length} bearbeitet · ${data.reserved.length} reserviert`));
+  const bar = el('progress', undefined, 'completion-bar'); bar.max = Math.max(1, data.names.length); bar.value = done;
+  bar.setAttribute('aria-label', 'Bearbeitete Funktionen');
+  $('status').replaceChildren(progress, bar);
+  if (data.error) $('status').append(el('p', data.error, 'warning'));
   if (data.stopRequested) $('status').append(el('p', 'Pause angefordert. Ein laufender Werkzeugaufruf wird noch innerhalb seines Zeitlimits beendet.', 'warning'));
   const counts = el('div', undefined, 'job-counts');
   for (const [state, count] of [['queued', queued], ['running', running], ['review_ready', data.jobs.filter(j => j.status === 'review_ready').length], ['deferred', data.jobs.filter(isDeferred).length]]) {const badge = statusBadge(state); badge.append(el('strong', String(count))); counts.append(badge);}
@@ -201,16 +221,23 @@ function renderSession(data) {
     card.append(el('span', title, 'metric-label'), el('strong', String(metrics[key]), 'metric-number'), el('span', detail, 'metric-detail'));
     summary.append(card);
   }
-  $('status').append(summary, el('p', 'Gezählt werden eindeutige Funktionen anhand ihres aktuellen besten Ergebnisses im gesamten Suchlauf, einschließlich ausgeblendeter Fälle. Suchwerte sind keine Korrektheitsprozente oder fachlichen Freigaben.', 'muted'));
+  $('status').append(summary);
+  const meta = el('details', undefined, 'session-meta'); meta.open = Boolean(metaOpen);
+  const metaSummary = el('summary', 'Details zum Suchlauf'); metaSummary.id = 'sessionMetaSummary';
+  meta.append(metaSummary, el('p', `Owner: ${data.owner}`, 'source'), el('p', data.alive ? 'Die Suche läuft als lokaler Hintergrundprozess weiter, auch wenn VS Code geschlossen wird.' : 'Kein aktiver Suchprozess. Beste Ergebnisse und Reservierungen sind gespeichert.'),
+    el('p', 'Gezählt werden eindeutige Funktionen anhand ihres aktuellen besten Ergebnisses im gesamten Suchlauf, einschließlich ausgeblendeter Fälle. Suchwerte sind keine Korrektheitsprozente oder fachlichen Freigaben.'));
   $('stop').disabled = !data.alive; $('resume').disabled = data.alive || !data.jobs.some(j => ['queued', 'running'].includes(j.status));
   $('handoffAll').disabled = data.alive || !data.reserved.length;
   const canRetry = j => data.reserved.includes(j.name) && !j.best?.technicalMatch && j.status !== 'handed_off';
   $('retry').disabled = data.alive || !data.jobs.some(j => canRetry(j) && !isDeferred(j));
   $('retryDeferred').disabled = data.alive || !data.jobs.some(j => canRetry(j) && isDeferred(j));
-  if (data.jobs.some(isDeferred)) $('status').append(el('p', 'Zurückgestellte werden bei neuen Läufen und normalen Wiederholungen ausgelassen. Über die Checkbox anzeigen oder später gezielt erneut versuchen.', 'muted'));
-  $('status').append(el('p', `Suchpass ${data.searchPass || 1} · ${data.jobs.filter(j => j.attempts === 1).length} nur einmal gebaut. „Bearbeitet“ bedeutet Suchlauf beendet, nicht erfolgreich decompiliert.`, 'muted'));
-  const table = el('table'); const head = el('tr');
-  ['Funktion', 'Stand', 'Versuche', 'Suchwert', 'Ergebnis'].forEach(t => head.append(el('th', t))); table.append(head);
+  if (data.jobs.some(isDeferred)) meta.append(el('p', 'Zurückgestellte werden bei neuen Läufen und normalen Wiederholungen ausgelassen. Über die Checkbox anzeigen oder später gezielt erneut versuchen.'));
+  meta.append(el('p', `Suchpass ${data.searchPass || 1} · ${data.jobs.filter(j => j.attempts === 1).length} nur einmal gebaut. „Bearbeitet“ bedeutet Suchlauf beendet, nicht erfolgreich decompiliert.`));
+  $('status').append(meta);
+  if (metaFocused) metaSummary.focus({preventScroll: true});
+  const table = el('table', undefined, 'job-table'); const head = el('tr'), thead = el('thead'), tbody = el('tbody');
+  ['Funktion', 'Stand', 'Versuche', 'Suchwert', 'Ergebnis'].forEach(t => {const cell = el('th', t); cell.scope = 'col'; head.append(cell);});
+  thead.append(head); table.append(thead, tbody);
   const filtered = data.jobs.filter(j => $('showDeferred').checked || !isDeferred(j));
   const visible = [...filtered.filter(j => j.status === 'running'), ...filtered.filter(j => j.status !== 'running')];
   const lastPage = Math.max(0, Math.ceil(visible.length / jobPageSize) - 1);
@@ -220,24 +247,35 @@ function renderSession(data) {
   $('jobNext').disabled = jobPage === lastPage;
   $('jobPageInfo').textContent = visible.length ? `${jobPage * jobPageSize + 1}–${jobPage * jobPageSize + pageRows.length} von ${visible.length} Funktionen` : 'Keine Funktionen in dieser Ansicht';
   for (const job of pageRows) {
-    const row = el('tr', undefined, 'job-row job-' + job.status); row.dataset.status = job.status;
+    const row = el('tr', undefined, 'job-row job-' + job.status); row.dataset.status = job.status; row.dataset.name = job.name;
     const state = el('td'); state.append(statusBadge(isDeferred(job) ? 'deferred' : job.status));
-    row.append(el('td', job.name), state, el('td', `${job.attempts}/${data.options.maxAttempts}`),
-      el('td', job.best ? `${job.best.score.toFixed(2)}${job.best.technicalMatch ? ' · technischer Treffer' : ''}` : '—'));
+    const score = el('td', job.best ? job.best.score.toFixed(2) : '—');
+    if (job.best?.technicalMatch) score.append(el('span', 'technischer Treffer', 'score-note'));
+    row.append(el('td', job.name), state, el('td', `${job.attempts}/${data.options.maxAttempts}`), score);
     const actions = el('td');
-    const checks = el('button', 'Prüfbericht'); checks.addEventListener('click', () => send('checks', {name: job.name})); actions.append(checks);
-    if (job.best || job.lastAttempt || job.roughCandidate) {const best = el('button', job.best ? 'Beste Quelle' : job.lastAttempt ? 'Letzter Entwurf' : 'Grobentwurf'); best.addEventListener('click', () => send('best', {name: job.name})); actions.append(best);}
-    if (job.status !== 'handed_off') {const handoff = el('button', 'An Review freigeben'); handoff.disabled = data.alive; handoff.addEventListener('click', () => send('handoff', {name: job.name})); actions.append(handoff);}
-    if (job.reason) actions.append(el('p', job.reason, 'muted')); if (job.variantNote) actions.append(el('p', job.variantNote, 'muted'));
-    actions.append(el('p', `${job.elapsed || 0} s · ${job.generatedVariants || 0} neue Quellvarianten · ${job.distinctObjects || 0} verschiedene Compilerergebnisse · ${job.reusedBuilds || 0} Builds aus Belegen wiederverwendet${job.previousAttempts ? ' · ' + job.previousAttempts + ' frühere Builds archiviert' : ''}`, 'muted'));
-    if (Number.isInteger(job.supportedVariantSources)) actions.append(el('p', `${job.supportedVariantSources} unterstützte Quellvarianten · ${job.historySkippedVariants || 0} anhand früherer Belege ausgelassen`, 'muted'));
-    if (job.normalizations?.length) actions.append(el('p', job.normalizations.join('; '), 'muted'));
-    if (job.originalCompiler) actions.append(el('p', 'Zusatzprofil: ' + job.originalCompiler.reason, job.originalCompiler.available ? 'muted' : 'warning'));
-    if (job.checks) actions.append(el('p', job.checks.error ? 'Prüfbericht noch offen: ' + job.checks.error :
+    const buttons = el('div', undefined, 'job-actions'); actions.append(buttons);
+    const checks = el('button', 'Prüfbericht'); checks.dataset.action = 'checks'; checks.addEventListener('click', () => send('checks', {name: job.name})); buttons.append(checks);
+    if (job.best || job.lastAttempt || job.roughCandidate) {const best = el('button', job.best ? 'Beste Quelle' : job.lastAttempt ? 'Letzter Entwurf' : 'Grobentwurf'); best.dataset.action = 'best'; best.addEventListener('click', () => send('best', {name: job.name})); buttons.append(best);}
+    if (job.status !== 'handed_off') {const handoff = el('button', 'An Review freigeben'); handoff.dataset.action = 'handoff'; handoff.disabled = data.alive; handoff.addEventListener('click', () => send('handoff', {name: job.name})); buttons.append(handoff);}
+    if (job.reason) actions.append(el('p', job.reason, 'job-reason muted'));
+    const details = el('details', undefined, 'job-details'); details.open = expandedJobs.has(job.name);
+    const caption = el('summary', 'Diagnose & Verlauf'); caption.dataset.action = 'details'; details.append(caption);
+    details.addEventListener('toggle', () => {if (details.isConnected) {if (details.open) expandedJobs.add(job.name); else expandedJobs.delete(job.name);}});
+    if (job.variantNote) details.append(el('p', job.variantNote, 'muted'));
+    details.append(el('p', `${job.elapsed || 0} s · ${job.generatedVariants || 0} neue Quellvarianten · ${job.distinctObjects || 0} verschiedene Compilerergebnisse · ${job.reusedBuilds || 0} Builds aus Belegen wiederverwendet${job.previousAttempts ? ' · ' + job.previousAttempts + ' frühere Builds archiviert' : ''}`, 'muted'));
+    if (Number.isInteger(job.supportedVariantSources)) details.append(el('p', `${job.supportedVariantSources} unterstützte Quellvarianten · ${job.historySkippedVariants || 0} anhand früherer Belege ausgelassen`, 'muted'));
+    if (job.normalizations?.length) details.append(el('p', job.normalizations.join('; '), 'muted'));
+    if (job.originalCompiler) details.append(el('p', 'Zusatzprofil: ' + job.originalCompiler.reason, job.originalCompiler.available ? 'muted' : 'warning'));
+    if (job.checks) details.append(el('p', job.checks.error ? 'Prüfbericht noch offen: ' + job.checks.error :
       (job.checks.technicalPassed ? 'Technische Prüfung aller Platzierungen bestanden. Fachliche Review offen.' : 'Technische Prüfung offen oder abweichend. Siehe Prüfbericht.'), 'muted'));
-    row.append(actions); table.append(row);
+    actions.append(details); row.append(actions); tbody.append(row);
   }
-  $('jobs').replaceChildren(table);
+  $('jobs').replaceChildren(visible.length ? table : el('p', 'Keine Funktionen in dieser Ansicht', 'empty-state'));
+  if (focusedJob && focusedAction) {
+    const row = [...table.querySelectorAll('.job-row')].find(row => row.dataset.name === focusedJob);
+    const control = [...(row?.querySelectorAll('[data-action]') || [])].find(control => control.dataset.action === focusedAction);
+    control?.focus({preventScroll: true});
+  }
   vscode.postMessage({type: 'rendered', kind: 'session', count: data.jobs.length, stateBadges: pageRows.every(j => table.querySelector('tr[data-status="' + j.status + '"] .job-status'))});
 }
 function renderDeferred(rows) {
@@ -335,7 +373,7 @@ window.addEventListener('message', ({data: m}) => {
   if (m.type === 'sessionProgress') progressState(m);
   if (m.type === 'session') {
     if (requestedSession && m.data.id !== requestedSession && !m.selection) return;
-    if (m.selection) requestedSession = m.data.id;
+    if (m.selection) {requestedSession = m.data.id; viewChosen = true; tab('sessionsView');}
     renderSession(m.data);
     updateSession = m.data.id;
     lastSuccessfulUpdate = m.updatedAt || new Date().toISOString();
@@ -344,10 +382,11 @@ window.addEventListener('message', ({data: m}) => {
   }
   if (m.type === 'deferred') renderDeferred(m.data);
   if (m.type === 'sessions') {
+    if (!viewChosen) {tab(m.data.length ? 'sessionsView' : 'queueView'); viewChosen = true;}
     $('sessions').replaceChildren(...m.data.map(s => {const o = el('option', `${s.purpose ? s.purpose + ' · ' : ''}${s.created.slice(0, 19)} · ${s.functionCount ?? s.names?.length ?? 0} Funktionen`); o.value = s.id; return o;}));
     vscode.postMessage({type: 'rendered', kind: 'sessions', count: m.data.length});
   }
-  if (m.type === 'started') {starting = false; candidateReady = false; candidates = []; $('candidates').replaceChildren(el('p', 'Auswahl gestartet. Zum nächsten Suchlauf zuerst die gewünschte Liste neu laden.')); updateSelection(); loadingCandidates(false); $('candidateStatus').textContent = 'Die Suche läuft. Fortschritt und Ergebnisse stehen unten.';}
+  if (m.type === 'started') {starting = false; candidateReady = false; candidates = []; $('candidates').replaceChildren(el('p', 'Auswahl gestartet. Zum nächsten Suchlauf zuerst die gewünschte Liste neu laden.')); updateSelection(); loadingCandidates(false); $('candidateStatus').textContent = 'Die Suche läuft. Fortschritt und Ergebnisse stehen unter „Suchläufe & Review“.'; viewChosen = true; tab('sessionsView', true);}
   if (m.type === 'error') {$('error').textContent = m.text; starting = false; loadingCandidates(false);}
 });
 window.addEventListener('error', e => vscode.postMessage({type: 'viewError', text: e.message}));

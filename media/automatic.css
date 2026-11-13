@@ -1,49 +1,107 @@
-label {display: flex; align-items: center; gap: 8px;}
-select, input {font: inherit; color: var(--vscode-input-foreground); background: var(--vscode-input-background); border: 1px solid var(--vscode-input-border, var(--vscode-panel-border)); padding: 6px; border-radius: 3px;}
-.settings {display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; padding: 16px 0;}
-.settings label {flex-direction: column; align-items: flex-start;}
-.settings input {width: 100px;}
-#candidates {max-height: 280px; overflow-y: auto; border-top: 1px solid var(--vscode-panel-border); padding: 8px 0;}
-.candidate {padding: 5px; font-family: var(--vscode-editor-font-family);}
-.candidate:hover {background: var(--vscode-list-hoverBackground);}
-#error:not(:empty) {padding: 12px; background: var(--vscode-inputValidation-errorBackground); border: 1px solid var(--vscode-inputValidation-errorBorder);}
-td button {margin: 0 5px 5px 0;}
-td p {max-width: 460px; font-family: var(--vscode-font-family);}
-section h2 {margin-top: 0;}
-#jobs {overflow-x: auto;}
-.job-status {display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; border: 1px solid currentColor; border-radius: 12px; font-size: 0.9em; white-space: nowrap;}
-.status-icon {font-weight: 700;}
-.status-queued {color: var(--vscode-descriptionForeground, #888);}
-.status-running {color: var(--vscode-progressBar-background, #3794ff); background: var(--vscode-list-inactiveSelectionBackground);}
-.status-review_ready {color: var(--vscode-charts-green, #89d185);}
-.status-blocked {color: var(--vscode-editorWarning-foreground, #cca700);}
-.status-deferred {color: var(--vscode-descriptionForeground, #888);}
-.deferred-entry {padding: 10px 0; border-top: 1px solid var(--vscode-panel-border);}
-.status-error {color: var(--vscode-errorForeground, #f48771);}
-.status-handed_off {color: var(--vscode-charts-purple, #b180d7);}
-.job-running > td:first-child {border-left: 3px solid var(--vscode-progressBar-background, #3794ff); font-weight: 700;}
-.job-queued > td:first-child {border-left: 3px solid var(--vscode-descriptionForeground, #888);}
-.job-counts {display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0;}
-.session-metrics {display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 14px; margin: 18px 0 10px;}
-.session-metric {display: flex; flex-direction: column; gap: 8px; padding: 18px; min-width: 0; border: 1px solid var(--vscode-panel-border); border-top: 3px solid var(--vscode-progressBar-background, #3794ff); background: var(--vscode-editor-background); color: var(--vscode-editor-foreground); border-radius: 5px; overflow-wrap: anywhere;}
-.metric-label {font-size: 1.1em; font-weight: 600; line-height: 1.4;}
-.metric-number {font-size: clamp(30px, 4vw, 44px); line-height: 1.2; font-variant-numeric: tabular-nums;}
-.metric-detail {line-height: 1.5;}
-.session-progress {font-size: clamp(20px, 2.4vw, 30px); font-weight: 700; line-height: 1.4; padding: 16px; margin: 16px 0 10px; border-left: 4px solid var(--vscode-progressBar-background, #3794ff); background: var(--vscode-list-inactiveSelectionBackground); overflow-wrap: anywhere;}
-#loadCount, #selectionAmount {width: 90px;}
-.candidate .job-status {margin-left: auto; font-family: var(--vscode-font-family);}
-.active-jobs {padding: 16px; margin: 16px 0; border: 1px solid var(--vscode-panel-border); border-left: 4px solid var(--vscode-progressBar-background, #3794ff); background: var(--vscode-editor-background); overflow-wrap: anywhere;}
-.active-jobs h3 {margin: 0 0 10px;}
-.active-jobs ul {display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0; padding-left: 20px;}
-.active-jobs li {padding: 4px 0;}
-.active-jobs strong {font-family: var(--vscode-editor-font-family);}
-.active-job-attempts {margin-left: 10px; font-variant-numeric: tabular-nums;}
-.session-update {display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 12px 0; line-height: 1.6; color: var(--vscode-descriptionForeground);}
+.section-heading {display: flex; justify-content: space-between; gap: 16px; margin-bottom: 20px;}
+.section-heading h2 {margin: 0;}
+.section-heading p {margin-bottom: 0;}
+.session-picker {display: flex; align-items: flex-end; gap: 12px;}
+.session-picker label {flex-direction: column; align-items: flex-start; flex: 1; max-width: 650px; font-size: 12px; color: var(--muted);}
+#sessions {width: 100%; font-size: 13px;}
+.session-controls, .results-heading, .pagination {display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px;}
+.session-controls {border-bottom: 1px solid var(--border); padding-bottom: 6px;}
+.results-heading {margin: 28px 0 6px;}
+.results-heading h2 {margin: 0;}
+.results-heading label, .pagination {font-size: 12px; color: var(--muted);}
+.job-status {display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; border: 1px solid var(--border); border-radius: 5px; font: 11px/1.5 var(--vscode-font-family);}
+.status-icon {font-weight: 700; flex-shrink: 0;}
+.status-queued, .status-deferred {color: var(--muted);}
+.status-running {color: var(--vscode-textLink-foreground); background: var(--vscode-list-inactiveSelectionBackground);}
+.status-review_ready {color: var(--vscode-testing-iconPassed, var(--vscode-charts-green));}
+.status-blocked {color: var(--vscode-editorWarning-foreground);}
+.status-error {color: var(--vscode-errorForeground);}
+.status-handed_off {color: var(--vscode-charts-purple);}
+.job-running > td:first-child {border-left: 3px solid var(--vscode-progressBar-background); font-weight: 700;}
+.job-queued > td:first-child {border-left: 3px solid var(--border);}
+.job-counts {display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0;}
+.job-counts strong {border-left: 1px solid var(--border); padding-left: 7px; font-variant-numeric: tabular-nums;}
+.session-metrics {display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 16px 0 8px;}
+.session-metric {display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; min-width: 0; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; overflow-wrap: anywhere;}
+.metric-label {font-size: 12px; color: var(--muted); font-weight: 600;}
+.metric-number {font-size: 32px; line-height: 1.2; font-weight: 600; font-variant-numeric: tabular-nums;}
+.metric-detail {font-size: 11px; color: var(--muted);}
+.session-progress {display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 18px; font-weight: 600; line-height: 1.4; margin: 18px 0 8px;}
+.session-progress span {font-size: 13px; font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums;}
+.completion-bar {display: block; width: 100%; height: 5px; border: 0; border-radius: 3px; overflow: hidden; accent-color: var(--vscode-progressBar-background); background: var(--surface);}
+.completion-bar::-webkit-progress-bar {background: var(--surface);}
+.completion-bar::-webkit-progress-value {background: var(--vscode-progressBar-background);}
+.completion-bar::-moz-progress-bar {background: var(--vscode-progressBar-background);}
+.session-meta {font-size: 12px; color: var(--muted);}
+.session-meta .source {margin: 8px 0;}
+.session-explanation {font-size: 12px; color: var(--muted);}
+.active-jobs {padding: 14px 18px; margin: 16px 0; border: 1px solid var(--border); border-left: 3px solid var(--vscode-progressBar-background); background: var(--surface); border-radius: 6px; overflow-wrap: anywhere;}
+.active-jobs h3 {margin: 0 0 6px; font-size: 12px;}
+.active-jobs ul {display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; padding-left: 16px;}
+.active-jobs li {padding: 2px 0;}
+.active-jobs strong {font: 12px var(--vscode-editor-font-family);}
+.active-job-attempts {margin-left: 8px; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums;}
+.active-jobs p {font-size: 11px; margin-bottom: 0;}
+.session-update {display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 10px 0; font-size: 11px; color: var(--muted);}
 .session-update time {font-variant-numeric: tabular-nums;}
-.session-update-stale {color: var(--vscode-editorWarning-foreground, #cca700);}
+.session-update-stale {color: var(--vscode-editorWarning-foreground);}
 .update-error {flex-basis: 100%; overflow-wrap: anywhere;}
-
-.candidate-details {display: flex; flex-direction: column; gap: 4px; min-width: 0; overflow-wrap: anywhere;}
-.candidate-details .muted {font-family: var(--vscode-font-family); font-size: 0.9em;}
-.version-option {display:flex; align-items:center; gap:.5rem; padding:.5rem .75rem; border:1px solid var(--vscode-panel-border); border-radius:.3rem;}
-.version-selection [role="status"] {line-height:1.6; overflow-wrap:anywhere;}
+.job-table {min-width: 700px;}
+.job-table td:first-child {white-space: nowrap;}
+.job-table td:nth-child(3), .job-table td:nth-child(4) {font-variant-numeric: tabular-nums;}
+.job-table .score-note {display: block; color: var(--muted); font: 11px/1.4 var(--vscode-font-family);}
+.job-actions {display: flex; flex-wrap: wrap; gap: 6px;}
+.job-actions button {font: 11px/1.4 var(--vscode-font-family); padding: 5px 8px;}
+.job-details {font: 12px/1.6 var(--vscode-font-family); max-width: 500px; min-width: 220px; margin-bottom: 0;}
+.job-details p {overflow-wrap: anywhere;}
+.job-details summary {font-size: 11px; color: var(--muted);}
+.job-reason {font: 12px/1.5 var(--vscode-font-family); max-width: 500px; overflow-wrap: anywhere;}
+.version-selection h3 {margin-bottom: 0;}
+.version-option {display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 5px;}
+.version-option:has(input:checked) {border-color: var(--accent);}
+.version-option:has(input:disabled) {color: var(--muted);}
+.version-selection [role="status"] {font-size: 12px; overflow-wrap: anywhere;}
+.version-selection [role="status"]:empty {display: none;}
+.step {display: inline-grid; place-items: center; width: 24px; height: 24px; border: 1px solid var(--border); border-radius: 50%; margin-right: 10px; font-size: 12px; color: var(--accent);}
+.filter-grid {display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; margin: 18px 0;}
+.filter-grid label {flex-direction: column; align-items: stretch; font-size: 12px; color: var(--muted);}
+.filter-grid select, .filter-grid input {width: 100%; font-size: 13px;}
+.byte-range {display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;}
+.load-actions {display: flex; align-items: center; flex-wrap: wrap; gap: 12px;}
+.load-actions label {font-size: 12px; color: var(--muted);}
+#loadCount, #selectionAmount {width: 90px;}
+.selection-toolbar {display: flex; flex-wrap: wrap; align-items: center; gap: 0 16px; border-top: 1px solid var(--border); margin-top: 20px; padding-top: 8px;}
+.selection-toolbar .toolbar {gap: 6px;}
+.selection-toolbar button {padding: 5px 9px; font-size: 12px;}
+.custom-selection {margin: 0; font-size: 12px;}
+.selection-status {display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px 20px; align-items: baseline; font-size: 12px; padding-bottom: 8px;}
+#selectionCount {color: var(--accent); font-weight: 600; white-space: nowrap;}
+#candidates {max-height: 320px; overflow-y: auto; scrollbar-width: thin; border: 1px solid var(--border); border-radius: 5px; background: var(--vscode-editor-background);}
+#candidates:empty {border: 0;}
+#candidates > p {padding: 20px; margin: 0; border: 0;}
+.candidate {padding: 11px 14px; gap: 12px; border-bottom: 1px solid var(--border); cursor: pointer;}
+.candidate:last-child {border-bottom: 0;}
+.candidate:hover {background: var(--vscode-list-hoverBackground);}
+.candidate:has(input:checked) {background: var(--vscode-list-inactiveSelectionBackground);}
+.candidate-details {display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; overflow-wrap: anywhere;}
+.candidate-name {font: 12px var(--vscode-editor-font-family);}
+.candidate-info {font: 11px/1.5 var(--vscode-font-family); color: var(--muted);}
+.candidate-details .muted {font: 11px/1.5 var(--vscode-font-family);}
+.start-actions {display: flex; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid var(--border); padding-top: 18px;}
+.start-actions .muted {font-size: 12px;}
+.deferred-entry {padding: 18px; margin: 12px 0; border: 1px solid var(--border); border-radius: 6px; overflow-wrap: anywhere;}
+.deferred-entry strong {font-family: var(--vscode-editor-font-family);}
+@media (max-width: 640px) {
+  .filter-grid {grid-template-columns: 1fr;}
+  .session-metrics {gap: 8px;}
+  .session-metric {padding: 12px;}
+  .metric-number {font-size: 26px;}
+  .candidate .job-status {display: none;}
+  .session-picker {flex-wrap: wrap;}
+  .session-picker label {flex-basis: 100%;}
+}
+@media (max-width: 420px) {
+  .session-metrics {grid-template-columns: 1fr;}
+  .session-metric {display: grid; grid-template-columns: 1fr auto;}
+  .metric-number {grid-column: 2; grid-row: 1 / 3; align-self: center;}
+}
