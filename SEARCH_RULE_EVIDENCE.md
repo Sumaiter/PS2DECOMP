@@ -164,6 +164,11 @@ become volatile after preprocessing and add observable accesses. Visible AST
 qualifier checks alone cannot exclude this. Such flags are never removed or
 rewritten to make the rule apply; they require a separate preprocessing contract.
 Ordinary optimization, warning and code-generation flags remain verbatim.
+The same check covers visible `sourceFlags` and `compileCommand` option vectors
+in `ps2decomp.json`, including projects whose draft has no flags comment. Invalid
+manifest/option data disables this variant. Project options are not rewritten.
+Opaque compiler wrappers still require the project's independently established
+preprocessing contract; this guard does not inspect or execute wrapper internals.
 
 [Synthetic compiler metadata](tests/evidence/comparison-value-compiler.json)
 records ten unchanged-pipeline builds across five independent headers and two

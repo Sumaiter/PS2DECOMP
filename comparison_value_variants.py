@@ -4,6 +4,7 @@ This adds a search child, not a type correction or a match certificate. The
 destination type, function ABI, operands, evaluation gate and flags stay intact.
 """
 import copy
+import json
 import re
 import shlex
 
@@ -17,17 +18,33 @@ def generate(source, repository):
     # command-line macro can redefine the newly introduced int keyword/name,
     # an include option can supply another header, or a response/specs file
     # hides such options. Never change or strip the original flags instead.
+    option_sets = []
     for comment in re.findall(r'/\*\s*cflags:(.*?)\*/', source, re.S):
         try:
-            flags = shlex.split(comment)
+            option_sets.append(shlex.split(comment))
         except ValueError:
             return
-        unsafe = ('-D', '-U', '-I', '-F', '-A', '-i', '-Wp,', '-Xpreprocessor',
-                  '--include', '--define-macro', '--undefine-macro', '--sysroot',
-                  '--specs', '-specs', '-fplugin', '-nostdinc', '-undef', '-B')
-        if any(flag.startswith(unsafe) or flag.startswith('@') or flag == '-Wp'
-               for flag in flags):
+    # Generic projects can configure the same active options without any
+    # source comment. Inspect the visible argv/profile, not only the draft.
+    manifest = repository / 'ps2decomp.json'
+    if manifest.exists():
+        try:
+            settings = json.loads(manifest.read_text(encoding='utf-8-sig'))
+            if not isinstance(settings, dict):
+                return
+            for key in ('sourceFlags', 'compileCommand'):
+                flags = settings.get(key, [])
+                if not isinstance(flags, list) or not all(isinstance(f, str) for f in flags):
+                    return
+                option_sets.append(flags)
+        except (OSError, ValueError):
             return
+    unsafe = ('-D', '-U', '-I', '-F', '-A', '-i', '-Wp,', '-Xpreprocessor',
+              '--include', '--define-macro', '--undefine-macro', '--sysroot',
+              '--specs', '-specs', '-fplugin', '-nostdinc', '-undef', '-B')
+    if any(flag.startswith(unsafe) or flag.startswith('@') or flag == '-Wp'
+           for flags in option_sets for flag in flags):
+        return
     rules = Variants(repository)
     if not rules.plain_header():
         return

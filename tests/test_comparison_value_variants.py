@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import sys
 import tempfile
 import unittest
@@ -106,6 +107,37 @@ class ComparisonValueTests(unittest.TestCase):
         flags = '/* cflags: -O2 -G8 -Wuninitialized -mips4 */'
         output = self.gen(flags + '\n' + SOURCE)[0][1]
         self.assertEqual(output.splitlines()[0], flags)
+
+    def test_configured_project_flags_also_guard_the_new_int_temporary(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); (root / 'include').mkdir()
+            (root / 'include/common.h').write_text('typedef long Result;\ntypedef unsigned char Byte;\n')
+            source = '#include "common.h"\nResult f(Byte *p){Result r;r=p[8]==7;return r;}'
+            self.assertTrue(self.gen(source, root))
+            manifest = root / 'ps2decomp.json'
+            for key in ['sourceFlags', 'compileCommand']:
+                for flags in [['-Dint=volatile int'], ['-include', 'forced.h'], ['@profile']]:
+                    options = flags if key == 'sourceFlags' else ['compiler', *flags, '-c', '{source}', '-o', '{object}']
+                    with self.subTest(key=key, flags=flags):
+                        manifest.write_text(json.dumps({key: options}))
+                        before = manifest.read_bytes()
+                        self.assertFalse(self.gen(source, root))
+                        self.assertEqual(manifest.read_bytes(), before)
+
+    def test_plain_project_profile_is_preserved_and_invalid_metadata_fails_closed(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); (root / 'include').mkdir()
+            (root / 'include/common.h').write_bytes((ROOT / 'include/common.h').read_bytes())
+            manifest = root / 'ps2decomp.json'
+            manifest.write_text(json.dumps({'compileCommand': ['tools/compiler with spaces', '-O2', '-G8', '{source}', '-o', '{object}'],
+                                           'sourceFlags': ['-O2', '-G8']}))
+            before = manifest.read_bytes()
+            self.assertTrue(self.gen(root=root))
+            self.assertEqual(manifest.read_bytes(), before)
+            for invalid in ['{', '[]', '{"sourceFlags":"-O2"}', '{"compileCommand":[3]}']:
+                with self.subTest(invalid=invalid):
+                    manifest.write_text(invalid)
+                    self.assertFalse(self.gen(root=root))
 
 
 if __name__ == '__main__':
