@@ -171,6 +171,8 @@ including ordinary `static inline` helpers and declarations. Search mutations
 and reviewed search seeds still require exactly one function. Unsupported
 preprocessor inputs retain their explicit analysis limitation. A complete
 diagnostic scan does not approve types, ABI, ownership, semantics or a match.
+Literal-pointer checks resolve typedefs in lexical order and capture each alias
+before later shadowing; helper-local aliases do not leak into other functions.
 
 Exact objects also receive [incoming-boundary checks](BOUNDARY_EVIDENCE.md)
 against every placement's verified reference ELF. External non-call branches

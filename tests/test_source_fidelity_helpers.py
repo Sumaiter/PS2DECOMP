@@ -65,6 +65,21 @@ class HelperDiagnostics(unittest.TestCase):
         self.assertTrue(result['astAnalyzed'], result)
         self.assertEqual([v['value'] for v in result['violations']], [-16])
 
+    def test_literal_casts_follow_helper_local_aliases_and_shadowing(self):
+        result = self.inspect('static Scalar one(void){typedef int Pointer;return (Pointer)16384;} Scalar example(void){return one();}')
+        self.assertTrue(result['astAnalyzed'], result)
+        self.assertEqual(result['violations'], [])
+        result = self.inspect('static void *one(void){typedef void *Local;return (Local)16384;} void *example(void){return one();}')
+        self.assertTrue(result['astAnalyzed'], result)
+        self.assertEqual([v['value'] for v in result['violations']], [16384])
+
+    def test_literal_alias_binding_is_captured_and_does_not_leak(self):
+        result = self.inspect('typedef Pointer Saved;static void *one(void){typedef int Pointer;return (Saved)16384;} Pointer example(void){return (Pointer)32;}')
+        self.assertTrue(result['astAnalyzed'], result)
+        self.assertEqual([v['value'] for v in result['violations']], [16384, 32])
+        result = self.inspect('static Scalar one(void){typedef int Pointer;return (Pointer)1;} Pointer example(void){return (Pointer)32;}')
+        self.assertEqual([v['value'] for v in result['violations']], [32])
+
     def test_search_keeps_exactly_one_function_guard(self):
         rules = Variants(self.root)
         for body in examples().values():
