@@ -99,6 +99,10 @@ ternaries, calls or mutations in the comparison, escaped/shadowed bases,
 qualified or attributed types, macro-altered headers, labels and ambiguous
 insertion points are rejected. The generated local uses the input cast type
 verbatim, including when the same alias names a different underlying type.
+Function-local typedefs are rejected because the new declaration would be
+hoisted outside their original scope or binding. Context-dependent reserved
+identifiers are rejected throughout the translation unit, including global
+initializers. Fresh local names also exclude enum constants.
 
 [Compiler metadata](tests/evidence/index-base-compiler.json) records eight real
 before/after compilations with four independent synthetic headers: `int`,

@@ -23,6 +23,10 @@ def generate(source, repository):
     a = rules.a
     prefix = rules.parser().parse(rules.prelude)
     all_nodes = [n for *_, n in rules._nodes(tree)]
+    if any(isinstance(n, a.ID) and n.name.startswith('__') for n in all_nodes):
+        return  # Includes source/context-dependent builtins outside the condition.
+    if any(isinstance(n, a.Typedef) for *_, n in rules._nodes(fn.body)):
+        return  # A hoisted declaration must not escape or change a local alias.
     if any(getattr(n, 'quals', None) for n in all_nodes +
            [n for *_, n in rules._nodes(prefix)]):
         return
@@ -94,7 +98,7 @@ def generate(source, repository):
         return False
 
     nodes = list(rules._nodes(fn.body))
-    reserved = {n.name for n in all_nodes if isinstance(n, (a.ID, a.Decl, a.Typedef))}
+    reserved = {n.name for n in all_nodes if isinstance(n, (a.ID, a.Decl, a.Typedef, a.Enumerator))}
     reserved |= set(typedefs)
     name = next('ps2decomp_index_base_' + str(i) for i in range(10000)
                 if 'ps2decomp_index_base_' + str(i) not in reserved)

@@ -102,6 +102,26 @@ class IndexBaseTests(unittest.TestCase):
         output = self.gen()[0][1]
         self.assertFalse(self.gen(output))
 
+    def test_local_typedefs_cannot_change_the_hoisted_pointer_type(self):
+        self.assertFalse(self.gen(SOURCE.replace('if (ready(state)) {',
+            'if (ready(state)) { typedef short s32;')))
+        self.assertFalse(self.gen(SOURCE.replace(' if (ready(state)) {',
+            ' typedef short s32;\n if (ready(state)) {')))
+
+    def test_source_context_builtins_outside_the_condition_are_rejected(self):
+        for expression in ['__FILE_NAME__[0]', '__BASE_FILE__[0]', '__INCLUDE_LEVEL__',
+                           '__DATE__[0]', '__TIME__[0]', '__TIMESTAMP__[0]']:
+            with self.subTest(expression=expression):
+                self.assertFalse(self.gen(SOURCE.replace('return 0;', 'return ' + expression + ';')))
+        self.assertFalse(self.gen(SOURCE.replace('extern s32 select_index;',
+            'char *filename = __BASE_FILE__;\nextern s32 select_index;')))
+
+    def test_generated_name_avoids_unused_enumerator_bindings(self):
+        output = self.gen(SOURCE.replace(' if (ready(state)) {',
+            ' enum { ps2decomp_index_base_0 = 3 };\n if (ready(state)) {'))[0][1]
+        self.assertIn('s32 *ps2decomp_index_base_1;', output)
+        self.assertNotIn('s32 *ps2decomp_index_base_0;', output)
+
     def test_static_global_and_attributed_bases_are_rejected(self):
         self.assertFalse(self.gen(SOURCE.replace('s32 f(u8 *state)', 'u8 *state; s32 f(void)')))
         self.assertFalse(self.gen(SOURCE.replace('s32 f(u8 *state)', 's32 f(void)').replace(' if (ready', ' static u8 *state;\n if (ready')))
