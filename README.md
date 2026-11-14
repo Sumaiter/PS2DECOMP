@@ -117,6 +117,11 @@ decompilation, and unsafe assumptions such as forcing `--void` are not enabled.
 
 ## Search budgets and resume
 
+The bounded search also tries materializing an existing indexed pointer cast
+as a local before a plain comparison. It preserves the original type and gate;
+it does not infer array bounds or pointer validity. Guards, compiler evidence
+and counterexamples are documented in [Search rule evidence](SEARCH_RULE_EVIDENCE.md#materializing-an-existing-indexed-pointer-base).
+
 Each function's search pass shares its configured time and attempt limits across
 all seeds, variants and pause/resume segments. Completed segments retain their
 full-precision monotonic running time; paused wall time is excluded. Immutable

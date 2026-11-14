@@ -132,7 +132,7 @@ class CandidateRetention(unittest.TestCase):
             stack.enter_context(patch('auto_jobs.Variants',return_value=Rules()))
             stack.enter_context(patch('auto_jobs.similarity',side_effect=lambda r:r['testScore']))
             stack.enter_context(patch('auto_jobs.object_key',side_effect=lambda p,e:jobs.sha(p)))
-            for module in ['scheduler_variants','address_variants','review_variants','terminal_return_variants',
+            for module in ['scheduler_variants','address_variants','review_variants','index_base_variants','terminal_return_variants',
                            'reset_store_variants','counter_relay_variants','postcall_default_variants',
                            'adjacent_input_store_variants','shared_call_join_variants']:
                 stack.enter_context(patch('auto_jobs.'+module+'.generate',return_value=[]))
