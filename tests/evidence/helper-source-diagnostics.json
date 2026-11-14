@@ -1,0 +1,178 @@
+{
+  "syntheticSourcesOnly": true,
+  "semanticApproval": false,
+  "retailComparison": false,
+  "sourceRewriting": false,
+  "compilerRuns": 8,
+  "cases": [
+    {
+      "context": "int-float-byte-pointer",
+      "case": "literal-in-helper",
+      "headerHash": "7f4b07cc00fe9861601ac77edf4a24046e6fd6aa756e9118394cc7ed40b8e235",
+      "sourceLFHash": "e2b987a90484e9a4c091a38188d97e8b6a033dbf1b5506166b944b7cfe952c15",
+      "compilerWarning": false,
+      "violations": 1,
+      "integerPointerConversions": 0,
+      "objectHash": "c2d285266054b247093f247b56ac9e212e4b6d2c6ca330fde78a10a9b2f43201",
+      "textHash": "106519279702cb6440621e566fbc5ce95092b48f2f80b8148bfac5c963dfc8f0",
+      "bytes": 8,
+      "relocations": []
+    },
+    {
+      "context": "int-float-byte-pointer",
+      "case": "integer-in-helper",
+      "headerHash": "7f4b07cc00fe9861601ac77edf4a24046e6fd6aa756e9118394cc7ed40b8e235",
+      "sourceLFHash": "2485ead90371202a04bf76849c33fe9d3440cb41864b873f8e02629679d47eb5",
+      "compilerWarning": true,
+      "violations": 0,
+      "integerPointerConversions": 1,
+      "objectHash": "91b2313f15bb172b8f1d1aee6b4d59acdf18bf98aeba630b278307c7cf1db1e2",
+      "textHash": "dc9e272d2613c9ded626cee16fd704ea2db7d8f6fa3bcc2540585cf59c98c571",
+      "bytes": 12,
+      "relocations": []
+    },
+    {
+      "context": "int-float-byte-pointer",
+      "case": "external-table",
+      "headerHash": "7f4b07cc00fe9861601ac77edf4a24046e6fd6aa756e9118394cc7ed40b8e235",
+      "sourceLFHash": "d5f13369a9393d36948d489708154309e9a5382607e056c5cb13c9c9a2229e2c",
+      "compilerWarning": false,
+      "violations": 0,
+      "integerPointerConversions": 0,
+      "objectHash": "9d43d3d98fd639f37cea07cb9086e461aac915be83a1583b7d2024a3dcca898d",
+      "textHash": "248427cbcc08957bda20b977bf26c9cdb83f16f997c272844a67cfb6288e6236",
+      "bytes": 16,
+      "relocations": [
+        {
+          "section": ".text",
+          "offset": 0,
+          "type": 5,
+          "symbol": "table",
+          "symbolValue": 0
+        },
+        {
+          "section": ".text",
+          "offset": 4,
+          "type": 6,
+          "symbol": "table",
+          "symbolValue": 0
+        }
+      ]
+    },
+    {
+      "context": "int-float-byte-pointer",
+      "case": "floating-helper",
+      "headerHash": "7f4b07cc00fe9861601ac77edf4a24046e6fd6aa756e9118394cc7ed40b8e235",
+      "sourceLFHash": "7b49cafa45e7ba9eada0f45c4cdad91fb824945196eb577dbf7f825a8b53f2fd",
+      "compilerWarning": false,
+      "violations": 0,
+      "integerPointerConversions": 0,
+      "objectHash": "2f6e1e492fad8589616a5c573e8e28be960d98b508da220fe737aa0c5dc0cf28",
+      "textHash": "0cb64ee62793337baa8e411faa76887e4ee4f50250316ee94743142bd7b01728",
+      "bytes": 56,
+      "relocations": []
+    },
+    {
+      "context": "short-double-void-pointer",
+      "case": "literal-in-helper",
+      "headerHash": "cbe53cff0eae4963b76117cbe61d296a0ca6aca7966b6d08c47feaba1ce3a1e7",
+      "sourceLFHash": "e2b987a90484e9a4c091a38188d97e8b6a033dbf1b5506166b944b7cfe952c15",
+      "compilerWarning": false,
+      "violations": 1,
+      "integerPointerConversions": 0,
+      "objectHash": "307a46231468ce7e446132dd4cff26438f225639b3485126ed6d7a502a277bf2",
+      "textHash": "106519279702cb6440621e566fbc5ce95092b48f2f80b8148bfac5c963dfc8f0",
+      "bytes": 8,
+      "relocations": []
+    },
+    {
+      "context": "short-double-void-pointer",
+      "case": "integer-in-helper",
+      "headerHash": "cbe53cff0eae4963b76117cbe61d296a0ca6aca7966b6d08c47feaba1ce3a1e7",
+      "sourceLFHash": "2485ead90371202a04bf76849c33fe9d3440cb41864b873f8e02629679d47eb5",
+      "compilerWarning": true,
+      "violations": 0,
+      "integerPointerConversions": 1,
+      "objectHash": "7fde000636f5ad3bb15aabe1ce778622148394f49aad8eef2f0db9b1945f4482",
+      "textHash": "4366f1a713897c82ae91e6429c10df35d6a670ec0176e6c78c7254aa35a14247",
+      "bytes": 16,
+      "relocations": []
+    },
+    {
+      "context": "short-double-void-pointer",
+      "case": "external-table",
+      "headerHash": "cbe53cff0eae4963b76117cbe61d296a0ca6aca7966b6d08c47feaba1ce3a1e7",
+      "sourceLFHash": "d5f13369a9393d36948d489708154309e9a5382607e056c5cb13c9c9a2229e2c",
+      "compilerWarning": false,
+      "violations": 0,
+      "integerPointerConversions": 0,
+      "objectHash": "a7ed2f03da8cf7d1cf4f429a60879ccc66c4438e011e22c8dc3ee3c9f025daa3",
+      "textHash": "89979c3e97a469f8ae7afd0d87aed7e481b05f9791af1a583070fb3a4b0a3a97",
+      "bytes": 24,
+      "relocations": [
+        {
+          "section": ".text",
+          "offset": 4,
+          "type": 5,
+          "symbol": "table",
+          "symbolValue": 0
+        },
+        {
+          "section": ".text",
+          "offset": 12,
+          "type": 6,
+          "symbol": "table",
+          "symbolValue": 0
+        }
+      ]
+    },
+    {
+      "context": "short-double-void-pointer",
+      "case": "floating-helper",
+      "headerHash": "cbe53cff0eae4963b76117cbe61d296a0ca6aca7966b6d08c47feaba1ce3a1e7",
+      "sourceLFHash": "7b49cafa45e7ba9eada0f45c4cdad91fb824945196eb577dbf7f825a8b53f2fd",
+      "compilerWarning": false,
+      "violations": 0,
+      "integerPointerConversions": 0,
+      "objectHash": "bc3ace8d37d4bcf3f764d0e56b545b7232f27c3e548a69d2d988a4976ab02429",
+      "textHash": "75743051cfd2e1d72353a9ec5537997b164901ae48c702446496016d1fccb4b8",
+      "bytes": 88,
+      "relocations": [
+        {
+          "section": ".text",
+          "offset": 16,
+          "type": 4,
+          "symbol": "dpcmp",
+          "symbolValue": 0
+        },
+        {
+          "section": ".text",
+          "offset": 40,
+          "type": 4,
+          "symbol": "dpadd",
+          "symbolValue": 0
+        },
+        {
+          "section": ".text",
+          "offset": 64,
+          "type": 4,
+          "symbol": "dpsub",
+          "symbolValue": 0
+        }
+      ]
+    }
+  ],
+  "motivatingReview": {
+    "sourceHash": "0f9c1aad811edffa512fc875ef0daf04f15585619239f9d4d49bf8b921bf03bd",
+    "objectHash": "0ceaaadc7cec89badb25407dbf08d0d05b4a876a542697cd4b95e7ba20051d57",
+    "completeFunctionBytes": 172,
+    "inlineHelpers": 3,
+    "exportedFunctions": 1,
+    "previousAstAnalyzed": false,
+    "previousLimitation": "Exactly one function was required by the search parser.",
+    "newAstAnalyzed": true,
+    "sourceObjectUnchanged": true,
+    "newGameCompilerInvocations": 0,
+    "semanticApproval": false
+  }
+}

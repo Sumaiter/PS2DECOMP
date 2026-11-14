@@ -20,7 +20,7 @@ def inspect(source, repository):
     conversion_reason = None
     try:
         rules = Variants(repository)
-        tree, _ = rules.parse(source)
+        tree = rules.parse_unit(source)
         a = rules.a
         aliases = {n.name: n.type for n in rules.parser().parse(rules.prelude).ext if isinstance(n, a.Typedef)}
         aliases.update({n.name: n.type for n in tree.ext if isinstance(n, a.Typedef)})
