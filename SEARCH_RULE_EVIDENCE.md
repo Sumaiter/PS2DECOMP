@@ -139,3 +139,38 @@ claims and explicit review handoff are retained.
 The CLI also emits ASCII-safe JSON so a strict Windows output code page cannot
 crash after a completed search. Tests round-trip Unicode and a large response;
 the decoded values and stored evidence are unchanged.
+
+## Materialize an existing comparison value
+
+`comparison_value_variants.py` offers `temporary = comparison; result = temporary`
+for a standalone assignment to an unescaped, unqualified local integer. A C
+comparison already has type `int` and value zero or one. The new temporary has
+that existing type; the destination declaration and conversion, function ABI,
+operand order, conditional gate and compiler flags are preserved. The rule
+never changes a draft's return type to obtain a preferred register allocation.
+
+The assignment stays in the same compound statement, including inside a guard
+or loop. Unknown or shadowed destination bindings, qualifiers, attributes,
+storage classes, local typedefs, labels, macros and side-effecting comparison
+operands are rejected. Assignments used as expressions and unbraced insertion
+sites are left for manual review. A generated temporary is not materialized
+again. Existing search deduplication, budgets, claims and promotion checks apply.
+
+[Synthetic compiler metadata](tests/evidence/comparison-value-compiler.json)
+records ten unchanged-pipeline builds across five independent headers and two
+existing result contracts. Byte, halfword and single-precision comparisons with
+the wide result retain an extra copy. The narrow-result and double cases
+produce identical text: this is a candidate rule, not a promise of improvement.
+Actual call relocations, including the double comparison helper, retain their
+symbols, types and zero encoded addends. A retained 36/40-byte reviewed pair
+separately demonstrated the missing-copy correction; its generated AST equals
+the independently verified source after renaming only the new local. No ROM,
+game source, objects or proprietary compiler is distributed.
+
+```text
+python tests/compile_comparison_value_examples.py --command-json command.json --cwd /path/to/compiler-project --output build/new-comparison-value-check
+```
+
+Use a fresh output directory and your own unchanged compiler wrapper. The runner
+uses the documented SN header contract (`long` wide result, `int` narrow result);
+it does not infer integer widths from typedef names or certify other ABIs.

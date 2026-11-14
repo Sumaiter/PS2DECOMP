@@ -1,0 +1,247 @@
+{
+  "syntheticSourcesOnly": true,
+  "retailComparison": false,
+  "compilerFlagsChanged": false,
+  "semanticApproval": false,
+  "compilerRuns": 10,
+  "cases": [
+    {
+      "context": "wide-byte",
+      "headerHash": "407d419cb8885ee05c366ad0fee29dc6a9e3656ee47cec51c74fdeea17453a80",
+      "sameText": false,
+      "builds": [
+        {
+          "phase": "before",
+          "sourceHash": "129e50f41c80eb17fe6aa7dc592789641d5e5fee7eb20eb6f3c792ea9458e17f",
+          "objectHash": "8514fbe334cb04fa0c0d00cc8324ab1e99aa2e6d214e5b762c4b617167c5cdd5",
+          "textHash": "27ee514d7c25f096bcf341ce07677dabdba141ddd284c132277040ccacbd331b",
+          "bytes": 72,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 20,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        },
+        {
+          "phase": "after",
+          "sourceHash": "47d31824273824ee05848cc4ee599bdbb1f38fee3badff50100a21937e3dc82e",
+          "objectHash": "c5fc1d0bd41dba188630b6abd287b7990eaac43230ba12445e9598cf1e8257eb",
+          "textHash": "14303d919680fb43d2d85730b2d59e28f79bf007c27538c93d1c04057d3d8f8b",
+          "bytes": 76,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 20,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "context": "narrow-byte",
+      "headerHash": "f9c9e0f79fe6462c6c9561b49502128bf585da8138652d5838ef8d8ceebce6ac",
+      "sameText": true,
+      "builds": [
+        {
+          "phase": "before",
+          "sourceHash": "129e50f41c80eb17fe6aa7dc592789641d5e5fee7eb20eb6f3c792ea9458e17f",
+          "objectHash": "065d7ede07a0a057e9bb89a7566f68ceb14dd0c7130ba96cdece6a2654c0291e",
+          "textHash": "27ee514d7c25f096bcf341ce07677dabdba141ddd284c132277040ccacbd331b",
+          "bytes": 72,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 20,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        },
+        {
+          "phase": "after",
+          "sourceHash": "47d31824273824ee05848cc4ee599bdbb1f38fee3badff50100a21937e3dc82e",
+          "objectHash": "32577ed981568407d582ae92101a335d0d8c6511e3c6553100286e5c624f9f2a",
+          "textHash": "27ee514d7c25f096bcf341ce07677dabdba141ddd284c132277040ccacbd331b",
+          "bytes": 72,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 20,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "context": "wide-halfword",
+      "headerHash": "fab8fb65c97dae33339acf729414a8d37d1dd73b7a67bf145cc8ca9ba0bbe779",
+      "sameText": false,
+      "builds": [
+        {
+          "phase": "before",
+          "sourceHash": "129e50f41c80eb17fe6aa7dc592789641d5e5fee7eb20eb6f3c792ea9458e17f",
+          "objectHash": "8f294b0ded2b60ad0c78e1bdd3102ee1f2c3b637979279ca644aac53cf3f38e7",
+          "textHash": "c751f63173d3438910107fccfe6b7cf3c915978e66fd27ad3acfc457c58d4b47",
+          "bytes": 72,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 20,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        },
+        {
+          "phase": "after",
+          "sourceHash": "47d31824273824ee05848cc4ee599bdbb1f38fee3badff50100a21937e3dc82e",
+          "objectHash": "99983cb42bc5a46213c24a33ab4b9406e1bdb93e1099322ab599e65a6eaf535d",
+          "textHash": "e5fa816fe6aae5e87aed935ebe9bc08fe2c6937237d22e0548b6a5ac90a2b93f",
+          "bytes": 76,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 20,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "context": "wide-single",
+      "headerHash": "ca4976f697d94f3dfe50ed6257c7ccdbcf75031ef3f5e90da92f4a796e49fa25",
+      "sameText": false,
+      "builds": [
+        {
+          "phase": "before",
+          "sourceHash": "129e50f41c80eb17fe6aa7dc592789641d5e5fee7eb20eb6f3c792ea9458e17f",
+          "objectHash": "2ce548e82e4fb6f3eac8c6538d20af1559b2b43dbd4c525cff7f32fb13f45dde",
+          "textHash": "acd8e1c71a93ee73370372d9e0c7dc693ce6b98a352dcd5eceb5d206b455a902",
+          "bytes": 96,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 20,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        },
+        {
+          "phase": "after",
+          "sourceHash": "47d31824273824ee05848cc4ee599bdbb1f38fee3badff50100a21937e3dc82e",
+          "objectHash": "13855812f4500a58650efd2423be34cccb1485f8c0900bf9e80e9fd24739cc61",
+          "textHash": "771e0ea18883a92ce21a34fe7a11e4f93bf6bb298284865a221269d513659d7c",
+          "bytes": 100,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 20,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "context": "wide-double",
+      "headerHash": "cc22787bf150c416ba969038ec3c8664dc81c576a59efb3151537ef3f9ceaa40",
+      "sameText": true,
+      "builds": [
+        {
+          "phase": "before",
+          "sourceHash": "129e50f41c80eb17fe6aa7dc592789641d5e5fee7eb20eb6f3c792ea9458e17f",
+          "objectHash": "835e9c4d70ac58d65a27398638982e7d0be7749e064f0929a1f2f3ddad80c722",
+          "textHash": "303fb0c07a29776e0376e62e66239537e6eae420f10320b38d56da5b79ee8f8f",
+          "bytes": 80,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 20,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            },
+            {
+              "section": ".text",
+              "offset": 44,
+              "type": 4,
+              "symbol": "dpcmp",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        },
+        {
+          "phase": "after",
+          "sourceHash": "47d31824273824ee05848cc4ee599bdbb1f38fee3badff50100a21937e3dc82e",
+          "objectHash": "6f16b0fa4fd3714f76575f2dfd163fbeb5eb86076d22d09a3b7a18ff97464568",
+          "textHash": "303fb0c07a29776e0376e62e66239537e6eae420f10320b38d56da5b79ee8f8f",
+          "bytes": 80,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 20,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            },
+            {
+              "section": ".text",
+              "offset": 44,
+              "type": 4,
+              "symbol": "dpcmp",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "compiler": "Unchanged SN EE GCC2.95.3 v1.36 project pipeline; its established header uses long for the wide integer result.",
+  "motivatingReview": {
+    "retainedAstReplayEqualsIndependentlyReviewedSourceAfterLocalRename": true,
+    "functionBytes": 40,
+    "placements": 6,
+    "newGameCompilerInvocations": 0,
+    "beforeBytes": 36,
+    "afterBytes": 40,
+    "existingSignatureAndTypesPreserved": true
+  },
+  "limitations": [
+    "Candidate generation only; instruction/relocation/ABI/ownership/semantic/full-build review still required.",
+    "No change to destination types or function ABI; C comparison expressions already have int type and0/1 values.",
+    "Extra instructions are not automatically better: narrow-integer and double examples produce identical text.",
+    "Synthetic sources are not retail matches.",
+    "The first local experiment used unsupported long long arithmetic for this compiler and was retained as a failed setup counterexample; final examples use the independently established long header type, without changing compiler flags."
+  ]
+}
