@@ -139,7 +139,11 @@ def inspect(rules, tree):
             scopes[-1][node.name] = (declared_type(node), True, local)
         elif isinstance(node, a.Decl):
             if node.name:
-                scopes[-1][node.name] = (declared_type(node), False, local)
+                # A block-scope extern can shadow a local name while still
+                # denoting a global object. Keep that binding, outside our
+                # local/parameter destination scope.
+                scopes[-1][node.name] = (declared_type(node), False,
+                                       local and 'extern' not in node.storage)
                 check(node.name, node.init, 'initializer')
             walk(node.init, local)
         elif isinstance(node, a.Assignment):

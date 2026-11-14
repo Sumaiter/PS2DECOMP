@@ -84,6 +84,12 @@ class PointerDiagnostics(unittest.TestCase):
     def test_complex_destinations_and_global_storage_skipped(self):
         self.count('extern Pointer global;struct S{Pointer p;};void example(Index n,struct S *s){global=n*32+16384;s->p=n*32+16384;}', 0)
 
+    def test_block_extern_is_global_and_shadows_without_leaking_its_scope(self):
+        self.count('void example(Index n){extern Pointer global;global=n*32+16384;}', 0)
+        result = self.count('void example(Index n){Pointer p;{extern Pointer p;p=n*32+16384;}p=n+1;}', 1)
+        self.assertEqual(result['integerPointerConversions'][0]['expression'], 'n + 1')
+        self.count('void example(Index n){static Pointer p;p=n*32+16384;}', 1)
+
     def test_existing_violations_and_eligibility_unchanged(self):
         result = self.count('void example(void){Pointer p=(Pointer)1234;}', 0)
         self.assertEqual(result['violations'], [dict(kind='literal-pointer-address', expression='(Pointer) 1234', value=1234)])

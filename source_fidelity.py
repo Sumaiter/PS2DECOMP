@@ -62,6 +62,6 @@ def inspect(source, repository):
     return dict(astAnalyzed=parsed, violations=violations, analysisLimitation=reason,
                 integerPointerConversions=conversions,
                 integerPointerAnalysisLimitation=conversion_reason if parsed else reason,
-                integerPointerScope='Known local/parameter pointer assignments and initializers from lexical integer expressions only. No flow, call, field, target-width or ownership inference; unknown and potentially null constant expressions are skipped. Diagnostic only; does not change violations or eligibility.',
+                integerPointerScope='Known local/parameter pointer assignments and initializers from lexical integer expressions only; block-scope extern destinations are excluded. No flow, call, field, target-width or ownership inference; unknown and potentially null constant expressions are skipped. Diagnostic only; does not change violations or eligibility.',
                 semanticApproval=False,
                 scope='Direct nonzero integer-to-pointer literals and explicit unsupported source constructs only. Absence of findings is not approval.')
