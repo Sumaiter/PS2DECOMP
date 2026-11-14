@@ -159,6 +159,14 @@ checks are followed by independent review of types, ABI, initial values,
 semantics, ownership and function boundaries, plus the game's full build checks.
 Unknown relocations and incomplete coordination fail closed.
 
+Review reports include a separate `sourceFidelity.integerPointerConversions`
+diagnostic for integer expressions assigned to known local or parameter pointers.
+It follows lexical declarations and typedef scopes; block-scope `extern` targets,
+unknown expressions, true pointer arithmetic and potentially null constants are
+outside this diagnostic. Findings do not change scores, strict checks, existing
+`violations` or reviewed-seed eligibility. An empty list is not semantic approval;
+`integerPointerAnalysisLimitation` records incomplete diagnostic analysis.
+
 Exact objects also receive [incoming-boundary checks](BOUNDARY_EVIDENCE.md)
 against every placement's verified reference ELF. External non-call branches
 into the window and direct entries into its interior require manual boundary

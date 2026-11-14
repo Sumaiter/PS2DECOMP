@@ -1,0 +1,212 @@
+{
+  "syntheticSourcesOnly": true,
+  "semanticApproval": false,
+  "retailComparison": false,
+  "compilerRuns": 10,
+  "cases": [
+    {
+      "context": "int-long",
+      "case": "assignment",
+      "headerHash": "5aa7aa6a5a87d106e837b59ac325c31a047955b856fab61c06cefe8851986699",
+      "sourceLFHash": "62b6ecec4635cc9544050583aae02a0ef7614e91755af0fe5f59227def63f066",
+      "compilerWarning": true,
+      "diagnosticCount": 1,
+      "objectHash": "77d031232874ea91c6a9cccf68658eede4c88106e583f39ac72a321a7ac05143",
+      "textHash": "dc9e272d2613c9ded626cee16fd704ea2db7d8f6fa3bcc2540585cf59c98c571",
+      "bytes": 12,
+      "relocations": []
+    },
+    {
+      "context": "int-long",
+      "case": "initializer",
+      "headerHash": "5aa7aa6a5a87d106e837b59ac325c31a047955b856fab61c06cefe8851986699",
+      "sourceLFHash": "57601cefb096d284a5227fb218095b1fe14f5c496ad0c64214989045a6f14015",
+      "compilerWarning": true,
+      "diagnosticCount": 1,
+      "objectHash": "2486ee87f2504b3de25ab36dca121f588e0acfc4c05a5e5a7bbeeeb1a799345f",
+      "textHash": "dc9e272d2613c9ded626cee16fd704ea2db7d8f6fa3bcc2540585cf59c98c571",
+      "bytes": 12,
+      "relocations": []
+    },
+    {
+      "context": "int-long",
+      "case": "pointer-arithmetic",
+      "headerHash": "5aa7aa6a5a87d106e837b59ac325c31a047955b856fab61c06cefe8851986699",
+      "sourceLFHash": "c4c8a83392ff3fa780b320be8848dff54a2700f0507e2c91d295f6a7e7bc9dad",
+      "compilerWarning": false,
+      "diagnosticCount": 0,
+      "objectHash": "575ad1c26c126d77e41708d9d68ffc1afb3acda7458b2c31af9dd93230e3029b",
+      "textHash": "8bb502437dee1c416990f56ce4060cf5c716ceb5b145a00cacf86bc91fad5f44",
+      "bytes": 24,
+      "relocations": [
+        {
+          "section": ".text",
+          "offset": 4,
+          "type": 5,
+          "symbol": "table",
+          "symbolValue": 0
+        },
+        {
+          "section": ".text",
+          "offset": 8,
+          "type": 6,
+          "symbol": "table",
+          "symbolValue": 0
+        }
+      ]
+    },
+    {
+      "context": "int-long",
+      "case": "integer-arithmetic",
+      "headerHash": "5aa7aa6a5a87d106e837b59ac325c31a047955b856fab61c06cefe8851986699",
+      "sourceLFHash": "9b6f4724cf078e22d3f6a654f677f26ad0de7301a7d9e63b9da6b668409a747d",
+      "compilerWarning": false,
+      "diagnosticCount": 0,
+      "objectHash": "3b745a7090607550af25d40745ad1aaf7214c2aea9dcd5f50b202c142ce8abf9",
+      "textHash": "dc9e272d2613c9ded626cee16fd704ea2db7d8f6fa3bcc2540585cf59c98c571",
+      "bytes": 12,
+      "relocations": []
+    },
+    {
+      "context": "int-long",
+      "case": "null",
+      "headerHash": "5aa7aa6a5a87d106e837b59ac325c31a047955b856fab61c06cefe8851986699",
+      "sourceLFHash": "8ce3a242e82426e665f1ecd34da697636502b36f67139fabf89ac0f5938b981c",
+      "compilerWarning": false,
+      "diagnosticCount": 0,
+      "objectHash": "5c1ff8d95755e45d6e61a81dacc49462fd2cde6f4bc9a00695b8defbbe2f1739",
+      "textHash": "008d26890102af179c703d77fae42cb7b3f424a11b8db552383dd8e5313f4061",
+      "bytes": 8,
+      "relocations": []
+    },
+    {
+      "context": "short-int",
+      "case": "assignment",
+      "headerHash": "5d67de5937315f4b3e9bfd30876d1c86c8e0e161aa75ba652d47d8560083edbf",
+      "sourceLFHash": "62b6ecec4635cc9544050583aae02a0ef7614e91755af0fe5f59227def63f066",
+      "compilerWarning": true,
+      "diagnosticCount": 1,
+      "objectHash": "1672112c73ce061958df05a65fbcfe1f1aeebcc94a8b34806fb704e9498704ed",
+      "textHash": "4366f1a713897c82ae91e6429c10df35d6a670ec0176e6c78c7254aa35a14247",
+      "bytes": 16,
+      "relocations": []
+    },
+    {
+      "context": "short-int",
+      "case": "initializer",
+      "headerHash": "5d67de5937315f4b3e9bfd30876d1c86c8e0e161aa75ba652d47d8560083edbf",
+      "sourceLFHash": "57601cefb096d284a5227fb218095b1fe14f5c496ad0c64214989045a6f14015",
+      "compilerWarning": true,
+      "diagnosticCount": 1,
+      "objectHash": "3113dd82b9d0e03f71e6603b1a6116d40ca537410645cf336962014b203c100c",
+      "textHash": "4366f1a713897c82ae91e6429c10df35d6a670ec0176e6c78c7254aa35a14247",
+      "bytes": 16,
+      "relocations": []
+    },
+    {
+      "context": "short-int",
+      "case": "pointer-arithmetic",
+      "headerHash": "5d67de5937315f4b3e9bfd30876d1c86c8e0e161aa75ba652d47d8560083edbf",
+      "sourceLFHash": "c4c8a83392ff3fa780b320be8848dff54a2700f0507e2c91d295f6a7e7bc9dad",
+      "compilerWarning": false,
+      "diagnosticCount": 0,
+      "objectHash": "ef9478cf76e40043db8183e5a002270e54649ef5943ee9b5288a4d0a32c5aecf",
+      "textHash": "fc08901079be60693740e15c7b4d41f9ed8c29edc971a31497dca4705b0f296c",
+      "bytes": 28,
+      "relocations": [
+        {
+          "section": ".text",
+          "offset": 8,
+          "type": 5,
+          "symbol": "table",
+          "symbolValue": 0
+        },
+        {
+          "section": ".text",
+          "offset": 12,
+          "type": 6,
+          "symbol": "table",
+          "symbolValue": 0
+        }
+      ]
+    },
+    {
+      "context": "short-int",
+      "case": "integer-arithmetic",
+      "headerHash": "5d67de5937315f4b3e9bfd30876d1c86c8e0e161aa75ba652d47d8560083edbf",
+      "sourceLFHash": "9b6f4724cf078e22d3f6a654f677f26ad0de7301a7d9e63b9da6b668409a747d",
+      "compilerWarning": false,
+      "diagnosticCount": 0,
+      "objectHash": "29ae158ba0e6ae1800c9587b67465f9b016fb9c629ef8ae0abeaa84fbfbb2e08",
+      "textHash": "4366f1a713897c82ae91e6429c10df35d6a670ec0176e6c78c7254aa35a14247",
+      "bytes": 16,
+      "relocations": []
+    },
+    {
+      "context": "short-int",
+      "case": "null",
+      "headerHash": "5d67de5937315f4b3e9bfd30876d1c86c8e0e161aa75ba652d47d8560083edbf",
+      "sourceLFHash": "8ce3a242e82426e665f1ecd34da697636502b36f67139fabf89ac0f5938b981c",
+      "compilerWarning": false,
+      "diagnosticCount": 0,
+      "objectHash": "6d524e54e36f40a0b66598eb13aa99958ab96e619cc01c3c2415538b89b49e22",
+      "textHash": "008d26890102af179c703d77fae42cb7b3f424a11b8db552383dd8e5313f4061",
+      "bytes": 8,
+      "relocations": []
+    }
+  ],
+  "compiler": {
+    "family": "EE GCC 2.95.3",
+    "sha256": "522d28f9d74ddfce89568437156c8ee323c806de525d99907f698050dee8d81e",
+    "flags": [
+      "-c",
+      "-O2",
+      "-G8",
+      "-mno-split-addresses"
+    ]
+  },
+  "motivatingLocalReview": {
+    "sourceSha256": "220b48cdb9ba51b9a8c3f3316859ab54e7620ca6dbc87141296d62f277e3e950",
+    "objectSha256": "c9362d6727ce30e2c6d24e3db7f2e89670880df3ffe15e8d9e16e7e14ceca65c",
+    "immutableReviewSha256": "0ec9854afff2f70dcdab44b7e385ccebc856b34dfbee018b08162592d7bc2406",
+    "dataAddressRelocations": 0,
+    "logicalPlacements": 2,
+    "nativeAddressIdentityVaries": true,
+    "priorViolations": [],
+    "limitation": "Local binary review supplied the motivating observation; no game source, native bytes, addresses or object are redistributed. Synthetic probes independently demonstrate the diagnostic distinction, not semantic equivalence.",
+    "diagnosticReplay": {
+      "astAnalyzed": true,
+      "diagnosticCount": 1,
+      "findings": [
+        {
+          "kind": "integer-to-pointer",
+          "context": "assignment",
+          "expressionSha256": "37a55fc626d1c7ad6b61cfe2ff7d258af854a7f10b5709d7221d8fde6ae0d23b"
+        }
+      ],
+      "existingViolationsUnchanged": true,
+      "sourceSha256": "220b48cdb9ba51b9a8c3f3316859ab54e7620ca6dbc87141296d62f277e3e950",
+      "objectSha256": "c9362d6727ce30e2c6d24e3db7f2e89670880df3ffe15e8d9e16e7e14ceca65c",
+      "resultSha256": "39af992a06a77bbd0222f2413a00b236d736ba4d5a4e3bb1f1b69fdadda51bba",
+      "immutableReviewSha256": "0ec9854afff2f70dcdab44b7e385ccebc856b34dfbee018b08162592d7bc2406",
+      "textSha256": "c7d4dce771ae856344a5e0c22f5c9b5049251a10c9a1a0b8059f71e67c63917f",
+      "actualObjectRelocations": [],
+      "placementEvidence": [
+        {
+          "nativeBodyHash": "6bb8bc20c4c6693972f84ec2235ba3e3b6ee8a3af8e5337016edd8b415921f7f",
+          "objectReplayExact": false,
+          "relocations": []
+        },
+        {
+          "nativeBodyHash": "13b452f2a0e99ef7c42eff963bf34b35e5412f93f239ae7aa9780d36fa9e98e9",
+          "objectReplayExact": false,
+          "relocations": []
+        }
+      ],
+      "placementEvidenceSha256": "385fb9da5d2a8b4a0bc12daa5b377a50a764f73f6a80bcd9603ad77a7353ee44",
+      "gameCompilerRuns": 0,
+      "semanticApproval": false,
+      "limitation": "Existing cached source diagnostic replay and object metadata only; no fresh native analysis or semantic approval."
+    }
+  }
+}
