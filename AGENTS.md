@@ -54,13 +54,21 @@ engine reusable across games and put game-specific integration in its own folder
   Skip `blocked` / `deferred=true` cases in normal follow-up work; retain their
   evidence and resume them only on an explicit targeted request after handoff
   and a new personal claim. Do not repeat recorded unsuccessful variants.
-- Keep time and attempt limits effective across all seeds and variants. A plateau
+- For automatic searches, keep time and attempt limits effective across all
+  seeds and variants. A plateau
   or a score of 80–99 does not stop a search while supported variants and budget
   remain. A score is a heuristic, never a correctness percentage.
-- For manual review selection, use released candidates scoring at least 70.
+- For manual review selection, use released candidates scoring at least 80,
+  including candidates with previous automatic attempts.
   Lower scores return to later automatic search; preserve their evidence and
   release only your own manual claims. This local selection rule must not appear
   in public reservation comments.
+- Addon search budgets do not limit manual review or manual decompilation. An
+  exhausted automatic budget is not a manual stop reason. Preserve automatic
+  settings, counters and histories; record manual attempts separately. Reuse the
+  best evidenced state and avoid recorded unsuccessful variants. Continue toward
+  an independently verified match where possible; otherwise document the specific
+  remaining blocker and its evidence.
 
 ## Verification and learning from reviews
 
