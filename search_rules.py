@@ -57,7 +57,11 @@ class Variants:
         body=re.sub(r'^\s*#.*$','',text,flags=re.M)
         return tokens(body)==tokens(code_only(self.prelude))
 
-    def parse(self, source):
+    def parse_unit(self, source):
+        """Parse a guarded translation unit for read-only diagnostics.
+
+        Search mutations use parse(), which still requires exactly one function.
+        """
         text = code_only(source)
         flags = re.findall(r'/\*\s*cflags\b.*?\*/', source, re.S)
         if flags and (len(flags) != 1 or source.splitlines()[0] != flags[0]
@@ -72,6 +76,10 @@ class Variants:
         prefix = self.parser().parse(self.prelude)
         tree = self.parser().parse(self.prelude + '\n' + clean)
         del tree.ext[:len(prefix.ext)]
+        return tree
+
+    def parse(self, source):
+        tree = self.parse_unit(source)
         functions = [n for n in tree.ext if isinstance(n, self.a.FuncDef)]
         if len(functions) != 1:
             raise ValueError('Genau eine Funktion für die AST-Suche erforderlich.')

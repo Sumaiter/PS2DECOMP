@@ -20,18 +20,19 @@ def inspect(source, repository):
     conversion_reason = None
     try:
         rules = Variants(repository)
-        tree, _ = rules.parse(source)
+        tree = rules.parse_unit(source)
         a = rules.a
-        aliases = {n.name: n.type for n in rules.parser().parse(rules.prelude).ext if isinstance(n, a.Typedef)}
-        aliases.update({n.name: n.type for n in tree.ext if isinstance(n, a.Typedef)})
+        scopes = [{}]
 
-        def pointer(node, seen=frozenset()):
+        def pointer(node):
             if isinstance(node, a.PtrDecl):
                 return True
             if isinstance(node, a.TypeDecl) and isinstance(node.type, a.IdentifierType):
                 names = node.type.names
-                if len(names) == 1 and names[0] in aliases and names[0] not in seen:
-                    return pointer(aliases[names[0]], seen | {names[0]})
+                if len(names) == 1:
+                    for scope in reversed(scopes):
+                        if names[0] in scope:
+                            return scope[names[0]]
             return False
 
         def integer_literal(node):
@@ -47,11 +48,30 @@ def inspect(source, repository):
             except ValueError:
                 return None
 
-        for *_, node in rules._nodes(tree):
+        def inspect_node(node):
+            if isinstance(node, (a.Compound, a.For, a.FuncDef)):
+                scopes.append({})
+                for _, child in node.children():
+                    inspect_node(child)
+                scopes.pop()
+                return
+            if isinstance(node, a.Typedef):
+                # Capture the alias now, before a later scope shadows its source.
+                binding = pointer(node.type)
+                for _, child in node.children():
+                    inspect_node(child)
+                scopes[-1][node.name] = binding
+                return
             if isinstance(node, a.Cast) and pointer(node.to_type.type):
                 value = integer_literal(node.expr)
                 if value is not None and value != 0:
                     violations.append(dict(kind='literal-pointer-address', expression=rules.generator.visit(node), value=value))
+            for _, child in node.children():
+                inspect_node(child)
+
+        for node in rules.parser().parse(rules.prelude).ext:
+            inspect_node(node)
+        inspect_node(tree)
         parsed = True
         try:
             conversions = integer_pointer_diagnostics.inspect(rules, tree)
