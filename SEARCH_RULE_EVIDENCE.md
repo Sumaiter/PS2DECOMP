@@ -156,6 +156,15 @@ operands are rejected. Assignments used as expressions and unbraced insertion
 sites are left for manual review. A generated temporary is not materialized
 again. Existing search deduplication, budgets, claims and promotion checks apply.
 
+Preprocessing-active compiler options are also rejected, including command-line
+macros, forced headers, include-path overrides and response/profile/specs files.
+A real counterexample is a preserved `"-Dint=volatile int"` option: the original
+source need not contain an `int` declaration, but the inserted declaration would
+become volatile after preprocessing and add observable accesses. Visible AST
+qualifier checks alone cannot exclude this. Such flags are never removed or
+rewritten to make the rule apply; they require a separate preprocessing contract.
+Ordinary optimization, warning and code-generation flags remain verbatim.
+
 [Synthetic compiler metadata](tests/evidence/comparison-value-compiler.json)
 records ten unchanged-pipeline builds across five independent headers and two
 existing result contracts. Byte, halfword and single-precision comparisons with

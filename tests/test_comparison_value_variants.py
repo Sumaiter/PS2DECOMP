@@ -91,6 +91,22 @@ class ComparisonValueTests(unittest.TestCase):
         self.assertIn('int ps2decomp_comparison_1;', self.gen(source)[0][1])
         self.assertTrue(self.gen(SOURCE.replace('p[8] == 7', '*(float *)p > 0.5f')))
 
+    def test_preprocessor_flags_cannot_qualify_the_new_int_temporary(self):
+        for flags in ['"-Dint=volatile int"', "-Dint='volatile int'",
+                      '-Dint=volatile', '-D int=volatile', '-Uanything',
+                      '-include forced.h', '-includeforced.h', '-imacros hidden.h',
+                      '-Iother', '-iquote other', '-isystem other',
+                      '-Wp,-Dint=volatile', '-Xpreprocessor -Dint=volatile',
+                      '@hidden-options', '@compiler-profile', '--sysroot other',
+                      '-specs=hidden.specs', '-fplugin=hidden.so']:
+            with self.subTest(flags=flags):
+                self.assertFalse(self.gen('/* cflags: ' + flags + ' */\n' + SOURCE))
+
+    def test_ordinary_compiler_flags_remain_verbatim(self):
+        flags = '/* cflags: -O2 -G8 -Wuninitialized -mips4 */'
+        output = self.gen(flags + '\n' + SOURCE)[0][1]
+        self.assertEqual(output.splitlines()[0], flags)
+
 
 if __name__ == '__main__':
     unittest.main()

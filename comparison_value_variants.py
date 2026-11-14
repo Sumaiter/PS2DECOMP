@@ -5,6 +5,7 @@ destination type, function ABI, operands, evaluation gate and flags stay intact.
 """
 import copy
 import re
+import shlex
 
 from search_rules import Variants
 
@@ -12,6 +13,21 @@ from search_rules import Variants
 def generate(source, repository):
     if re.search(r'\b(?:__[A-Za-z_]\w*|asm|_asm|_Alignas)\b', source):
         return
+    # An otherwise plain common.h is not a preprocessing contract when a
+    # command-line macro can redefine the newly introduced int keyword/name,
+    # an include option can supply another header, or a response/specs file
+    # hides such options. Never change or strip the original flags instead.
+    for comment in re.findall(r'/\*\s*cflags:(.*?)\*/', source, re.S):
+        try:
+            flags = shlex.split(comment)
+        except ValueError:
+            return
+        unsafe = ('-D', '-U', '-I', '-F', '-A', '-i', '-Wp,', '-Xpreprocessor',
+                  '--include', '--define-macro', '--undefine-macro', '--sysroot',
+                  '--specs', '-specs', '-fplugin', '-nostdinc', '-undef', '-B')
+        if any(flag.startswith(unsafe) or flag.startswith('@') or flag == '-Wp'
+               for flag in flags):
+            return
     rules = Variants(repository)
     if not rules.plain_header():
         return
