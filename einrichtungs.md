@@ -370,7 +370,14 @@ selected jobs does not authorize that pass to resume with newer compiler/checker
 inputs. An unknown or changed provenance requires its own explicit retry; old
 snapshots and negative history remain available.
 
-Review released candidates scoring at least 70 first. Scores are search hints,
+Review released candidates scoring at least 80, including previously attempted
+automatic candidates. The addon's time and attempt limits govern automatic
+searches only; they do not limit manual review or manual decompilation. An
+exhausted automatic budget is not a manual stop reason. Preserve automatic
+settings, counters and histories, and record manual attempts separately. Reuse
+the best evidenced state without repeating recorded unsuccessful variants.
+Continue toward a verified match where possible, or document the specific
+remaining blocker and its evidence. Scores are search hints,
 not percentages of correctness. A technical match still needs independent byte,
 relocation, type/ABI, ownership, boundary and semantic review and full game builds.
 
