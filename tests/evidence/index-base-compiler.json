@@ -1,0 +1,265 @@
+{
+  "syntheticSourcesOnly": true,
+  "retailComparison": false,
+  "compilerRuns": 8,
+  "semanticApproval": false,
+  "compilerFlagsChanged": false,
+  "cases": [
+    {
+      "context": "word",
+      "headerHash": "efd48200380e689c0c273e89226ad9810ce8e160c21e1fc28c54c267e5266e09",
+      "builds": [
+        {
+          "phase": "before",
+          "sourceHash": "f4d69ca18a70c354e1a2523a76e38894b1df6c26dc9c49eff92132aafb633350",
+          "objectHash": "5c573f74bb1b897f80d07e5c091dfc5a3af56948211f411ccf94dceb6c6fa768",
+          "textHash": "2a84aa8e6ba4111a931411dd91abb5fefe47c984f1540b1c6505789c5fefab6a",
+          "bytes": 76,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 12,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            },
+            {
+              "section": ".text",
+              "offset": 24,
+              "type": 7,
+              "symbol": "selected__gp",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        },
+        {
+          "phase": "after",
+          "sourceHash": "87f80e06a6a6c69c6b1bb809d6c57f5374e51eb49e0ed99e96e83fe4c04914fe",
+          "objectHash": "64f1391ecaa3d8963cfe81468c1414cecf373992587bb32696df193dbb9e2bbd",
+          "textHash": "d1f8180bbeedbb310f8aa922d2c9ebb9f4b21f514fba3aaaea28602dcaf9e09a",
+          "bytes": 76,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 12,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            },
+            {
+              "section": ".text",
+              "offset": 24,
+              "type": 7,
+              "symbol": "selected__gp",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "context": "halfword",
+      "headerHash": "6cec4afaa97ac99ab7c2dbbd41858ccffbb8eba50c701581bb29faeca2f8d82c",
+      "builds": [
+        {
+          "phase": "before",
+          "sourceHash": "f4d69ca18a70c354e1a2523a76e38894b1df6c26dc9c49eff92132aafb633350",
+          "objectHash": "eafcbe1e4b99092fce8f350ff95137135c3d2d4de773964f379de07e08346a7d",
+          "textHash": "149e2781c87d35b7223f8d055ca89c9179b22abe49fff9712f1afaaff4ce765f",
+          "bytes": 76,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 12,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            },
+            {
+              "section": ".text",
+              "offset": 24,
+              "type": 7,
+              "symbol": "selected__gp",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        },
+        {
+          "phase": "after",
+          "sourceHash": "87f80e06a6a6c69c6b1bb809d6c57f5374e51eb49e0ed99e96e83fe4c04914fe",
+          "objectHash": "1febd75114d9f9451f249ea98fd2d1afdbe4f298585fbd64e664fb549f222562",
+          "textHash": "141bb8f826b0fa3a795cbfdc402593763f2010feb0dc8d7524ed36412d966e42",
+          "bytes": 76,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 12,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            },
+            {
+              "section": ".text",
+              "offset": 24,
+              "type": 7,
+              "symbol": "selected__gp",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "context": "single",
+      "headerHash": "61a8c623c1daf18bc7b789318133a83f57798afc6977c8193e742c5fd95a75ad",
+      "builds": [
+        {
+          "phase": "before",
+          "sourceHash": "f4d69ca18a70c354e1a2523a76e38894b1df6c26dc9c49eff92132aafb633350",
+          "objectHash": "e7b8a6b9e62899baadf18d37939d8179aef2c310ec56efebddf58afcd010a7c1",
+          "textHash": "d90a4593ed459197ce21eacdcfce7b4a5908f439d45004958b5b3ac21a78a2fa",
+          "bytes": 80,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 12,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            },
+            {
+              "section": ".text",
+              "offset": 24,
+              "type": 7,
+              "symbol": "selected__gp",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        },
+        {
+          "phase": "after",
+          "sourceHash": "87f80e06a6a6c69c6b1bb809d6c57f5374e51eb49e0ed99e96e83fe4c04914fe",
+          "objectHash": "92513aad61a157948b5b78f7e4ab7b5e16a56b0ca418cd466c43950612404c9f",
+          "textHash": "4be170e94227d1aeac427270c32ecea86eecf7386c1f0f7bf3070a3719910d31",
+          "bytes": 80,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 12,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            },
+            {
+              "section": ".text",
+              "offset": 24,
+              "type": 7,
+              "symbol": "selected__gp",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "context": "double",
+      "headerHash": "5e3751f1654982b8f30b132fb0c8f6606d942cdbb77f9135a360a043fc3a29e3",
+      "builds": [
+        {
+          "phase": "before",
+          "sourceHash": "f4d69ca18a70c354e1a2523a76e38894b1df6c26dc9c49eff92132aafb633350",
+          "objectHash": "c3df4ca94d6e72fbe50924782341b0aee715a598902bf088c25cc3b8d957d76f",
+          "textHash": "bdcdac47fda6e6735f10f3ca79b37aaf86b8121629e8f57fea2806e018fb40ae",
+          "bytes": 80,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 12,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            },
+            {
+              "section": ".text",
+              "offset": 24,
+              "type": 7,
+              "symbol": "selected__gp",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            },
+            {
+              "section": ".text",
+              "offset": 40,
+              "type": 4,
+              "symbol": "dpcmp",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        },
+        {
+          "phase": "after",
+          "sourceHash": "87f80e06a6a6c69c6b1bb809d6c57f5374e51eb49e0ed99e96e83fe4c04914fe",
+          "objectHash": "2b00f2a20aadd1a2085dc66248d15d963c939a66fac129f93fa9f2d031e0fa08",
+          "textHash": "1562f889e2cf2245e209134cd50bbfea9592f47872b9242f9c69deb9a3ea6c9e",
+          "bytes": 80,
+          "relocations": [
+            {
+              "section": ".text",
+              "offset": 12,
+              "type": 4,
+              "symbol": "gate",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            },
+            {
+              "section": ".text",
+              "offset": 24,
+              "type": 7,
+              "symbol": "selected__gp",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            },
+            {
+              "section": ".text",
+              "offset": 40,
+              "type": 4,
+              "symbol": "dpcmp",
+              "symbolValue": 0,
+              "encodedAddend": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "compiler": "Unchanged SN EE GCC 2.95.3 v1.36 project pipeline",
+  "motivatingReview": {
+    "generatedAstEqualsReviewedSourceAfterLocalRename": true,
+    "completeFunctionBytes": 80,
+    "placements": 3,
+    "newGameCompilerInvocations": 0,
+    "originalMismatchingBytes": 1,
+    "finalActualTargetsVerified": true,
+    "noArrayBoundIntroduced": true
+  },
+  "limitations": [
+    "Search candidate generation only; no semantic approval or promotion.",
+    "No element width or ABI inferred from an alias name.",
+    "Synthetic before/after objects are not retail matches.",
+    "Runtime validity and index bounds are not invented."
+  ]
+}

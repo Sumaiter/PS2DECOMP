@@ -27,6 +27,7 @@ import pointer_seeds
 import structural_seeds
 import address_variants
 import review_variants
+import index_base_variants
 import native_guard_variants
 import terminal_return_variants
 import reset_store_variants
@@ -1542,7 +1543,7 @@ def _search_job(manager, folder, data, name, engine, claims, job, budget):
                             offer(label, text)
                     for label, text in variants.generate(source):
                         offer(label, text)
-                    for module in (address_variants, review_variants, native_guard_variants, terminal_return_variants, reset_store_variants, counter_relay_variants, postcall_default_variants, native_load_before_clear, adjacent_input_store_variants, shared_call_join_variants, word_base_variants, word_store_address_variants, terminated_switch_variants, native_sd16_profile, scalar_copy_temp):
+                    for module in (address_variants, review_variants, index_base_variants, native_guard_variants, terminal_return_variants, reset_store_variants, counter_relay_variants, postcall_default_variants, native_load_before_clear, adjacent_input_store_variants, shared_call_join_variants, word_base_variants, word_store_address_variants, terminated_switch_variants, native_sd16_profile, scalar_copy_temp):
                         try:
                             extra_children = (native_guard_children(source, engine, name, place, raw)
                                               if module is native_guard_variants

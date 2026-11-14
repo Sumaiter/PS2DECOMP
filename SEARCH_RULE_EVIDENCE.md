@@ -83,6 +83,51 @@ are not promised.
 
 ## Validation
 
+### Materializing an existing indexed pointer base
+
+`index_base_variants.py` can extract the existing cast in a comparison such as
+`value >= ((Element *)(bytes + offset))[index]` into a local `Element *`.
+The assignment stays immediately before that comparison in the same compound
+block, including inside an existing gate or loop. The cast, byte expression,
+index, comparison and function signature are preserved. No element width,
+array length, index range, ABI or data ownership is inferred. This is a search
+candidate, not an approval rule.
+
+The rule accepts only one indexed read in a plain comparison, a known local
+byte-pointer base, a constant offset and a known scalar index. Short-circuits,
+ternaries, calls or mutations in the comparison, escaped/shadowed bases,
+qualified or attributed types, macro-altered headers, labels and ambiguous
+insertion points are rejected. The generated local uses the input cast type
+verbatim, including when the same alias names a different underlying type.
+Function-local typedefs are rejected because the new declaration would be
+hoisted outside their original scope or binding. Context-dependent reserved
+identifiers are rejected throughout the translation unit, including global
+initializers. Fresh local names also exclude enum constants.
+
+[Compiler metadata](tests/evidence/index-base-compiler.json) records eight real
+before/after compilations with four independent synthetic headers: `int`,
+`short`, `float` and `double` element types. Actual call/data relocation symbols,
+types and encoded addends are checked; the double comparison's extra helper is
+retained. These examples are not retail comparisons. A retained reviewed pair
+separately established that this source form removed a one-byte register-order
+difference in an 80-byte function, with all three actual placements and targets
+verified. The generated AST reproduces that reviewed form after renaming only
+the new local; no new game compilation or claim transfer was needed.
+
+Reproduce the synthetic evidence using your own unchanged compiler wrapper:
+
+```text
+python tests/compile_index_base_examples.py --command-json command.json --cwd /path/to/compiler-project --output build/new-index-base-check
+```
+
+The output folder must be new. Sources, objects and logs stay local. The
+runner checks the documented SN pipeline's GP or HI/LO index relocation and,
+for double, its comparison helper. Another compiler may require a separately
+reviewed evidence runner; the search rule itself contains no compiler profile,
+instruction, address or game special case. Existing search budgets, claims,
+handoff, source-fidelity checks and independent promotion requirements remain
+unchanged.
+
 The tests cover different header names and underlying types, hidden qualifiers
 and typedef attributes, callback shadowing, macro-altered headers, line-sensitive
 expressions, assignment conversions, live values, every-copy native disagreement,
