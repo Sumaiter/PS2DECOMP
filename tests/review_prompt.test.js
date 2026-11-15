@@ -47,3 +47,31 @@ test('manual budget exemption preserves identity, handoff, ownership and verific
   assert.match(de, /niemals fremde oder automatische Reservierungen/);
   assert.match(de, /keine Korrektheitsprozente/);
 });
+
+test('English review requires native data provenance and conditional effect checks', () => {
+  const text = prompt(data, 'en');
+  assert.match(text, /runtime GP for each program and the active game version/);
+  assert.match(text, /active placement's mapped reference sections/);
+  assert.match(text, /program\/overlay data do not shadow that address/);
+  assert.match(text, /comparison and branch opcodes, signed\/unsigned semantics/);
+  assert.match(text, /truth table.*boundary values and executed loads, stores and calls/);
+  assert.match(text, /Ordinary branch delay instructions execute on both outcomes/);
+  assert.match(text, /branch-likely delay instructions execute only when taken/);
+  assert.match(text, /NaN\/unordered floating-point cases separately/);
+  assert.match(text, /verify logical negation/);
+  assert.match(text, /byte-closer variant with different returns or effects is not a better valid candidate/);
+});
+
+test('German review requires the same provenance and branch semantics checks', () => {
+  const text = prompt(data, 'de-DE');
+  assert.match(text, /Laufzeit-GP des jeweiligen Programms und der aktiven Spielversion/);
+  assert.match(text, /Referenzabschnitten der aktiven Platzierung/);
+  assert.match(text, /Programm-\/Overlaydaten dieselbe Adresse überlagern/);
+  assert.match(text, /Vergleichs- und Branch-Opcodes, signed\/unsigned-Semantik/);
+  assert.match(text, /Wahrheitstabelle einschließlich Grenzwerten, ausgeführten Loads, Stores und Calls/);
+  assert.match(text, /gewöhnlichen Branches wird der Delay-Slot auf beiden Pfaden ausgeführt/);
+  assert.match(text, /Branch-Likely nur bei genommenem Branch/);
+  assert.match(text, /NaN\/Unordered bei FP-Vergleichen getrennt/);
+  assert.match(text, /kontrolliere die logische Negation/);
+  assert.match(text, /byte-nähere Variante mit anderen Rückgaben oder Effekten ist kein besserer gültiger Kandidat/);
+});
